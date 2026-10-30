@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus — Dashboard & Habit Tracker</title>
+
+    <script>
+        // Thème sombre par défaut, appliqué avant le rendu pour éviter le flash.
+        try {
+            var __s = JSON.parse(localStorage.getItem('lifeos_v2') || '{}');
+            if (!__s.focusDarkDefaultApplied) {
+                __s.theme = 'dark';
+                __s.focusDarkDefaultApplied = true;
+                localStorage.setItem('lifeos_v2', JSON.stringify(__s));
+            }
+            if (__s.theme !== 'light') document.documentElement.classList.add('dark');
+        } catch (e) { document.documentElement.classList.add('dark'); }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', '"Cairo"', 'sans-serif'] },
+                    colors: {
+                        bg: 'rgb(var(--c-bg) / <alpha-value>)', surface: 'rgb(var(--c-surface) / <alpha-value>)', 'surface-hover': 'rgb(var(--c-surface-hover) / <alpha-value>)',
+                        border: 'rgb(var(--c-border) / <alpha-value>)', 'border-subtle': 'rgb(var(--c-border-subtle) / <alpha-value>)',
+                        teal: 'rgb(var(--c-teal) / <alpha-value>)', orange: 'rgb(var(--c-orange) / <alpha-value>)', indigo: 'rgb(var(--c-indigo) / <alpha-value>)', amber: 'rgb(var(--c-orange) / <alpha-value>)',
+                        muted: 'rgb(var(--c-muted) / <alpha-value>)', primary: 'rgb(var(--c-primary) / <alpha-value>)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ---------- Palette (clair par défaut, sombre en option) ---------- */
+        :root {
+            --c-bg: 9 10 15;
+            --c-surface: 18 20 26;
+            --c-surface-hover: 24 27 35;
+            --c-border: 34 38 48;
+            --c-border-subtle: 26 29 38;
+            --c-teal: 45 212 168;
+            --c-orange: 245 158 11;
+            --c-indigo: 99 102 241;
+            --c-muted: 113 113 122;
+            --c-primary: 244 244 245;
+        }
+        html.dark {
+            --c-bg: 9 10 15;
+            --c-surface: 18 20 26;
+            --c-surface-hover: 24 27 35;
+            --c-border: 34 38 48;
+            --c-border-subtle: 26 29 38;
+            --c-teal: 45 212 168;
+            --c-orange: 245 158 11;
+            --c-indigo: 99 102 241;
+            --c-muted: 113 113 122;
+            --c-primary: 244 244 245;
+        }
+        body { background-color: rgb(var(--c-bg)); color: rgb(var(--c-primary)); touch-action: manipulation; transition: background-color .3s ease, color .3s ease; }
+        html:not(.dark) .bg-surface { box-shadow: 0 1px 2px rgba(28,32,51,.05), 0 8px 24px -12px rgba(28,32,51,.12); }
+        html:not(.dark) body { background-image: radial-gradient(900px 400px at 10% -10%, rgb(var(--c-teal) / .08), transparent), radial-gradient(800px 380px at 100% 0%, rgb(var(--c-indigo) / .08), transparent); background-attachment: fixed; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--c-surface)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--c-border)); border-radius: 3px; }
+
+        .progress-ring__circle { transition: stroke-dashoffset 0.9s cubic-bezier(.22,1,.36,1); transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+        /* ---------- Animations ---------- */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,.45); } 50% { box-shadow: 0 0 0 7px rgba(245,158,11,0); } }
+        @keyframes pulseGlowTeal { 0%,100% { box-shadow: 0 0 0 0 rgba(45,212,168,.45); } 50% { box-shadow: 0 0 0 7px rgba(45,212,168,0); } }
+        @keyframes flame { 0%,100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.18) rotate(4deg); } }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes tickPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+        .reveal { opacity: 0; animation: fadeUp .65s cubic-bezier(.22,1,.36,1) forwards; }
+        .modal-card { animation: popIn .3s cubic-bezier(.22,1,.36,1) both; }
+        .badge-late { animation: pulseGlow 2s infinite; }
+        .badge-ok { animation: pulseGlowTeal 2s infinite; }
+        .flame { display: inline-block; animation: flame 1.4s ease-in-out infinite; }
+        .float { animation: floatY 3s ease-in-out infinite; }
+        .lift { transition: transform .25s ease, border-color .25s ease, background-color .25s ease; }
+        .lift:hover { transform: translateY(-3px); border-color: #2dd4a855; }
+        .skeleton-shimmer { background: linear-gradient(90deg, transparent, rgb(var(--c-teal) / .07), transparent); background-size: 200% 100%; animation: shimmer 2.4s infinite; }
+        .tick-pop { animation: tickPop .3s ease both; }
+        .confetti-piece { position: fixed; top: -12px; width: 8px; height: 14px; z-index: 100; pointer-events: none; animation: confetti 2.2s ease-in forwards; }
+        #toast { position: fixed; left: 50%; bottom: 22px; z-index: 90; animation: toastIn .3s ease both; }
+        .today-ring { box-shadow: 0 0 0 2px rgb(var(--c-teal)), 0 0 14px rgb(var(--c-teal) / .4); }
+        .task-done { text-decoration: line-through; opacity: .5; }
+        .greet-grad { background: linear-gradient(90deg, rgb(var(--c-teal)), rgb(var(--c-indigo)), rgb(var(--c-orange))); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: shimmer 6s linear infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+            .reveal { opacity: 1; }
+        }
+
+        /* Range sliders */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgb(var(--c-border)); border-radius: 4px; }
+        input[type=range]::-webkit-slider-thumb { height: 22px; width: 22px; border-radius: 50%; cursor: pointer; -webkit-appearance: none; margin-top: -7px; transition: transform .1s ease; }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.25); }
+        input[type=range]::-moz-range-track { height: 8px; background: rgb(var(--c-border)); border-radius: 4px; }
+        input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; border: none; cursor: pointer; }
+        .slider-teal::-webkit-slider-thumb { background: rgb(var(--c-teal)); box-shadow: 0 0 0 3px rgb(var(--c-surface)), 0 0 12px rgb(var(--c-teal) / .55); }
+        .slider-orange::-webkit-slider-thumb { background: rgb(var(--c-orange)); box-shadow: 0 0 0 3px rgb(var(--c-surface)), 0 0 12px rgb(var(--c-orange) / .55); }
+        .slider-indigo::-webkit-slider-thumb { background: rgb(var(--c-indigo)); box-shadow: 0 0 0 3px rgb(var(--c-surface)), 0 0 12px rgb(var(--c-indigo) / .55); }
+        .slider-teal::-moz-range-thumb { background: rgb(var(--c-teal)); }
+        .slider-orange::-moz-range-thumb { background: rgb(var(--c-orange)); }
+        .slider-indigo::-moz-range-thumb { background: rgb(var(--c-indigo)); }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-24">
+
+    <!-- Secure email OTP sign-in gate -->
+    <section id="authGate" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg/95 backdrop-blur-xl">
+        <div class="w-full max-w-md rounded-3xl border border-border bg-surface p-6 sm:p-8 shadow-2xl">
+            <div class="w-12 h-12 rounded-2xl bg-teal/10 border border-teal/20 flex items-center justify-center text-teal mb-5"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+            <p class="text-[10px] uppercase tracking-[.25em] font-bold text-teal">FOCUS · PERSONAL SPACE</p>
+            <h1 class="text-2xl font-extrabold mt-2">Your progress, saved to your account.</h1>
+            <p class="text-sm text-muted mt-2 leading-relaxed">Sign in with your email. We’ll send you a one-time verification code. Your data stays private to your account.</p>
+            <div class="mt-6 space-y-3">
+                <label for="focusEmail" class="block text-xs font-semibold text-muted">Gmail / Email address</label>
+                <input id="focusEmail" type="email" autocomplete="email" placeholder="you@gmail.com" class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')sendFocusCode()">
+                <button id="sendFocusCodeBtn" type="button" onclick="sendFocusCode()" class="w-full rounded-xl bg-teal text-bg font-extrabold py-3 text-sm hover:opacity-90">Send verification code</button>
+                <div id="focusCodeArea" class="hidden space-y-3 pt-2">
+                    <label for="focusOtp" class="block text-xs font-semibold text-muted">6-digit code sent to your email</label>
+                    <input id="focusOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-center text-xl tracking-[.5em] font-bold focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')verifyFocusCode()">
+                    <button id="verifyFocusCodeBtn" type="button" onclick="verifyFocusCode()" class="w-full rounded-xl bg-teal text-bg font-extrabold py-3 text-sm hover:opacity-90">Verify and open Focus</button>
+                    <button type="button" onclick="resetFocusCode()" class="w-full text-xs text-muted hover:text-teal py-1">Use another email</button>
+                </div>
+                <p id="focusAuthMessage" role="status" aria-live="polite" class="text-xs text-muted min-h-5"></p>
+                <p id="focusConfigWarning" class="hidden text-xs text-orange bg-orange/10 border border-orange/20 rounded-xl p-3">Setup required: add your Supabase Project URL and Publishable (anon) key in the configuration section of this HTML file. Never put a service-role key here.</p>
+            </div>
+            <p class="text-[10px] text-muted mt-5 leading-relaxed">Use only your own email account. Never share your verification code with anyone.</p>
+        </div>
+    </section>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-bg/90 backdrop-blur-md border-b border-border px-4 py-3">
+        <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 shrink-0 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center float">
+                    <i data-lucide="layout-grid" class="w-4 h-4 text-teal"></i>
+                </div>
+                <div class="min-w-0 leading-tight">
+                    <span class="font-bold text-lg tracking-tight block">Focus</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+                <button id="themeBtn" onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm hover:border-teal transition-all" title="Thème">🌙</button>
+                <button onclick="toggleLanguage()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-border text-teal hover:border-teal transition-all">
+                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                    <span id="langDisplay">FR</span>
+                </button>
+                <button onclick="openCopilotModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-indigo/10 border border-indigo/30 text-indigo hover:bg-indigo/20 transition-all">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span id="txt-copilot-btn" class="hidden sm:inline">Analyse IA</span>
+                </button>
+                <button onclick="openAddCategoryModal()" class="hidden">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span id="txt-saisir-btn" class="hidden sm:inline">Saisir</span>
+                </button>
+
+                <!-- Username (top-right): click to edit -->
+                <button onclick="openNameModal()" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-surface border border-border hover:border-teal transition-all" title="Modifier le nom">
+                    <span id="avatarInitials" class="w-7 h-7 rounded-full bg-teal/15 border border-teal/30 flex items-center justify-center text-[11px] font-extrabold text-teal">?</span>
+                    <span id="userNameTop" class="text-xs font-bold max-w-[84px] truncate">Invité</span>
+                </button>
+                <button type="button" onclick="focusSignOut()" class="w-8 h-8 rounded-full bg-surface border border-border hover:border-orange text-muted hover:text-orange flex items-center justify-center" title="Sign out" aria-label="Sign out"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Greeting + live clock -->
+        <section class="reveal rounded-2xl border border-border bg-surface p-4 relative overflow-hidden" style="animation-delay:.02s">
+            <div class="absolute inset-0 skeleton-shimmer pointer-events-none"></div>
+            <div class="relative flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <p id="greetLine" class="text-lg md:text-xl font-extrabold truncate"><span class="greet-grad">Bonjour</span></p>
+                    <p id="dateLine" class="text-xs text-muted mt-0.5 capitalize">—</p>
+                </div>
+                <div class="text-right shrink-0">
+                    <p id="clockLine" class="text-2xl font-black tabular-nums text-teal">--:--</p>
+                    <p id="phaseLine" class="text-[10px] font-bold uppercase tracking-wider text-muted">—</p>
+                </div>
+            </div>
+            <div class="relative mt-3 flex items-center gap-1.5 text-[10px] text-muted">
+                <i data-lucide="hard-drive" class="w-3 h-3 text-teal"></i>
+                <span id="saveInfo">Enregistré automatiquement sur cet appareil</span>
+                <span id="saveDot" class="w-1.5 h-1.5 rounded-full bg-teal"></span>
+            </div>
+        </section>
+
+        <!-- Month & streak -->
+        <div class="text-center space-y-1.5 reveal" style="animation-delay:.08s">
+            <button id="txt-month-title" type="button" onclick="openMonthPicker()" title="Choose your month" class="text-2xl md:text-3xl font-extrabold flex items-center justify-center gap-2 capitalize hover:text-teal transition-colors mx-auto">
+                <span id="monthTitleText">Octobre 2026</span><i data-lucide="chevron-down" class="w-5 h-5"></i>
+            </button>
+            <div class="flex justify-center pt-1"><button type="button" onclick="openMonthlyAnalysis()" class="px-3 py-1.5 rounded-full border border-teal/30 bg-teal/10 text-teal text-xs font-bold hover:bg-teal/15 transition-colors">📊 <span id="monthlyAnalysisBtnText">Analyse du mois</span></button></div>
+            <div class="flex items-center justify-center gap-2 text-xs font-medium text-muted">
+                <span class="flame">🔥</span>
+                <span id="streakDisplay">0-jour de série</span>
+            </div>
+        </div>
+
+        <!-- Gauges -->
+        <div class="grid grid-cols-3 gap-2 md:gap-6 py-2">
+            <div class="reveal lift flex flex-col items-center gap-2 bg-surface/50 border border-border/50 rounded-2xl p-3" style="animation-delay:.14s">
+                <div class="relative w-[90px] h-[90px] md:w-[120px] md:h-[120px]">
+                    <svg class="w-full h-full" viewBox="0 0 120 120">
+                        <circle class="text-border" stroke-width="8" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60"/>
+                        <circle id="executionRing" class="progress-ring__circle text-teal" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60" stroke-dasharray="314.15" stroke-dashoffset="314.15"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center"><span id="executionText" class="text-xl md:text-2xl font-black text-teal">0%</span></div>
+                </div>
+                <div class="text-center">
+                    <p id="txt-gauge-execution" class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted">EXÉCUTION</p>
+                    <p id="executionCountLabel" class="text-[10px] text-muted mt-0.5">0 / 6 actions</p>
+                </div>
+            </div>
+
+            <div class="reveal lift flex flex-col items-center gap-2 bg-surface/50 border border-border/50 rounded-2xl p-3" style="animation-delay:.2s">
+                <div class="relative w-[90px] h-[90px] md:w-[120px] md:h-[120px]">
+                    <svg class="w-full h-full" viewBox="0 0 120 120">
+                        <circle class="text-border" stroke-width="8" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60"/>
+                        <circle id="moneyRing" class="progress-ring__circle text-orange" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60" stroke-dasharray="314.15" stroke-dashoffset="314.15"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center"><span id="moneyText" class="text-xl md:text-2xl font-black text-orange">0%</span></div>
+                </div>
+                <div class="text-center">
+                    <p id="txt-gauge-money" class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted">ARGENT (DH)</p>
+                    <p id="moneyTargetLabel" class="text-[10px] text-muted mt-0.5">0 DH de 50000 DH</p>
+                </div>
+            </div>
+
+            <div class="reveal lift flex flex-col items-center gap-2 bg-surface/50 border border-border/50 rounded-2xl p-3" style="animation-delay:.26s">
+                <div class="relative w-[90px] h-[90px] md:w-[120px] md:h-[120px]">
+                    <svg class="w-full h-full" viewBox="0 0 120 120">
+                        <circle class="text-border" stroke-width="8" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60"/>
+                        <circle id="resultsRing" class="progress-ring__circle text-indigo" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="50" cx="60" cy="60" stroke-dasharray="314.15" stroke-dashoffset="314.15"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center"><span id="resultsText" class="text-xl md:text-2xl font-black text-indigo">0%</span></div>
+                </div>
+                <div class="text-center">
+                    <p id="txt-gauge-results" class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted">RÉSULTATS</p>
+                    <p id="resultsCountLabel" class="text-[10px] text-muted mt-0.5">0 suivis</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pace chart -->
+        <div class="reveal bg-surface rounded-2xl border border-border p-4 md:p-5" style="animation-delay:.32s">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1">
+                <div>
+                    <p id="txt-pace-day-title" class="text-[10px] font-bold uppercase tracking-wider text-muted mb-0.5">Jour — · Rythme actuel</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <p class="text-base font-bold">
+                            <span id="paceDoneText" class="text-primary">0%</span>
+                            <span id="txt-accompli" class="text-primary"> accompli</span>
+                            <span id="txt-target-40" class="text-muted font-normal">· cible 40%</span>
+                        </p>
+                        <span id="paceBadge" class="px-2 py-0.5 rounded text-[10px] font-black bg-amber/10 text-amber border border-amber/20 badge-late">! EN RETARD</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 mb-3 text-xs text-muted">
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-muted"></span><span id="txt-leg-target">Cible</span></div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal"></span><span id="txt-leg-exec">Exécution</span></div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo"></span><span id="txt-leg-res">Résultats</span></div>
+            </div>
+            <div class="h-44 w-full"><canvas id="paceChart"></canvas></div>
+        </div>
+
+        <!-- Week selector + today's tasks -->
+        <div class="reveal bg-surface rounded-2xl border border-border p-4 space-y-3" style="animation-delay:.38s">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-teal"></i>
+                    <span id="txt-daily-tracker-title">Ma semaine</span>
+                </h3>
+                <span id="txt-select-day-sub" class="text-xs text-muted">Sélectionnez un jour</span>
+            </div>
+            <div id="daysContainer" class="grid grid-cols-7 gap-1.5 text-center"></div>
+
+            <div class="pt-1 border-t border-border-subtle">
+                <div class="flex items-center justify-between pt-3">
+                    <p id="selectedDayStatus" class="text-xs font-bold">—</p>
+                    <span id="dayProgress" class="text-[10px] font-bold text-teal">0/3</span>
+                </div>
+                <p id="focusLine" class="text-[11px] text-muted mt-1">—</p>
+                <ul id="tasksList" class="mt-2 space-y-2"></ul>
+                <div class="mt-2 flex items-center gap-2">
+                    <input id="newTaskInput" type="text" maxlength="80" placeholder="Ajoute ta propre tâche..." class="flex-1 min-w-0 bg-bg border border-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')addCustomTask()">
+                    <button onclick="addCustomTask()" class="w-9 h-9 shrink-0 rounded-xl bg-teal text-bg font-black text-xl leading-none hover:scale-105 transition-transform" title="+">+</button>
+                </div>
+                <div id="timeTip" class="mt-3 text-[11px] rounded-xl bg-indigo/10 border border-indigo/20 text-indigo px-3 py-2"></div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between px-1">
+                <h2 id="txt-cat-header" class="text-xs font-bold uppercase tracking-wider text-muted">Catégories & Réglages Directs</h2>
+                <div class="flex items-center gap-2">
+                    <span id="txt-cat-hint" class="text-xs text-teal font-medium hidden sm:inline">Glissez le curseur avec le doigt</span>
+                    <button onclick="openAddCategoryModal()" class="flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full bg-teal text-bg text-xs font-extrabold hover:scale-105 transition-transform">
+                        <span class="text-base leading-none">+</span><span id="txt-add-cat-btn">Ajouter</span>
+                    </button>
+                </div>
+            </div>
+            <div id="categoriesContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Rewards -->
+        <div class="reveal bg-surface rounded-2xl border border-border p-4 space-y-3" style="animation-delay:.44s">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="gift" class="w-4 h-4 text-orange float"></i>
+                    <h3 id="txt-rewards-title" class="text-sm font-bold">Récompenses Déblocables</h3>
+                </div>
+                <span id="txt-rewards-req" class="text-xs text-muted">Score requis: 50%+</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="lift bg-bg rounded-xl border border-border-subtle p-3 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p id="txt-rew1-title" class="text-xs font-semibold">Grand Dîner au Restaurant</p>
+                        <p class="text-[10px] font-bold text-teal mt-0.5">300 DH</p>
+                    </div>
+                    <button data-idx="0" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button>
+                </div>
+                <div class="lift bg-bg rounded-xl border border-border-subtle p-3 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p id="txt-rew2-title" class="text-xs font-semibold">Nouvelle Tenue / Baskets</p>
+                        <p class="text-[10px] font-bold text-teal mt-0.5">1000 DH</p>
+                    </div>
+                    <button data-idx="1" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button>
+                </div>
+            </div>
+            <div class="border-t border-border-subtle pt-3 space-y-2.5">
+                <p class="text-xs font-bold">🎯 Ajoute ta propre récompense</p>
+                <p class="text-[10px] text-muted">Choisis ce qui te motive : sortie, jeu, livre, temps libre, achat ou autre. Elle restera verrouillée tant que ton score n’atteint pas 50%.</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="customRewardName" maxlength="70" type="text" placeholder="Ma récompense (ex. sortie au cinéma)" class="flex-1 min-w-0 bg-bg border border-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal">
+                    <input id="customRewardCost" maxlength="30" type="text" placeholder="Budget (facultatif)" class="sm:w-36 bg-bg border border-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal">
+                    <button onclick="addCustomReward()" class="px-4 py-2 rounded-xl bg-teal text-bg text-xs font-extrabold hover:opacity-90">+ Ajouter</button>
+                </div>
+                <div id="customRewardsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: month picker -->
+    <div id="monthPickerModal" class="fixed inset-0 bg-bg/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)closeMonthPicker()">
+        <div class="modal-card bg-surface border border-border w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between gap-3"><div><h3 id="monthPickerTitle" class="text-lg font-extrabold">Choose your month</h3><p class="text-xs text-muted mt-1">Chaque mois garde ses propres données.</p></div><button onclick="closeMonthPicker()" class="w-9 h-9 rounded-xl border border-border hover:border-teal" aria-label="Close">✕</button></div>
+            <div id="monthPickerGrid" class="space-y-4"></div>
+            <div class="flex justify-between items-center gap-2 border-t border-border-subtle pt-3"><button id="yearViewBtn" onclick="toggleYearView()" class="px-3 py-2 rounded-xl border border-border text-xs font-bold hover:border-teal">Year view</button><button onclick="closeMonthPicker()" class="px-4 py-2 rounded-xl bg-teal text-bg text-xs font-extrabold">Close</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: complete monthly analysis -->
+    <div id="monthlyAnalysisModal" class="fixed inset-0 bg-bg/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="if(event.target===this)closeMonthlyAnalysis()">
+        <div class="modal-card bg-surface border border-border w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl p-5 space-y-4">
+            <div class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-widest font-bold text-teal">FOCUS</p><h3 id="monthlyAnalysisTitle" class="text-xl font-extrabold mt-1">Analyse complète du mois</h3><p id="monthlyAnalysisSubtitle" class="text-xs text-muted mt-1"></p></div><button onclick="closeMonthlyAnalysis()" class="w-9 h-9 shrink-0 rounded-xl border border-border hover:border-teal" aria-label="Close">✕</button></div>
+            <div id="monthlyAnalysisContent" class="space-y-4"></div>
+            <div class="flex justify-end border-t border-border-subtle pt-3"><button onclick="closeMonthlyAnalysis()" class="px-4 py-2 rounded-xl bg-teal text-bg text-xs font-extrabold">Close</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: username -->
+    <div id="nameModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-card bg-surface border border-border w-full max-w-sm rounded-2xl p-5 space-y-4">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-teal/10 border border-teal/30 flex items-center justify-center text-teal"><i data-lucide="user" class="w-4 h-4"></i></div>
+                <h3 id="txt-name-title" class="font-bold text-base">Comment t'appelles-tu ?</h3>
+            </div>
+            <input id="nameInput" type="text" maxlength="24" placeholder="Ton prénom" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')saveName()">
+            <p id="txt-name-hint" class="text-[11px] text-muted">Ton nom s'affiche en haut et dans tes messages. Il est enregistré sur cet appareil.</p>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeNameModal()" id="txt-name-later" class="px-4 py-2 rounded-xl text-xs font-semibold text-muted hover:bg-surface-hover">Plus tard</button>
+                <button onclick="saveName()" id="txt-name-save" class="px-4 py-2 rounded-xl text-xs font-bold bg-teal text-bg hover:opacity-90 transition-all">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: add category -->
+    <div id="addCategoryModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-card bg-surface border border-border w-full max-w-md rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 id="txt-add-cat-modal-title" class="font-bold text-base">Ajouter une Nouvelle Catégorie</h3>
+                <button onclick="closeAddCategoryModal()" class="text-muted hover:text-primary"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label id="txt-lbl-cat-name" class="text-xs font-semibold text-muted block mb-1">Nom de la catégorie</label>
+                    <input id="catNameInput" type="text" placeholder="ex: Projets Freelance" class="w-full bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                    <div class="flex items-center gap-2 mt-2">
+                        <input id="catGoalInput" type="number" min="0.1" step="any" placeholder="Objectif (ex: 20)" class="w-1/2 bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                        <select id="catUnitInput" class="w-1/2 bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal"></select>
+                    </div>
+                </div>
+                <div>
+                    <label id="txt-lbl-cat-type" class="text-xs font-semibold text-muted block mb-1">Type d'objectif (Couleur du cercle)</label>
+                    <select id="catTypeInput" class="w-full bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                        <option value="execution">Exécution (Teal)</option>
+                        <option value="money">Argent (Orange)</option>
+                        <option value="results">Résultats (Indigo)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeAddCategoryModal()" id="txt-cancel-btn" class="px-4 py-2 rounded-xl text-xs font-semibold text-muted hover:bg-surface-hover">Annuler</button>
+                <button onclick="submitNewCategory()" id="txt-create-btn" class="px-4 py-2 rounded-xl text-xs font-bold bg-teal text-bg hover:opacity-90 transition-all">Créer la catégorie</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: copilot -->
+    <div id="copilotModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-card bg-surface border border-border w-full max-w-lg rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo/20 flex items-center justify-center text-indigo"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+                    <h3 id="txt-copilot-modal-title" class="font-bold text-base">Analyse IA</h3>
+                </div>
+                <button onclick="closeCopilotModal()" class="text-muted hover:text-primary"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="copilotContent" class="space-y-3 max-h-80 overflow-y-auto text-xs leading-relaxed text-primary">
+                <p id="txt-copilot-initial" class="text-muted"></p>
+            </div>
+            <div class="pt-2 border-t border-border-subtle">
+                <button onclick="generateAIAnalysis()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo text-white hover:bg-indigo/90 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                    <span id="txt-gen-ai-btn">Générer mon plan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastHost"></div>
+    <datalist id="unitList"><option value="h"><option value="DH"><option value="jours"><option value="pages"><option value="km"><option value="%"></datalist>
+
+    <script>
+    /* =====================================================
+       TEXTS (FR / EN / AR)
+    ===================================================== */
+    const i18n = {
+        FR: {
+            locale: 'fr-FR', copilotBtn: 'Analyse IA', saisirBtn: 'Saisir',
+            streak: n => `${n}-jour de série`, leaderboard: 'Classement', yourYear: 'Votre année',
+            gaugeExec: 'EXÉCUTION', gaugeMoney: 'ARGENT (DH)', gaugeRes: 'RÉSULTATS',
+            paceDayTitle: (d, n) => `Jour ${d} sur ${n} · Rythme actuel`,
+            done: ' accompli', target: p => `· cible ${p}%`,
+            behindBadge: '! EN RETARD', onPaceBadge: '✓ DANS LE RYTHME',
+            legTarget: 'Cible', legExec: 'Exécution', legRes: 'Résultats',
+            weekTitle: 'Ma semaine', selectDaySub: 'Sélectionnez un jour',
+            catHeader: 'Catégories & Réglages Directs', catHint: 'Glissez le curseur avec le doigt',
+            rewardsTitle: 'Récompenses Déblocables', rewardsReq: 'Score requis: 50%+',
+            rew1: 'Grand Dîner au Restaurant', rew2: 'Nouvelle Tenue / Baskets',
+            claimBtn: 'Réclamer', claimedBtn: 'Réclamé ✓', lockedMsg: 'Il faut 50%+ de score pour débloquer cette récompense.',
+            addCatTitle: 'Ajouter une Nouvelle Catégorie', lblCatName: 'Nom de la catégorie', lblCatType: "Type d'objectif (Couleur)",
+            cancelBtn: 'Annuler', createBtn: 'Créer la catégorie',
+            copilotTitle: 'Analyse IA - Tâches & Conseils', copilotInitial: "Clique ci-dessous pour obtenir ton plan d'action du jour.",
+            genAiBtn: 'Générer mon plan du jour',
+            earnedText: 'Argent gagné', actionsText: 'actions', trackedText: 'suivis',
+            unitHours: 'H', unitDays: 'JOURS',
+            remainLbl: 'Reste', goalNumLbl: 'Objectif (nombre)', unitLbl: 'Unité (h, DH, jours...)', unitErr: "L'unité doit être un mot (h, DH, jours...), pas un nombre.",
+            addBtn: 'Ajouter', addTaskPh: 'Ajoute ta propre tâche...', myTask: 'Ma tâche',
+            reachedLbl: 'Atteint', goalLbl: 'Objectif', goalNumPh: 'Objectif en nombre (ex: 200)', goalUnitPh: 'Unité : h, DH, jours...',
+            goalUnits: { fin: 'DH', bus: 'propositions', app: 'H', faith: 'jours', fam: 'moments', hab: 'jours' },
+            days: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            dayNames: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+            greet: { morning: 'Bonjour', afternoon: 'Bon après-midi', evening: 'Bonsoir', night: 'Bonne nuit' },
+            guest: 'Invité',
+            phase: { start: 'Lancement du mois', mid: 'Rythme de croisière', end: 'Sprint final' },
+            today: "Aujourd'hui", focus: 'Focus du jour',
+            dayHeader: (name, d, today) => `${name} ${d}${today ? ' · aujourd\'hui' : ''}`,
+            future: 'À venir', past: 'Passé',
+            tip: {
+                morning: "☀️ Matin : fais la tâche la plus difficile en premier, avant les distractions.",
+                afternoon: "🌤️ Après-midi : avance sur tes contacts, offres et apprentissage.",
+                evening: "🌙 Soir : termine tes tâches, mets à jour tes curseurs et prépare demain.",
+                night: "😴 Il est tard : mets à jour tes curseurs puis repose-toi, demain on repart."
+            },
+            nameTitle: "Comment t'appelles-tu ?", namePh: 'Ton prénom',
+            nameHint: "Ton nom s'affiche en haut et dans tes messages. Il est enregistré sur cet appareil.",
+            nameSave: 'Enregistrer', nameLater: 'Plus tard',
+            saveInfo: 'Enregistré automatiquement sur cet appareil', saved: 'Enregistré ✓',
+            copilotStart: 'Vous démarrez le mois. Voici votre plan :', copilotBehind: 'Voici vos tâches pour rattraper le retard :', copilotOk: 'Bravo, vous êtes dans le rythme. Continuez :',
+            copilotPlan: "Plan d'Action Intelligent", copilotTasks: "Tâches d'aujourd'hui",
+            level: 'Niveau',
+            cats: { fin: 'Finance', bus: 'Business & Carrière', app: 'Apprentissage', faith: 'Foi & Religion', fam: 'Famille & Social', hab: 'Saisie de Données & Habitudes' },
+            task: {
+                fin: "Note tes revenus/dépenses du jour et propose un service payant.",
+                bus: "Envoie 5 propositions ou messages à des clients potentiels.",
+                app: "Étudie ou suis un tutoriel pratique pendant 30 minutes.",
+                faith: "Prends un moment calme pour tes prières et ta réflexion.",
+                fam: "Appelle ou passe du temps avec un proche.",
+                hab: "Mets à jour tes données et coche tes habitudes du jour."
+            }
+        },
+        EN: {
+            locale: 'en-GB', copilotBtn: 'AI Analysis', saisirBtn: 'Add Item',
+            streak: n => `${n}-day streak`, leaderboard: 'Leaderboard', yourYear: 'Your year',
+            gaugeExec: 'EXECUTION', gaugeMoney: 'MONEY (DH)', gaugeRes: 'RESULTS',
+            paceDayTitle: (d, n) => `Day ${d} of ${n} · Current Pace`,
+            done: ' done', target: p => `· target ${p}%`,
+            behindBadge: '! BEHIND', onPaceBadge: '✓ ON TRACK',
+            legTarget: 'Target', legExec: 'Execution', legRes: 'Results',
+            weekTitle: 'My week', selectDaySub: 'Select a day',
+            catHeader: 'Categories & Direct Settings', catHint: 'Drag the slider with your finger',
+            rewardsTitle: 'Unlockable Rewards', rewardsReq: 'Required Score: 50%+',
+            rew1: 'Nice Dinner Out', rew2: 'New Outfit / Sneakers',
+            claimBtn: 'Claim', claimedBtn: 'Claimed ✓', lockedMsg: 'You need a 50%+ score to unlock this reward.',
+            addCatTitle: 'Add New Category', lblCatName: 'Category Name', lblCatType: 'Goal Type (Circle Color)',
+            cancelBtn: 'Cancel', createBtn: 'Create Category',
+            copilotTitle: 'AI Analysis - Tasks & Advice', copilotInitial: 'Click below to get your action plan for today.',
+            genAiBtn: "Generate today's plan",
+            earnedText: 'Money earned', actionsText: 'actions', trackedText: 'tracked',
+            unitHours: 'H', unitDays: 'DAYS',
+            remainLbl: 'Left', goalNumLbl: 'Goal (number)', unitLbl: 'Unit (h, DH, days...)', unitErr: 'The unit must be a word (h, DH, days...), not a number.',
+            addBtn: 'Add', addTaskPh: 'Add your own task...', myTask: 'My task',
+            reachedLbl: 'Reached', goalLbl: 'Goal', goalNumPh: 'Goal as a number (e.g. 200)', goalUnitPh: 'Unit: h, DH, days...',
+            goalUnits: { fin: 'DH', bus: 'proposals', app: 'H', faith: 'days', fam: 'moments', hab: 'days' },
+            days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            greet: { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening', night: 'Good night' },
+            guest: 'Guest',
+            phase: { start: 'Month kickoff', mid: 'Cruising pace', end: 'Final sprint' },
+            today: 'Today', focus: "Today's focus",
+            dayHeader: (name, d, today) => `${name} ${d}${today ? ' · today' : ''}`,
+            future: 'Upcoming', past: 'Past',
+            tip: {
+                morning: '☀️ Morning: do the hardest task first, before distractions.',
+                afternoon: '🌤️ Afternoon: push on outreach, offers and learning.',
+                evening: '🌙 Evening: finish your tasks, update your sliders, prep tomorrow.',
+                night: "😴 It's late: update your sliders then rest, we go again tomorrow."
+            },
+            nameTitle: "What's your name?", namePh: 'Your first name',
+            nameHint: 'Your name shows at the top and in your messages. It is saved on this device.',
+            nameSave: 'Save', nameLater: 'Later',
+            saveInfo: 'Saved automatically on this device', saved: 'Saved ✓',
+            copilotStart: "You're starting the month. Here is your plan:", copilotBehind: 'Here are your tasks to get back on track:', copilotOk: "Great, you're on pace. Keep going:",
+            copilotPlan: 'Smart Action Plan', copilotTasks: "Today's tasks",
+            level: 'Level',
+            cats: { fin: 'Finance', bus: 'Business & Career', app: 'Learning', faith: 'Faith & Religion', fam: 'Family & Social', hab: 'Data Logging & Habits' },
+            task: {
+                fin: "Log today's income/expenses and offer one paid service.",
+                bus: 'Send 5 proposals or messages to potential clients.',
+                app: 'Study or follow a practical tutorial for 30 minutes.',
+                faith: 'Take a quiet moment for your prayers and reflection.',
+                fam: 'Call or spend time with someone close.',
+                hab: "Update your data and tick today's habits."
+            }
+        },
+        AR: {
+            locale: 'ar-MA-u-nu-latn', copilotBtn: 'تحليل AI', saisirBtn: 'إضافة',
+            streak: n => `سلسلة ${n} يوم`, leaderboard: 'الترتيب', yourYear: 'سنتك',
+            gaugeExec: 'التنفيذ', gaugeMoney: 'المال (درهم)', gaugeRes: 'النتائج',
+            paceDayTitle: (d, n) => `اليوم ${d} من ${n} · الوتيرة الحالية`,
+            done: ' منجز', target: p => `· الهدف ${p}%`,
+            behindBadge: '! متأخر', onPaceBadge: '✓ في المسار',
+            legTarget: 'الهدف', legExec: 'التنفيذ', legRes: 'النتائج',
+            weekTitle: 'أسبوعي', selectDaySub: 'اختر يوماً',
+            catHeader: 'الفئات والتحكم المباشر', catHint: 'اسحب المؤشر بإصبعك',
+            rewardsTitle: 'المكافآت القابلة للفتح', rewardsReq: 'النتيجة المطلوبة: 50%+',
+            rew1: 'عشاء فاخر في مطعم', rew2: 'ملابس جديدة / حذاء رياضي',
+            claimBtn: 'مطالبة', claimedBtn: 'تم الاستلام ✓', lockedMsg: 'تحتاج نتيجة 50%+ لفتح هذه المكافأة.',
+            addCatTitle: 'إضافة فئة جديدة', lblCatName: 'اسم الفئة', lblCatType: 'نوع الهدف (لون الدائرة)',
+            cancelBtn: 'إلغاء', createBtn: 'إنشاء الفئة',
+            copilotTitle: 'تحليل AI - المهام والنصائح', copilotInitial: 'انقر أدناه للحصول على خطة عملك لليوم.',
+            genAiBtn: 'توليد خطة اليوم',
+            earnedText: 'المال المكتسب', actionsText: 'إجراءات', trackedText: 'متابعات',
+            unitHours: 'س', unitDays: 'يوم',
+            remainLbl: 'المتبقي', goalNumLbl: 'الهدف (رقم)', unitLbl: 'الوحدة (س، درهم، يوم...)', unitErr: 'الوحدة يجب أن تكون كلمة (س، درهم، يوم...) وليس رقماً.',
+            addBtn: 'إضافة', addTaskPh: 'أضف مهمتك الخاصة...', myTask: 'مهمتي',
+            reachedLbl: 'المنجز', goalLbl: 'الهدف', goalNumPh: 'الهدف كرقم (مثال: 200)', goalUnitPh: 'الوحدة: س، درهم، يوم...',
+            goalUnits: { fin: 'درهم', bus: 'عرض', app: 'ساعة', faith: 'يوم', fam: 'لحظة', hab: 'يوم' },
+            days: ['إثن', 'ثلا', 'أرب', 'خمي', 'جمعة', 'سبت', 'أحد'],
+            dayNames: ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'],
+            greet: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'تصبح على خير' },
+            guest: 'ضيف',
+            phase: { start: 'انطلاقة الشهر', mid: 'وتيرة ثابتة', end: 'السباق الأخير' },
+            today: 'اليوم', focus: 'تركيز اليوم',
+            dayHeader: (name, d, today) => `${name} ${d}${today ? ' · اليوم' : ''}`,
+            future: 'قادم', past: 'مضى',
+            tip: {
+                morning: '☀️ الصباح: ابدأ بأصعب مهمة قبل أي تشتيت.',
+                afternoon: '🌤️ بعد الظهر: تقدّم في التواصل والعروض والتعلم.',
+                evening: '🌙 المساء: أنهِ مهامك، حدّث المؤشرات وحضّر الغد.',
+                night: '😴 الوقت متأخر: حدّث المؤشرات ثم ارتح، غداً نواصل.'
+            },
+            nameTitle: 'ما اسمك؟', namePh: 'اسمك الأول',
+            nameHint: 'يظهر اسمك في الأعلى وفي رسائلك. يُحفظ على هذا الجهاز.',
+            nameSave: 'حفظ', nameLater: 'لاحقاً',
+            saveInfo: 'يُحفظ تلقائياً على هذا الجهاز', saved: 'تم الحفظ ✓',
+            copilotStart: 'تبدأ الشهر. إليك خطتك:', copilotBehind: 'إليك مهامك لتدارك التأخير:', copilotOk: 'أحسنت، أنت في المسار. واصل:',
+            copilotPlan: 'خطة العمل الذكية', copilotTasks: 'مهام اليوم',
+            level: 'المستوى',
+            cats: { fin: 'المالية والمدخول', bus: 'الأعمال والمهنة', app: 'التعلم والدراسة', faith: 'الإيمان والدين', fam: 'العائلة والاجتماع', hab: 'تعبئة المعطيات والعادات' },
+            task: {
+                fin: 'سجّل مداخيل ومصاريف اليوم واعرض خدمة مدفوعة.',
+                bus: 'أرسل 5 عروض أو رسائل إلى عملاء محتملين.',
+                app: 'ادرس أو تابع درساً تطبيقياً لمدة 30 دقيقة.',
+                faith: 'خذ لحظة هدوء لصلاتك وتأملك.',
+                fam: 'اتصل بشخص قريب أو اقضِ معه وقتاً.',
+                hab: 'حدّث معطياتك وضع علامة على عادات اليوم.'
+            }
+        }
+    };
+
+    // Which categories to focus on, by weekday (0 = Monday ... 6 = Sunday)
+    const WEEK_FOCUS = [
+        ['bus', 'fin', 'app'],   // Mon
+        ['bus', 'app', 'hab'],   // Tue
+        ['fin', 'bus', 'fam'],   // Wed
+        ['app', 'bus', 'hab'],   // Thu
+        ['fin', 'faith', 'bus'], // Fri
+        ['fam', 'app', 'hab'],   // Sat
+        ['faith', 'fam', 'hab']  // Sun
+    ];
+
+    /* =====================================================
+       STATE + STORAGE (local cache + private cloud account)
+    ===================================================== */
+    let STORAGE_KEY = 'lifeos_v2';
+    let focusAuthUser = null;
+    let focusCloudSaveTimer = null;
+    let focusLoadingUserId = null;
+    let focusAppInitialized = false;
+    let focusLegacyStore = null;
+    try { focusLegacyStore = JSON.parse(localStorage.getItem('lifeos_v2') || 'null'); } catch (_) {}
+    let targetMoney = 50000;
+
+    const BASE_CATS = [
+        { id: 'fin',   isMoney: true, group: 'money',     colorClass: 'slider-orange', barColor: '#f59e0b', textClass: 'text-orange' },
+        { id: 'bus',   group: 'execution', colorClass: 'slider-teal',   barColor: '#2dd4a8', textClass: 'text-teal' },
+        { id: 'app',   group: 'results',   colorClass: 'slider-indigo', barColor: '#6366f1', textClass: 'text-indigo' },
+        { id: 'faith', group: 'execution', colorClass: 'slider-teal',   barColor: '#2dd4a8', textClass: 'text-teal' },
+        { id: 'fam',   group: 'results',   colorClass: 'slider-indigo', barColor: '#6366f1', textClass: 'text-indigo' },
+        { id: 'hab',   group: 'execution', colorClass: 'slider-teal',   barColor: '#2dd4a8', textClass: 'text-teal' }
+    ];
+
+    function defaultStore() { return { user: '', lang: 'FR', custom: [], customRewards: [], goals: {}, customTasks: {}, theme: 'dark', months: {}, dayDone: {}, lastActive: '' }; }
+
+    let store = defaultStore();
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) store = Object.assign(defaultStore(), JSON.parse(raw));
+    } catch (e) { /* storage unavailable: run in memory */ }
+
+    let saveTimer = null;
+    function persist() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+        const dot = document.getElementById('saveDot');
+        const info = document.getElementById('saveInfo');
+        if (info) info.textContent = i18n[currentLang].saved;
+        if (dot) dot.style.transform = 'scale(1.8)';
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+            if (info) info.textContent = focusAuthUser ? 'Saved securely to your account' : i18n[currentLang].saveInfo;
+            if (dot) dot.style.transform = 'scale(1)';
+        }, 1500);
+
+        // Debounced cloud sync: each row is owned by the authenticated user (RLS enforced in Postgres).
+        if (focusAuthUser && window.focusSupabaseClient) {
+            clearTimeout(focusCloudSaveTimer);
+            focusCloudSaveTimer = setTimeout(async () => {
+                try {
+                    const { error } = await window.focusSupabaseClient
+                        .from('focus_user_data')
+                        .upsert({ user_id: focusAuthUser.id, data: store, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+                    if (error) throw error;
+                    if (info) info.textContent = 'Saved securely to your account ✓';
+                } catch (err) {
+                    console.error('Focus cloud save failed:', err);
+                    if (info) info.textContent = 'Cloud sync issue — your changes remain on this device';
+                }
+            }, 800);
+        }
+    }
+
+    // ---- Date helpers (real date, recomputed live) ----
+    const pad = n => String(n).padStart(2, '0');
+    function now() { return new Date(); }
+    let activeMonthDate = new Date(now().getFullYear(), now().getMonth(), 1);
+    function monthKey(d = activeMonthDate) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; }
+    function dayKey(d = now()) { return `${monthKey(d)}-${pad(d.getDate())}`; }
+    function daysInMonth(d = now()) { return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); }
+    function weekdayIdx(d) { return (d.getDay() + 6) % 7; } // Monday = 0
+
+    function getMonthData(d = activeMonthDate) {
+        const k = monthKey(d);
+        if (!store.months[k]) store.months[k] = { values: {}, history: {}, claimed: {} };
+        return store.months[k];
+    }
+
+    let currentLang = store.lang in i18n ? store.lang : 'FR';
+
+    // ---- Objectifs par catégorie (valeur cible + unité, modifiables) ----
+    const TARGET_PCT = 70; // cible fixe du mois
+    const DEFAULT_TARGETS = { fin: 50000, bus: 100, app: 100, faith: 100, fam: 100, hab: 100 };
+    function goalOf(cat) {
+        const saved = store.goals && store.goals[cat.id];
+        if (saved) {
+            // une unité purement numérique est une erreur de saisie : on l'ignore
+            if (/^[\d.,\s]+$/.test(saved.unit || '')) return { target: 100, unit: '%' };
+            return saved;
+        }
+        const unit = cat.id === 'fin' ? ((i18n[currentLang].goalUnits || {}).fin || 'DH') : '%';
+        return { target: DEFAULT_TARGETS[cat.id] || 100, unit };
+    }
+    function fmtNum(n) {
+        const r = Math.abs(n) >= 100 ? Math.round(n) : Math.round(n * 10) / 10;
+        return String(r);
+    }
+    function syncMoneyTarget() { targetMoney = goalOf({ id: 'fin' }).target; }
+    syncMoneyTarget();
+    let categories = [];
+    let chartInstance = null;
+    let selectedDate = now();
+    let yearViewMode = false;
+
+    function buildCategories() {
+        const md = getMonthData();
+        categories = [...BASE_CATS, ...store.custom].map(c => Object.assign({}, c, { value: md.values[c.id] || 0 }));
+    }
+
+    function saveValues() {
+        const md = getMonthData();
+        categories.forEach(c => md.values[c.id] = c.value);
+        const { execAvg, resAvg } = computeAvgs();
+        md.history[selectedDate.getDate()] = { e: execAvg, r: resAvg };
+        store.lastActive = dayKey(selectedDate);
+        persist();
+    }
+
+    function computeStreak() {
+        // consecutive days up to today with any progress recorded this month
+        const md = getMonthData();
+        let s = 0;
+        const isCurrent = activeMonthDate.getFullYear() === now().getFullYear() && activeMonthDate.getMonth() === now().getMonth();
+        const isPast = activeMonthDate.getFullYear() < now().getFullYear() || (activeMonthDate.getFullYear() === now().getFullYear() && activeMonthDate.getMonth() < now().getMonth());
+        const endDay = isCurrent ? now().getDate() : isPast ? daysInMonth(activeMonthDate) : Math.min(daysInMonth(activeMonthDate), selectedDate.getDate());
+        for (let d = endDay; d >= 1; d--) {
+            const h = md.history[d];
+            if (h && (h.e > 0 || h.r > 0)) s++;
+            else if (d !== endDay) break;
+        }
+        return s;
+    }
+
+    /* =====================================================
+       LANGUAGE
+    ===================================================== */
+    function toggleLanguage() {
+        currentLang = currentLang === 'FR' ? 'EN' : currentLang === 'EN' ? 'AR' : 'FR';
+        store.lang = currentLang;
+        persist();
+        applyLanguageUI();
+    }
+
+    function setText(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
+
+    function applyLanguageUI() {
+        const t = i18n[currentLang];
+        document.getElementById('langDisplay').textContent = currentLang;
+        document.documentElement.lang = currentLang.toLowerCase();
+        document.body.dir = currentLang === 'AR' ? 'rtl' : 'ltr';
+
+        setText('txt-copilot-btn', t.copilotBtn);
+        setText('txt-saisir-btn', t.saisirBtn);
+        setText('txt-leaderboard', t.leaderboard);
+        setText('txt-your-year', t.yourYear);
+        setText('txt-gauge-execution', t.gaugeExec);
+        setText('txt-gauge-money', t.gaugeMoney);
+        setText('txt-gauge-results', t.gaugeRes);
+        setText('txt-accompli', t.done);
+        setText('txt-leg-target', t.legTarget);
+        setText('txt-leg-exec', t.legExec);
+        setText('txt-leg-res', t.legRes);
+        setText('txt-daily-tracker-title', t.weekTitle);
+        setText('txt-select-day-sub', t.selectDaySub);
+        setText('txt-cat-header', t.catHeader);
+        setText('txt-cat-hint', t.catHint);
+        setText('monthlyAnalysisBtnText', currentLang === 'EN' ? 'Monthly analysis' : currentLang === 'AR' ? 'تحليل الشهر' : 'Analyse du mois');
+        setText('txt-rewards-title', t.rewardsTitle);
+        setText('txt-rewards-req', t.rewardsReq);
+        setText('txt-rew1-title', t.rew1);
+        setText('txt-rew2-title', t.rew2);
+        setText('txt-add-cat-modal-title', t.addCatTitle);
+        setText('txt-lbl-cat-name', t.lblCatName);
+        setText('txt-lbl-cat-type', t.lblCatType);
+        setText('txt-cancel-btn', t.cancelBtn);
+        setText('txt-create-btn', t.createBtn);
+        setText('txt-copilot-modal-title', t.copilotTitle);
+        setText('txt-copilot-initial', t.copilotInitial);
+        setText('txt-gen-ai-btn', t.genAiBtn);
+        setText('txt-name-title', t.nameTitle);
+        setText('txt-name-hint', t.nameHint);
+        setText('txt-name-save', t.nameSave);
+        setText('txt-name-later', t.nameLater);
+        setText('saveInfo', t.saveInfo);
+        document.getElementById('nameInput').placeholder = t.namePh;
+        document.getElementById('catGoalInput').placeholder = t.goalNumPh;
+        document.getElementById('newTaskInput').placeholder = t.addTaskPh;
+        fillUnitSelect();
+        setText('txt-add-cat-btn', t.addBtn);
+        document.getElementById('catUnitInput').placeholder = t.goalUnitPh;
+        syncMoneyTarget();
+
+        refreshClaimButtons();
+        renderUser();
+        renderClock();
+        renderDays();
+        renderDayTasks();
+        renderCategories();
+        recalculateAll(true);
+        rebuildChart();
+        renderCustomRewards();
+    }
+
+    /* =====================================================
+       USER NAME
+    ===================================================== */
+    function initials(name) {
+        const p = name.trim().split(/\s+/).filter(Boolean);
+        if (!p.length) return '?';
+        return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
+    }
+    function renderUser() {
+        const t = i18n[currentLang];
+        const name = store.user || t.guest;
+        setText('userNameTop', name);
+        setText('avatarInitials', store.user ? initials(store.user) : '?');
+    }
+    function openNameModal() {
+        document.getElementById('nameInput').value = store.user;
+        document.getElementById('nameModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('nameInput').focus(), 50);
+    }
+    function closeNameModal() { document.getElementById('nameModal').classList.add('hidden'); }
+    function saveName() {
+        const v = document.getElementById('nameInput').value.trim();
+        if (!v) { closeNameModal(); return; }
+        store.user = v.slice(0, 24);
+        persist();
+        renderUser();
+        renderClock();
+        closeNameModal();
+        toast(i18n[currentLang].saved);
+    }
+
+    /* =====================================================
+       CLOCK / GREETING / PHASE (adapts to real time)
+    ===================================================== */
+    function periodOfDay(h) {
+        if (h >= 5 && h < 12) return 'morning';
+        if (h >= 12 && h < 18) return 'afternoon';
+        if (h >= 18 && h < 23) return 'evening';
+        return 'night';
+    }
+    function monthPhase(day, total) {
+        const r = day / total;
+        return r <= 0.25 ? 'start' : r <= 0.8 ? 'mid' : 'end';
+    }
+    function renderClock() {
+        const t = i18n[currentLang];
+        const d = now();
+        const period = periodOfDay(d.getHours());
+        const name = store.user ? `, ${store.user}` : '';
+        document.getElementById('greetLine').innerHTML = `<span class="greet-grad">${t.greet[period]}${name}</span> 👋`;
+        document.getElementById('dateLine').textContent = selectedDate.toLocaleDateString(t.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('clockLine').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        setText('phaseLine', t.phase[monthPhase(selectedDate.getDate(), daysInMonth(activeMonthDate))]);
+        setText('streakDisplay', t.streak(computeStreak()));
+        const mt = activeMonthDate.toLocaleDateString(t.locale, { month: 'long', year: 'numeric' });
+        setText('monthTitleText', mt);
+        const tip = document.getElementById('timeTip');
+        if (tip) tip.textContent = t.tip[period];
+    }
+
+    /* =====================================================
+       WEEK SELECTOR + DAILY TASKS
+    ===================================================== */
+    function weekDates() {
+        const base = selectedDate;
+        const monday = new Date(base.getFullYear(), base.getMonth(), base.getDate() - weekdayIdx(base));
+        return Array.from({ length: 7 }, (_, i) => new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+    }
+    function sameDay(a, b) { return dayKey(a) === dayKey(b); }
+
+    function renderDays() {
+        const t = i18n[currentLang];
+        const container = document.getElementById('daysContainer');
+        container.innerHTML = '';
+        const today = now();
+        weekDates().forEach((d, i) => {
+            const isToday = sameDay(d, today);
+            const isSel = sameDay(d, selectedDate);
+            const inActiveMonth = d.getFullYear() === activeMonthDate.getFullYear() && d.getMonth() === activeMonthDate.getMonth();
+            const isFuture = d > today && !isToday;
+            const btn = document.createElement('button');
+            btn.className = 'day-btn py-2 rounded-xl border text-xs transition-all ' +
+                (isSel ? 'border-teal/40 bg-teal/15 text-teal font-bold ' : 'border-border bg-bg font-semibold hover:border-teal ') +
+                (isToday ? 'today-ring ' : '') + (isFuture && !isSel ? 'opacity-60 ' : '') + (!inActiveMonth ? 'opacity-25 cursor-not-allowed ' : '');
+            btn.disabled = !inActiveMonth;
+            btn.innerHTML = `<span class="block text-[10px] opacity-70">${t.days[i]}</span><span class="block text-sm font-extrabold">${d.getDate()}</span>`;
+            btn.onclick = () => { if (!inActiveMonth) return; selectedDate = d; renderDays(); renderDayTasks(); };
+            container.appendChild(btn);
+        });
+    }
+
+    function tasksForDate(d) {
+        return WEEK_FOCUS[weekdayIdx(d)];
+    }
+
+    function renderDayTasks() {
+        const t = i18n[currentLang];
+        const d = selectedDate;
+        const idx = weekdayIdx(d);
+        const key = dayKey(d);
+        const isToday = sameDay(d, now());
+        const done = store.dayDone[key] || [];
+        const focus = tasksForDate(d);
+
+        setText('selectedDayStatus', t.dayHeader(t.dayNames[idx], d.getDate(), isToday));
+        setText('focusLine', `${t.focus} : ` + focus.map(c => t.cats[c] || c).join(' · '));
+
+        const list = document.getElementById('tasksList');
+        list.innerHTML = '';
+        focus.forEach((c, i) => {
+            const li = document.createElement('li');
+            const isDone = done.includes(i);
+            li.className = 'lift flex items-start gap-2.5 bg-bg border border-border-subtle rounded-xl p-2.5 cursor-pointer';
+            li.innerHTML = `
+                <span class="mt-0.5 w-5 h-5 shrink-0 rounded-md border ${isDone ? 'bg-teal border-teal text-bg' : 'border-border'} flex items-center justify-center text-[11px] font-black ${isDone ? 'tick-pop' : ''}">${isDone ? '✓' : ''}</span>
+                <span class="min-w-0">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-muted">${t.cats[c]}</span>
+                    <span class="block text-xs ${isDone ? 'task-done' : ''}">${t.task[c]}</span>
+                </span>`;
+            li.onclick = () => toggleTask(key, i);
+            list.appendChild(li);
+        });
+        // Tâches personnelles ajoutées par l'utilisateur pour ce jour
+        const customs = (store.customTasks && store.customTasks[key]) || [];
+        customs.forEach((ct, ci) => {
+            const li = document.createElement('li');
+            li.className = 'lift flex items-start gap-2.5 bg-bg border border-border-subtle rounded-xl p-2.5 cursor-pointer';
+            li.innerHTML = `
+                <span class="mt-0.5 w-5 h-5 shrink-0 rounded-md border ${ct.done ? 'bg-teal border-teal text-bg tick-pop' : 'border-border'} flex items-center justify-center text-[11px] font-black">${ct.done ? '✓' : ''}</span>
+                <span class="min-w-0 flex-1">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-indigo">${t.myTask}</span>
+                    <span class="block text-xs ${ct.done ? 'task-done' : ''}">${escapeHtml(ct.text)}</span>
+                </span>
+                <button class="text-muted hover:text-orange text-sm px-1" title="✕">✕</button>`;
+            li.onclick = () => toggleCustomTask(key, ci);
+            li.querySelector('button').onclick = e => { e.stopPropagation(); deleteCustomTask(key, ci); };
+            list.appendChild(li);
+        });
+        const doneCount = done.length + customs.filter(c => c.done).length;
+        setText('dayProgress', `${doneCount}/${focus.length + customs.length}`);
+        document.getElementById('timeTip').style.display = isToday ? '' : 'none';
+    }
+
+    function addCustomTask() {
+        const input = document.getElementById('newTaskInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const key = dayKey(selectedDate);
+        if (!store.customTasks[key]) store.customTasks[key] = [];
+        store.customTasks[key].push({ text, done: false });
+        input.value = '';
+        persist();
+        renderDayTasks();
+    }
+    function toggleCustomTask(key, i) {
+        const ct = store.customTasks[key] && store.customTasks[key][i];
+        if (!ct) return;
+        ct.done = !ct.done;
+        persist();
+        renderDayTasks();
+    }
+    function deleteCustomTask(key, i) {
+        if (!store.customTasks[key]) return;
+        store.customTasks[key].splice(i, 1);
+        persist();
+        renderDayTasks();
+    }
+
+    function toggleTask(key, i) {
+        const arr = store.dayDone[key] || [];
+        const pos = arr.indexOf(i);
+        if (pos >= 0) arr.splice(pos, 1); else arr.push(i);
+        store.dayDone[key] = arr;
+        persist();
+        renderDayTasks();
+        if (arr.length === tasksForDate(selectedDate).length) { toast('🎉 ' + i18n[currentLang].saved); burstConfetti(18); }
+    }
+
+    /* =====================================================
+       CATEGORIES + SLIDERS
+    ===================================================== */
+    function catLabel(cat) { const t = i18n[currentLang]; return t.cats[cat.id] || cat.customName || cat.id; }
+
+    function renderCategories() {
+        const t = i18n[currentLang];
+        const container = document.getElementById('categoriesContainer');
+        container.innerHTML = '';
+        categories.forEach((cat, i) => {
+            const card = document.createElement('div');
+            card.className = 'reveal lift bg-surface rounded-2xl border border-border p-4 space-y-3';
+            card.style.animationDelay = `${0.05 * i}s`;
+            const earned = cat.isMoney ? Math.round((cat.value / 100) * targetMoney) : 0;
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold">${escapeHtml(catLabel(cat))}</h3>
+                    <span id="val-text-${cat.id}" class="text-sm font-bold ${cat.textClass}">${cat.value}%</span>
+                </div>
+                <div class="space-y-1.5">
+                    <input type="range" min="0" max="100" value="${cat.value}"
+                        oninput="updateCategoryValue('${cat.id}', this.value)"
+                        class="${cat.colorClass}">
+                    <div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-${cat.id}" class="h-1.5 rounded-full transition-all duration-300" style="width:${cat.value}%; background-color:${BAR_VAR[cat.barColor] || cat.barColor};"></div>
+                    </div>
+                </div>
+                ${goalBlock(cat)}`;
+            container.appendChild(card);
+        });
+    }
+
+    // Bloc "Atteint / Objectif" sous chaque curseur
+    function goalBlock(cat) {
+        const t = i18n[currentLang];
+        const g = goalOf(cat);
+        const unit = escapeHtml(g.unit);
+        const reachedN = (cat.value / 100) * g.target;
+        const inp = 'w-full bg-surface border border-border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-teal';
+        return `
+        <div class="rounded-xl bg-bg border border-border-subtle px-3 py-2.5 space-y-2">
+            <div class="grid grid-cols-3 gap-2 items-end">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.reachedLbl}</p>
+                    <p class="text-base font-black ${cat.textClass} tabular-nums"><span id="reached-${cat.id}">${fmtNum(reachedN)}</span> <span class="text-xs font-bold text-muted">${unit}</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.remainLbl}</p>
+                    <p class="text-base font-black text-primary tabular-nums"><span id="remain-${cat.id}">${fmtNum(g.target - reachedN)}</span> <span class="text-xs font-bold text-muted">${unit}</span></p>
+                </div>
+                <div class="text-end">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.goalLbl}</p>
+                    <button onclick="toggleGoalEditor('${cat.id}')" class="text-base font-extrabold hover:text-teal transition-colors">${fmtNum(g.target)} ${unit} <span class="text-[11px] opacity-60">✎</span></button>
+                </div>
+            </div>
+            <div id="goal-edit-${cat.id}" class="hidden">
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <label class="text-[10px] font-semibold text-muted">${t.goalNumLbl}
+                        <input id="goal-num-${cat.id}" type="number" min="0.1" step="any" value="${g.target}" class="mt-1 ${inp}">
+                    </label>
+                    <label class="text-[10px] font-semibold text-muted">${t.unitLbl}
+                        <select id="goal-unit-${cat.id}" class="mt-1 ${inp}">${unitOptions(g.unit)}</select>
+                    </label>
+                </div>
+                <button onclick="saveGoal('${cat.id}')" class="mt-2 w-full px-3 py-1.5 rounded-lg text-xs font-bold bg-teal text-bg hover:opacity-90">OK</button>
+            </div>
+        </div>`;
+    }
+
+    function goalBlockOld(cat) {
+        const t = i18n[currentLang];
+        const g = goalOf(cat);
+        const unit = escapeHtml(g.unit);
+        const reached = fmtNum((cat.value / 100) * g.target);
+        const inp = 'bg-surface border border-border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-teal';
+        return `
+        <div class="rounded-xl bg-bg border border-border-subtle px-3 py-2.5 space-y-2">
+            <div class="flex items-end justify-between gap-2">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.reachedLbl}</p>
+                    <p class="text-lg font-black ${cat.textClass} tabular-nums">
+                        <span id="reached-${cat.id}">${reached}</span>
+                        <span class="text-xs font-bold text-muted">${unit}</span>
+                    </p>
+                </div>
+                <div class="text-end">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.goalLbl}</p>
+                    <button onclick="toggleGoalEditor('${cat.id}')" class="text-sm font-extrabold hover:text-teal transition-colors">
+                        ${fmtNum(g.target)} ${unit} <span class="text-[11px] opacity-60">✎</span>
+                    </button>
+                </div>
+            </div>
+            <div id="goal-edit-${cat.id}" class="hidden">
+                <div class="flex items-center gap-2 pt-1">
+                    <input id="goal-num-${cat.id}" type="number" min="0.1" step="any" value="${g.target}" class="w-24 ${inp}" placeholder="${t.goalNumPh}">
+                    <input id="goal-unit-${cat.id}" type="text" maxlength="12" value="${unit}" class="flex-1 min-w-0 ${inp}" placeholder="${t.goalUnitPh}">
+                    <button onclick="saveGoal('${cat.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-teal text-bg hover:opacity-90">OK</button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // Choix d'unités proposés : %, h (heures), jours, DH
+    function unitOptions(current) {
+        const t = i18n[currentLang];
+        const list = ['%', t.unitHours, t.unitDays, 'DH'];
+        if (current && !list.includes(current)) list.push(current);
+        return list.map(u => `<option value="${escapeHtml(u)}" ${u === current ? 'selected' : ''}>${escapeHtml(u)}</option>`).join('');
+    }
+    function fillUnitSelect() {
+        const sel = document.getElementById('catUnitInput');
+        if (sel) sel.innerHTML = unitOptions('%');
+    }
+
+    function toggleGoalEditor(id) {
+        const el = document.getElementById(`goal-edit-${id}`);
+        if (el) el.classList.toggle('hidden');
+    }
+
+    function saveGoal(id) {
+        const num = parseFloat(document.getElementById(`goal-num-${id}`).value);
+        const unit = document.getElementById(`goal-unit-${id}`).value.trim();
+        if (!(num > 0)) return;
+        if (/^[\d.,\s]+$/.test(unit)) { toast(i18n[currentLang].unitErr); return; }
+        const cat = categories.find(c => c.id === id);
+        store.goals[id] = { target: num, unit: unit || goalOf(cat).unit };
+        if (id === 'fin') syncMoneyTarget();
+        persist();
+        renderCategories();
+        recalculateAll();
+    }
+
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
+
+    function updateCategoryValue(id, val) {
+        val = parseInt(val) || 0;
+        const cat = categories.find(c => c.id === id);
+        if (!cat) return;
+        cat.value = val;
+        document.getElementById(`val-text-${id}`).textContent = `${val}%`;
+        document.getElementById(`bar-${id}`).style.width = `${val}%`;
+        const reachedEl = document.getElementById(`reached-${id}`);
+        const gTarget = goalOf(cat).target;
+        if (reachedEl) reachedEl.textContent = fmtNum((val / 100) * gTarget);
+        const remainEl = document.getElementById(`remain-${id}`);
+        if (remainEl) remainEl.textContent = fmtNum(gTarget - (val / 100) * gTarget);
+        if (cat.isMoney) {
+            const label = document.getElementById('moneyEarnedLabel');
+            if (label) label.textContent = `${Math.round((val / 100) * targetMoney)} DH / ${targetMoney} DH`;
+        }
+        recalculateAll();
+        clearTimeout(updateCategoryValue._t);
+        updateCategoryValue._t = setTimeout(() => { saveValues(); renderClock(); }, 350);
+    }
+
+    /* =====================================================
+       GAUGES
+    ===================================================== */
+    function computeAvgs() {
+        const execCats = categories.filter(c => c.group === 'execution');
+        const resCats = categories.filter(c => c.group === 'results');
+        const avg = a => a.length ? Math.round(a.reduce((s, c) => s + c.value, 0) / a.length) : 0;
+        const overall = categories.length ? Math.round(categories.reduce((s, c) => s + c.value, 0) / categories.length) : 0;
+        return { execAvg: avg(execCats), resAvg: avg(resCats), overall, execCats, resCats };
+    }
+
+    function recalculateAll(instant) {
+        const t = i18n[currentLang];
+        const d = activeMonthDate;
+        const day = selectedDate.getDate(), total = daysInMonth(d);
+        const targetPct = TARGET_PCT;
+        const { execAvg, resAvg, overall, resCats } = computeAvgs();
+        const moneyCat = categories.find(c => c.isMoney);
+        const moneyVal = moneyCat ? moneyCat.value : 0;
+        const moneyEarned = Math.round((moneyVal / 100) * targetMoney);
+
+        updateCircle('executionRing', 'executionText', execAvg);
+        updateCircle('moneyRing', 'moneyText', moneyVal);
+        updateCircle('resultsRing', 'resultsText', resAvg);
+
+        setText('executionCountLabel', `${categories.filter(c => c.value > 0).length} / ${categories.length} ${t.actionsText}`);
+        setText('moneyTargetLabel', `${moneyEarned} DH / ${targetMoney} DH`);
+        setText('resultsCountLabel', `${resCats.filter(c => c.value > 0).length} ${t.trackedText}`);
+        setText('txt-pace-day-title', t.paceDayTitle(day, total));
+        setText('txt-target-40', t.target(targetPct));
+        animateNumber(document.getElementById('paceDoneText'), overall, '%');
+
+        const badge = document.getElementById('paceBadge');
+        if (overall >= targetPct) {
+            badge.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-teal/10 text-teal border border-teal/20 badge-ok';
+            badge.textContent = t.onPaceBadge;
+        } else {
+            badge.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-amber/10 text-amber border border-amber/20 badge-late';
+            badge.textContent = t.behindBadge;
+        }
+
+        if (chartInstance) {
+            chartInstance.data.datasets[1].data[day - 1] = execAvg;
+            chartInstance.data.datasets[2].data[day - 1] = resAvg;
+            chartInstance.update();
+        }
+        refreshClaimButtons();
+    }
+
+    // Number count-up animation
+    function animateNumber(el, to, suffix = '') {
+        const from = parseInt(el.dataset.v || '0');
+        el.dataset.v = to;
+        if (from === to) { el.textContent = to + suffix; return; }
+        const start = performance.now(), dur = 600;
+        function step(ts) {
+            const p = Math.min((ts - start) / dur, 1);
+            const e = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(from + (to - from) * e) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    function updateCircle(ringId, textId, percent) {
+        const circle = document.getElementById(ringId);
+        const circumference = 2 * Math.PI * 50;
+        circle.style.strokeDashoffset = circumference - (percent / 100) * circumference;
+        animateNumber(document.getElementById(textId), percent, '%');
+    }
+
+    /* =====================================================
+       CHART (days of the REAL month)
+    ===================================================== */
+    function chartData() {
+        const d = activeMonthDate;
+        const total = daysInMonth(d);
+        const isRealCurrentMonth = d.getFullYear() === now().getFullYear() && d.getMonth() === now().getMonth();
+        const throughDay = isRealCurrentMonth ? now().getDate() : total;
+        const md = getMonthData();
+        // Courbe continue : 0 avant le début du suivi, puis on reporte la dernière valeur connue jusqu'à aujourd'hui
+        const exec = Array(total).fill(null);
+        const res = Array(total).fill(null);
+        let lastE = 0, lastR = 0;
+        for (let day = 1; day <= throughDay; day++) {
+            const h = md.history[day];
+            if (h) { lastE = h.e; lastR = h.r; }
+            exec[day - 1] = lastE;
+            res[day - 1] = lastR;
+        }
+        const { execAvg, resAvg } = computeAvgs();
+        const selectedIdx = Math.max(0, Math.min(total - 1, selectedDate.getDate() - 1));
+        exec[selectedIdx] = execAvg; res[selectedIdx] = resAvg;
+        return {
+            labels: Array.from({ length: total }, (_, i) => i + 1),
+            target: Array(total).fill(TARGET_PCT),
+            exec, res
+        };
+    }
+
+    function rebuildChart() {
+        const t = i18n[currentLang];
+        const c = chartData();
+        const todayIdx = selectedDate.getDate() - 1;
+        const C = { teal: rgbVar('--c-teal'), tealSoft: rgbVar('--c-teal', 0.14), indigo: rgbVar('--c-indigo'), muted: rgbVar('--c-muted'), grid: rgbVar('--c-border'), tick: rgbVar('--c-muted') };
+        if (chartInstance) chartInstance.destroy();
+        const ctx = document.getElementById('paceChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: c.labels,
+                datasets: [
+                    { label: t.legTarget, data: c.target, borderColor: '#71717a', borderWidth: 1.5, borderDash: [3, 3], pointRadius: 0 },
+                    { label: t.legExec, data: c.exec, borderColor: '#2dd4a8', backgroundColor: 'rgba(45,212,168,.12)', borderWidth: 3, fill: true,
+                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: '#2dd4a8', spanGaps: false, tension: .35 },
+                    { label: t.legRes, data: c.res, borderColor: '#6366f1', borderWidth: 3,
+                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: '#6366f1', spanGaps: false, tension: .35 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                animation: { duration: 1100, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#1a1d26' }, ticks: { color: '#71717a', font: { size: 9 } } },
+                    y: { grid: { color: '#1a1d26' }, ticks: { color: '#71717a', font: { size: 9 } }, min: 0, max: 100 }
+                }
+            }
+        });
+    }
+
+    /* =====================================================
+       MONTH NAVIGATION + MONTHLY ANALYSIS
+    ===================================================== */
+    const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function openMonthPicker() {
+        yearViewMode = false;
+        renderMonthPicker();
+        const modal = document.getElementById('monthPickerModal');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+    }
+    function closeMonthPicker() {
+        const modal = document.getElementById('monthPickerModal');
+        modal.classList.add('hidden'); modal.classList.remove('flex');
+    }
+    function toggleYearView() { yearViewMode = !yearViewMode; renderMonthPicker(); }
+    function renderMonthPicker() {
+        const host = document.getElementById('monthPickerGrid');
+        const title = document.getElementById('monthPickerTitle');
+        const yearBtn = document.getElementById('yearViewBtn');
+        host.innerHTML = '';
+        title.textContent = currentLang === 'AR' ? 'اختر الشهر' : currentLang === 'EN' ? 'Choose your month' : 'Choisir un mois';
+        yearBtn.textContent = yearViewMode ? (currentLang === 'AR' ? 'عرض الشهور' : currentLang === 'EN' ? 'Month view' : 'Vue mensuelle') : (currentLang === 'AR' ? 'عرض السنة' : currentLang === 'EN' ? 'Year view' : 'Vue annuelle');
+        if (yearViewMode) {
+            for (let year = 2026; year <= 2030; year++) {
+                const section = document.createElement('section'); section.className = 'rounded-xl border border-border-subtle p-3 space-y-2';
+                const heading = document.createElement('h4'); heading.className = 'font-extrabold text-sm'; heading.textContent = String(year); section.appendChild(heading);
+                const grid = document.createElement('div'); grid.className = 'grid grid-cols-3 sm:grid-cols-4 gap-2';
+                for (let m = 0; m < 12; m++) {
+                    const md = store.months[`${year}-${pad(m+1)}`];
+                    const score = md ? Math.round([...BASE_CATS, ...store.custom].reduce((sum,c)=>sum+(Number(md.values?.[c.id])||0),0) / Math.max(1, BASE_CATS.length + store.custom.length)) : 0;
+                    const b = document.createElement('button'); b.className = 'rounded-lg border border-border p-2 text-left hover:border-teal transition-colors';
+                    b.innerHTML = `<span class="block text-xs font-bold">${MONTH_SHORT[m]}</span><span class="block text-[10px] text-muted mt-1">${md ? score + '% score' : 'No data'}</span>`;
+                    b.onclick = () => selectMonth(year,m); grid.appendChild(b);
+                }
+                section.appendChild(grid); host.appendChild(section);
+            }
+            return;
+        }
+        for (let year = 2026; year <= 2030; year++) {
+            const section = document.createElement('section'); section.className = 'rounded-xl border border-border-subtle p-3 space-y-2';
+            const heading = document.createElement('h4'); heading.className = 'font-extrabold text-sm'; heading.textContent = String(year); section.appendChild(heading);
+            const grid = document.createElement('div'); grid.className = 'grid grid-cols-3 sm:grid-cols-4 gap-2';
+            MONTH_SHORT.forEach((month,m) => {
+                const active = activeMonthDate.getFullYear() === year && activeMonthDate.getMonth() === m;
+                const exists = !!store.months[`${year}-${pad(m+1)}`];
+                const b = document.createElement('button'); b.className = 'rounded-lg border p-3 text-sm font-bold transition-colors ' + (active ? 'border-teal bg-teal/15 text-teal' : 'border-border hover:border-teal');
+                b.textContent = month;
+                if (exists) { const dot = document.createElement('span'); dot.className='block w-1.5 h-1.5 rounded-full bg-teal mx-auto mt-1'; b.appendChild(dot); }
+                b.onclick = () => selectMonth(year,m); grid.appendChild(b);
+            });
+            section.appendChild(grid); host.appendChild(section);
+        }
+    }
+    function selectMonth(year, monthIndex) {
+        // Save the month currently on screen before switching, so its last slider values are never lost.
+        const oldKey = monthKey(activeMonthDate);
+        if (monthKey(selectedDate) === oldKey) saveValues();
+        activeMonthDate = new Date(year, monthIndex, 1);
+        const today = now();
+        const day = (year === today.getFullYear() && monthIndex === today.getMonth()) ? today.getDate() : 1;
+        selectedDate = new Date(year, monthIndex, Math.min(day, daysInMonth(activeMonthDate)));
+        buildCategories();
+        renderDays();
+        renderDayTasks();
+        renderCategories();
+        renderClock();
+        recalculateAll(true);
+        rebuildChart();
+        renderCustomRewards();
+        persist();
+        closeMonthPicker();
+    }
+    function openMonthlyAnalysis() {
+        const modal = document.getElementById('monthlyAnalysisModal');
+        renderMonthlyAnalysis(); modal.classList.remove('hidden'); modal.classList.add('flex');
+    }
+    function closeMonthlyAnalysis() {
+        const modal = document.getElementById('monthlyAnalysisModal');
+        modal.classList.add('hidden'); modal.classList.remove('flex');
+    }
+    function renderMonthlyAnalysis() {
+        const md = getMonthData();
+        const cats = [...BASE_CATS, ...store.custom].map(c => ({...c, value: Number(md.values?.[c.id]) || 0}));
+        const overall = cats.length ? Math.round(cats.reduce((a,c)=>a+c.value,0)/cats.length) : 0;
+        const execCats = cats.filter(c=>c.group==='execution'), resCats = cats.filter(c=>c.group==='results');
+        const average = arr => arr.length ? Math.round(arr.reduce((a,c)=>a+c.value,0)/arr.length) : 0;
+        const monthName = activeMonthDate.toLocaleDateString(currentLang==='EN'?'en-US':currentLang==='AR'?'ar':'fr-FR',{month:'long',year:'numeric'});
+        document.getElementById('monthlyAnalysisTitle').textContent = (currentLang==='EN'?'Full monthly analysis':currentLang==='AR'?'التحليل الشهري الكامل':'Analyse complète du mois');
+        document.getElementById('monthlyAnalysisSubtitle').textContent = monthName;
+        const history = md.history || {};
+        const recordedDays = Object.keys(history).filter(k => history[k] && (Number(history[k].e)>0 || Number(history[k].r)>0)).length;
+        const histVals = Object.values(history).filter(h=>h && (Number.isFinite(Number(h.e)) || Number.isFinite(Number(h.r))));
+        const avgE = histVals.length ? Math.round(histVals.reduce((a,h)=>a+(Number(h.e)||0),0)/histVals.length) : average(execCats);
+        const avgR = histVals.length ? Math.round(histVals.reduce((a,h)=>a+(Number(h.r)||0),0)/histVals.length) : average(resCats);
+        const monthPrefix = monthKey(activeMonthDate) + '-';
+        let taskTotal = 0, taskDone = 0;
+        Object.entries(store.dayDone || {}).forEach(([key,arr]) => {
+            if (!key.startsWith(monthPrefix)) return;
+            const dayNum = Number(key.slice(monthPrefix.length));
+            const date = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), dayNum);
+            if (!Number.isInteger(dayNum) || dayNum < 1 || dayNum > daysInMonth(activeMonthDate)) return;
+            const baseCount = tasksForDate(date).length;
+            const customCount = (store.customTasks && store.customTasks[key] || []).length;
+            taskDone += Array.isArray(arr) ? arr.length : 0;
+            taskDone += (store.customTasks && store.customTasks[key] || []).filter(task => task && task.done).length;
+            taskTotal += baseCount + customCount;
+        });
+        // Include days that only contain personal tasks and have not created a default checklist entry.
+        Object.entries(store.customTasks || {}).forEach(([key, tasks]) => {
+            if (!key.startsWith(monthPrefix) || Object.prototype.hasOwnProperty.call(store.dayDone || {}, key)) return;
+            const dayNum = Number(key.slice(monthPrefix.length));
+            if (!Number.isInteger(dayNum) || dayNum < 1 || dayNum > daysInMonth(activeMonthDate)) return;
+            const date = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), dayNum);
+            taskDone += (Array.isArray(tasks) ? tasks : []).filter(task => task && task.done).length;
+            taskTotal += tasksForDate(date).length + (Array.isArray(tasks) ? tasks.length : 0);
+        });
+        const sorted = [...cats].sort((a,b)=>a.value-b.value);
+        const catName = c => (i18n[currentLang].cats[c.id] || c.customName || c.id);
+        const strongest = [...cats].sort((a,b)=>b.value-a.value).slice(0,3);
+        const weakest = sorted.slice(0,3);
+        const isPast = activeMonthDate.getFullYear() < now().getFullYear() || (activeMonthDate.getFullYear()===now().getFullYear() && activeMonthDate.getMonth()<now().getMonth());
+        const status = isPast ? (currentLang==='EN'?'Month completed — historical report':currentLang==='AR'?'شهر مكتمل — تقرير محفوظ':'Mois terminé — bilan historique') : (currentLang==='EN'?'Progress report so far':currentLang==='AR'?'تقرير التقدم حتى الآن':'Bilan du progrès à ce jour');
+        const esc = escapeHtml;
+        document.getElementById('monthlyAnalysisContent').innerHTML = `
+          <div class="rounded-xl border border-teal/25 bg-teal/5 p-3"><p class="text-xs font-bold text-teal">${status}</p><p class="text-sm text-muted mt-1">${currentLang==='EN'?'Your records stay saved separately for each month. Starting a new month does not erase this report.':currentLang==='AR'?'المعلومات ديال كل شهر كتبقى محفوظة بوحدها، وبداية شهر جديد ما كتمسحش هاد التقرير.':'Les données de chaque mois sont conservées séparément. Le nouveau mois n’efface pas ce bilan.'}</p></div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="rounded-xl bg-bg border border-border-subtle p-3"><p class="text-[10px] text-muted">${currentLang==='EN'?'Overall score':currentLang==='AR'?'النقطة العامة':'Score global'}</p><p class="text-2xl font-black text-teal mt-1">${overall}%</p></div>
+            <div class="rounded-xl bg-bg border border-border-subtle p-3"><p class="text-[10px] text-muted">${currentLang==='EN'?'Execution avg.':currentLang==='AR'?'متوسط التنفيذ':'Moy. exécution'}</p><p class="text-2xl font-black mt-1">${avgE}%</p></div>
+            <div class="rounded-xl bg-bg border border-border-subtle p-3"><p class="text-[10px] text-muted">${currentLang==='EN'?'Results avg.':currentLang==='AR'?'متوسط النتائج':'Moy. résultats'}</p><p class="text-2xl font-black mt-1">${avgR}%</p></div>
+            <div class="rounded-xl bg-bg border border-border-subtle p-3"><p class="text-[10px] text-muted">${currentLang==='EN'?'Days tracked':currentLang==='AR'?'أيام التتبع':'Jours suivis'}</p><p class="text-2xl font-black mt-1">${recordedDays}</p></div>
+          </div>
+          <section class="space-y-2"><h4 class="font-extrabold text-sm">${currentLang==='EN'?'Category breakdown':currentLang==='AR'?'تفاصيل المجالات':'Détail par catégorie'}</h4>${cats.map(c=>`<div class="space-y-1"><div class="flex justify-between gap-2 text-xs"><span>${esc(catName(c))}</span><strong>${c.value}%</strong></div><div class="h-2 rounded-full bg-border-subtle overflow-hidden"><div class="h-full rounded-full" style="width:${c.value}%;background:${c.barColor||'#2dd4a8'}"></div></div></div>`).join('')}</section>
+          <div class="grid sm:grid-cols-2 gap-3"><section class="rounded-xl border border-border-subtle p-3 space-y-2"><h4 class="font-extrabold text-sm">🏆 ${currentLang==='EN'?'Strongest areas':currentLang==='AR'?'أقوى المجالات':'Points forts'}</h4>${strongest.map(c=>`<p class="text-xs flex justify-between gap-2"><span>${esc(catName(c))}</span><strong>${c.value}%</strong></p>`).join('')}</section><section class="rounded-xl border border-border-subtle p-3 space-y-2"><h4 class="font-extrabold text-sm">🎯 ${currentLang==='EN'?'Areas to improve':currentLang==='AR'?'مجالات للتحسين':'À améliorer'}</h4>${weakest.map(c=>`<p class="text-xs flex justify-between gap-2"><span>${esc(catName(c))}</span><strong>${c.value}%</strong></p>`).join('')}</section></div>
+          <section class="rounded-xl bg-bg border border-border-subtle p-3 space-y-2"><h4 class="font-extrabold text-sm">🧭 ${currentLang==='EN'?'Next month action plan':currentLang==='AR'?'خطة الشهر الجاي':'Plan d’action pour le mois prochain'}</h4><ul class="list-disc pl-5 space-y-1 text-xs text-muted">${weakest.map(c=>`<li>${currentLang==='EN'?'Prioritize':currentLang==='AR'?'ركز على':'Prioriser'} <strong>${esc(catName(c))}</strong> : ${currentLang==='EN'?'set one small measurable weekly target.':currentLang==='AR'?'حدد هدف صغير وقابل للقياس كل أسبوع.':'fixer un petit objectif hebdomadaire mesurable.'}</li>`).join('')}<li>${currentLang==='EN'?'Record your sliders and daily tasks consistently so next month’s analysis is more complete.':currentLang==='AR'?'سجل التقدم والمهام يومياً باش يكون تحليل الشهر الجاي أدق.':'Mettre à jour les curseurs et les tâches chaque jour pour obtenir un bilan plus précis.'}</li></ul></section>
+          <p class="text-[10px] text-muted">${currentLang==='EN'?'Task count is based on saved daily checklist entries; category scores reflect the latest saved monthly values.':currentLang==='AR'?'عدد المهام محسوب من التسجيلات اليومية المحفوظة، ونقط المجالات هي آخر قيم محفوظة للشهر.':'Le suivi des tâches utilise les cases cochées enregistrées ; les scores des catégories correspondent aux dernières valeurs mensuelles sauvegardées.'} ${taskDone}/${taskTotal} ${currentLang==='EN'?'tasks completed / available':currentLang==='AR'?'المهام المنجزة / المتاحة':'tâches terminées / disponibles'}.</p>`;
+    }
+
+    /* =====================================================
+       REWARDS
+    ===================================================== */
+    function refreshClaimButtons() {
+        const t = i18n[currentLang];
+        const md = getMonthData();
+        const unlocked = computeAvgs().overall >= 50;
+        document.querySelectorAll('.claim-btn').forEach(btn => {
+            const idx = btn.dataset.idx || btn.dataset.rewardId;
+            if (md.claimed[idx]) {
+                btn.textContent = t.claimedBtn;
+                btn.className = 'claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-bold bg-teal/10 text-teal border border-teal/30';
+                btn.disabled = true;
+            } else {
+                btn.disabled = !unlocked;
+                btn.textContent = (unlocked ? '' : '🔒 ') + t.claimBtn;
+                btn.title = unlocked ? t.claimBtn : t.lockedMsg;
+                btn.className = 'claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border transition-all ' +
+                    (unlocked ? 'border-teal text-teal hover:bg-teal/10' : 'border-border text-muted opacity-80 cursor-not-allowed');
+            }
+        });
+    }
+
+    function renderCustomRewards() {
+        const host = document.getElementById('customRewardsList');
+        if (!host) return;
+        const rewards = Array.isArray(store.customRewards) ? store.customRewards : [];
+        host.innerHTML = '';
+        if (!rewards.length) {
+            host.innerHTML = '<p class="text-[10px] text-muted sm:col-span-2">Tes récompenses personnelles apparaîtront ici.</p>';
+            return;
+        }
+        rewards.forEach(reward => {
+            const card = document.createElement('div');
+            card.className = 'lift bg-bg rounded-xl border border-border-subtle p-3 flex items-center justify-between gap-3';
+            const info = document.createElement('div');
+            info.className = 'min-w-0';
+            const title = document.createElement('p');
+            title.className = 'text-xs font-semibold break-words';
+            title.textContent = reward.name;
+            const cost = document.createElement('p');
+            cost.className = 'text-[10px] font-bold text-teal mt-0.5';
+            cost.textContent = reward.cost || 'Récompense personnelle';
+            info.append(title, cost);
+            const btn = document.createElement('button');
+            btn.dataset.rewardId = reward.id;
+            btn.onclick = function () { claimReward(this); };
+            btn.className = 'claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all';
+            btn.textContent = i18n[currentLang].claimBtn;
+            card.append(info, btn);
+            host.appendChild(card);
+        });
+        refreshClaimButtons();
+    }
+
+    function addCustomReward() {
+        const nameInput = document.getElementById('customRewardName');
+        const costInput = document.getElementById('customRewardCost');
+        const name = nameInput.value.trim();
+        if (!name) {
+            toast(currentLang === 'AR' ? 'كتب اسم المكافأة أولاً.' : currentLang === 'EN' ? 'Enter a reward name first.' : 'Saisis d’abord le nom de la récompense.');
+            nameInput.focus();
+            return;
+        }
+        if (!Array.isArray(store.customRewards)) store.customRewards = [];
+        store.customRewards.push({
+            id: 'custom_reward_' + Date.now(),
+            name: name.slice(0, 70),
+            cost: costInput.value.trim().slice(0, 30)
+        });
+        nameInput.value = '';
+        costInput.value = '';
+        persist();
+        renderCustomRewards();
+        toast(currentLang === 'AR' ? 'تمت إضافة المكافأة، وستُفتح عند بلوغ 50%.' : currentLang === 'EN' ? 'Reward added. It unlocks at 50%.' : 'Récompense ajoutée : déblocage à 50%.');
+    }
+
+    function claimReward(btn) {
+        const t = i18n[currentLang];
+        if (computeAvgs().overall < 50) { toast(t.lockedMsg); return; }
+        const key = btn.dataset.rewardId || btn.dataset.idx;
+        getMonthData().claimed[key] = true;
+        persist();
+        refreshClaimButtons();
+        burstConfetti(40);
+    }
+
+    /* =====================================================
+       MODALS
+    ===================================================== */
+    function openAddCategoryModal() { document.getElementById('addCategoryModal').classList.remove('hidden'); }
+    function closeAddCategoryModal() { document.getElementById('addCategoryModal').classList.add('hidden'); }
+
+    function submitNewCategory() {
+        const name = document.getElementById('catNameInput').value.trim();
+        const type = document.getElementById('catTypeInput').value;
+        if (!name) return;
+        const map = {
+            execution: { colorClass: 'slider-teal', barColor: '#2dd4a8', textClass: 'text-teal' },
+            money: { colorClass: 'slider-orange', barColor: '#f59e0b', textClass: 'text-orange' },
+            results: { colorClass: 'slider-indigo', barColor: '#6366f1', textClass: 'text-indigo' }
+        }[type];
+        const unitRaw = document.getElementById('catUnitInput').value.trim();
+        if (/^[\d.,\s]+$/.test(unitRaw)) { toast(i18n[currentLang].unitErr); return; }
+        const newId = 'custom_' + Date.now();
+        store.custom.push(Object.assign({ id: newId, customName: name, group: type }, map));
+        const gNum = parseFloat(document.getElementById('catGoalInput').value);
+        store.goals[newId] = { target: gNum > 0 ? gNum : 100, unit: unitRaw || '%' };
+        persist();
+        buildCategories();
+        renderCategories();
+        recalculateAll();
+        closeAddCategoryModal();
+        document.getElementById('catNameInput').value = '';
+        document.getElementById('catGoalInput').value = '';
+        document.getElementById('catUnitInput').value = '%';
+    }
+
+    function openCopilotModal() { document.getElementById('copilotModal').classList.remove('hidden'); }
+    function closeCopilotModal() { document.getElementById('copilotModal').classList.add('hidden'); }
+
+    function generateAIAnalysis() {
+        const t = i18n[currentLang];
+        const d = activeMonthDate;
+        const day = selectedDate.getDate(), total = daysInMonth(d);
+        const targetPct = TARGET_PCT;
+        const { overall } = computeAvgs();
+        const moneyCat = categories.find(c => c.isMoney);
+        const moneyEarned = moneyCat ? Math.round((moneyCat.value / 100) * targetMoney) : 0;
+        const msg = overall === 0 ? t.copilotStart : overall >= targetPct ? t.copilotOk : t.copilotBehind;
+        const colors = { fin: 'text-orange', bus: 'text-teal', app: 'text-indigo', faith: 'text-teal', fam: 'text-indigo', hab: 'text-teal' };
+        const items = tasksForDate(d).map((c, i) =>
+            `<li class="flex items-start gap-1.5"><span class="${colors[c]} font-bold">${i + 1}. ${t.cats[c]}:</span> ${t.task[c]}</li>`).join('');
+        const name = store.user ? ` ${escapeHtml(store.user)}` : '';
+        document.getElementById('copilotContent').innerHTML = `
+            <div class="flex items-center gap-2 text-indigo font-bold mb-2"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t.copilotPlan}${name ? ' ·' + name : ''}</span></div>
+            <div class="p-3 bg-bg border border-border rounded-xl space-y-2">
+                <p><strong>${t.level}:</strong> <span class="text-teal font-bold">${overall}%</span> / ${targetPct}% (${moneyEarned} DH / ${targetMoney} DH)</p>
+                <p class="text-muted">${msg}</p>
+            </div>
+            <div class="space-y-2 pt-2">
+                <p class="font-bold text-primary text-xs uppercase tracking-wider">${t.copilotTasks}</p>
+                <ul class="space-y-2 text-muted pl-1">${items}</ul>
+                <p class="text-indigo text-[11px] pt-1">${t.tip[periodOfDay(d.getHours())]}</p>
+            </div>`;
+        lucide.createIcons();
+    }
+
+    /* =====================================================
+       FX: toast + confetti
+    ===================================================== */
+    function toast(msg) {
+        const host = document.getElementById('toastHost');
+        host.innerHTML = '';
+        const el = document.createElement('div');
+        el.id = 'toast';
+        el.className = 'px-4 py-2 rounded-full bg-surface border border-teal/40 text-xs font-semibold text-teal shadow-lg';
+        el.textContent = msg;
+        host.appendChild(el);
+        setTimeout(() => el.remove(), 2200);
+    }
+
+    function burstConfetti(n) {
+        const colors = ['#2dd4a8', '#f59e0b', '#6366f1', '#f4f4f5'];
+        for (let i = 0; i < n; i++) {
+            const p = document.createElement('div');
+            p.className = 'confetti-piece';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.background = colors[i % colors.length];
+            p.style.animationDelay = Math.random() * 0.4 + 's';
+            p.style.animationDuration = 1.6 + Math.random() * 1.2 + 's';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 3500);
+        }
+    }
+
+    /* =====================================================
+       INIT + live refresh (time, day change, month change)
+    ===================================================== */
+    // ---- Thème clair / sombre ----
+    const BAR_VAR = { '#2dd4a8': 'rgb(var(--c-teal))', '#f59e0b': 'rgb(var(--c-orange))', '#6366f1': 'rgb(var(--c-indigo))' };
+    function rgbVar(name, a) {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim().split(/\s+/).join(',');
+        return a == null ? `rgb(${v})` : `rgba(${v},${a})`;
+    }
+    function applyThemeBtn() {
+        const b = document.getElementById('themeBtn');
+        if (b) b.textContent = store.theme === 'dark' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        store.theme = store.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.classList.toggle('dark', store.theme === 'dark');
+        persist();
+        applyThemeBtn();
+        rebuildChart();
+    }
+
+    let lastDayKey = dayKey();
+
+    function tick() {
+        renderClock();
+        const k = dayKey();
+        if (k !== lastDayKey) {           // a new day (or month) started
+            const wasViewingCurrentMonth = activeMonthDate.getFullYear() === now().getFullYear() && activeMonthDate.getMonth() === now().getMonth();
+            lastDayKey = k;
+            // Do not interrupt someone who is reviewing a historical month.
+            if (wasViewingCurrentMonth) {
+                activeMonthDate = new Date(now().getFullYear(), now().getMonth(), 1);
+                selectedDate = now();
+                buildCategories();
+                renderDays();
+                renderDayTasks();
+                renderCategories();
+                recalculateAll(true);
+                rebuildChart();
+                renderCustomRewards();
+            }
+        }
+    }
+
+    // -----------------------------------------------------
+    // ACCOUNT AUTH + PER-USER CLOUD STORAGE (Supabase)
+    // -----------------------------------------------------
+    // Replace these two values with your own Supabase project values.
+    const FOCUS_SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+    const FOCUS_SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY';
+    const focusSupabaseConfigured = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(FOCUS_SUPABASE_URL) &&
+        FOCUS_SUPABASE_PUBLISHABLE_KEY !== 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY' && FOCUS_SUPABASE_PUBLISHABLE_KEY.length > 20;
+    window.focusSupabaseClient = focusSupabaseConfigured && window.supabase
+        ? window.supabase.createClient(FOCUS_SUPABASE_URL, FOCUS_SUPABASE_PUBLISHABLE_KEY)
+        : null;
+
+    function focusAuthMessage(message, isError = false) {
+        const el = document.getElementById('focusAuthMessage');
+        if (el) { el.textContent = message; el.className = `text-xs min-h-5 ${isError ? 'text-orange' : 'text-muted'}`; }
+    }
+    function showFocusAuth() {
+        document.getElementById('authGate')?.classList.remove('hidden');
+        document.getElementById('focusCodeArea')?.classList.add('hidden');
+    }
+    function hideFocusAuth() { document.getElementById('authGate')?.classList.add('hidden'); }
+    function resetFocusCode() {
+        document.getElementById('focusCodeArea')?.classList.add('hidden');
+        document.getElementById('focusOtp').value = '';
+        focusAuthMessage('Enter your email address to receive a new code.');
+    }
+    async function sendFocusCode() {
+        if (!window.focusSupabaseClient) { focusAuthMessage('The account service is not configured yet. Follow the setup guide.', true); return; }
+        const email = document.getElementById('focusEmail').value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { focusAuthMessage('Enter a valid email address.', true); return; }
+        const btn = document.getElementById('sendFocusCodeBtn');
+        btn.disabled = true; btn.textContent = 'Sending…';
+        try {
+            const { error } = await window.focusSupabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+            if (error) throw error;
+            document.getElementById('focusCodeArea').classList.remove('hidden');
+            focusAuthMessage(`A verification code was sent to ${email}. Check your inbox and spam folder.`);
+            document.getElementById('focusOtp').focus();
+        } catch (err) { focusAuthMessage(err.message || 'Could not send the code. Try again later.', true); }
+        finally { btn.disabled = false; btn.textContent = 'Send verification code'; }
+    }
+    async function verifyFocusCode() {
+        if (!window.focusSupabaseClient) return;
+        const email = document.getElementById('focusEmail').value.trim().toLowerCase();
+        const token = document.getElementById('focusOtp').value.trim().replace(/\s/g, '');
+        if (!/^\d{6}$/.test(token)) { focusAuthMessage('Enter the 6-digit code from your email.', true); return; }
+        const btn = document.getElementById('verifyFocusCodeBtn');
+        btn.disabled = true; btn.textContent = 'Verifying…';
+        try {
+            const { error } = await window.focusSupabaseClient.auth.verifyOtp({ email, token, type: 'email' });
+            if (error) throw error;
+            focusAuthMessage('Email verified. Opening your account…');
+        } catch (err) { focusAuthMessage(err.message || 'The code is invalid or expired. Request a new one.', true); }
+        finally { btn.disabled = false; btn.textContent = 'Verify and open Focus'; }
+    }
+    async function focusSignOut() {
+        if (!window.focusSupabaseClient) return;
+        const { error } = await window.focusSupabaseClient.auth.signOut();
+        if (error) toast('Could not sign out. Please try again.');
+    }
+
+    async function loadFocusAccount(user) {
+        if (!user || focusLoadingUserId === user.id) return;
+        focusLoadingUserId = user.id;
+        focusAuthMessage('Loading your private data…');
+        try {
+            const { data, error } = await window.focusSupabaseClient
+                .from('focus_user_data').select('data').eq('user_id', user.id).maybeSingle();
+            if (error) throw error;
+            focusAuthUser = user;
+            STORAGE_KEY = `focus_user_${user.id}`;
+            if (data && data.data && typeof data.data === 'object') {
+                store = Object.assign(defaultStore(), data.data);
+            } else {
+                // One-time migration of the previous device-only data into the first account used on this browser.
+                let cached = null;
+                try { cached = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) {}
+                store = Object.assign(defaultStore(), cached || focusLegacyStore || {});
+                const { error: saveError } = await window.focusSupabaseClient.from('focus_user_data')
+                    .upsert({ user_id: user.id, data: store, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+                if (saveError) throw saveError;
+                focusLegacyStore = null;
+            }
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (_) {}
+            currentLang = store.lang in i18n ? store.lang : 'FR';
+            activeMonthDate = new Date(now().getFullYear(), now().getMonth(), 1);
+            selectedDate = now();
+            hideFocusAuth();
+            if (!focusAppInitialized) {
+                lucide.createIcons();
+                buildCategories();
+                applyLanguageUI();
+                renderClock();
+                setInterval(tick, 30000);
+                document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+                focusAppInitialized = true;
+            } else {
+                buildCategories(); applyLanguageUI(); renderClock();
+            }
+            buildCategories();
+            renderUser(); renderDays(); renderDayTasks(); renderCategories();
+            recalculateAll(true); rebuildChart(); renderCustomRewards(); applyThemeBtn();
+            document.documentElement.classList.toggle('dark', store.theme === 'dark');
+            const emailEl = document.getElementById('saveInfo');
+            if (emailEl) emailEl.textContent = 'Signed in · ' + (user.email || 'Email account');
+            if (!store.user) setTimeout(openNameModal, 500);
+        } catch (err) {
+            console.error('Focus account load failed:', err);
+            focusAuthMessage('Could not load your account data. Check your Supabase table and security policies, then refresh.', true);
+            showFocusAuth();
+        } finally { focusLoadingUserId = null; }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        lucide.createIcons();
+        if (!window.focusSupabaseClient) {
+            document.getElementById('focusConfigWarning')?.classList.remove('hidden');
+            focusAuthMessage('Complete the Supabase setup to activate email login.', true);
+            showFocusAuth();
+            return;
+        }
+        showFocusAuth();
+        window.focusSupabaseClient.auth.onAuthStateChange((event, session) => {
+            if (session?.user) setTimeout(() => loadFocusAccount(session.user), 0);
+            else if (event === 'SIGNED_OUT') { focusAuthUser = null; focusLoadingUserId = null; showFocusAuth(); }
+        });
+        const { data, error } = await window.focusSupabaseClient.auth.getSession();
+        if (error) { focusAuthMessage(error.message, true); return; }
+        if (data.session?.user) await loadFocusAccount(data.session.user);
+        else showFocusAuth();
+    });
+    </script>
+</body>
+</html>

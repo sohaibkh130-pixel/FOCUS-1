@@ -1,0 +1,58 @@
+FOCUS — EMAIL LOGIN + PRIVATE CLOUD SAVE
+
+IMPORTANT
+The HTML file is prepared, but real sign-in/cloud storage will not work until you connect your own Supabase project. Do not publish the file before replacing the two configuration values.
+
+1) Create your Supabase project
+- Open https://supabase.com and create a project.
+- In Project Settings / API, copy the Project URL and the Publishable key (or legacy anon public key).
+- Never use or paste the service_role / secret key in this HTML file.
+
+2) Create the private database table
+- In Supabase, open SQL Editor.
+- Open focus_user_data.sql from this folder, copy all its contents, paste into SQL Editor and run it.
+- The table uses Row Level Security (RLS). A user can access only the row whose user_id matches their authenticated account.
+
+3) Enable six-digit email codes
+- In Supabase, open Authentication > Email Templates.
+- Edit the Magic Link template so the email contains {{ .Token }} (not only {{ .ConfirmationURL }}).
+- Example email body:
+  <h2>Your Focus sign-in code</h2>
+  <p>Enter this code in Focus: {{ .Token }}</p>
+- Save the template.
+- In Authentication URL Configuration, set the Site URL to the final website address after deployment.
+
+4) Connect the HTML file to your project
+- Open index.html in a code editor (VS Code is recommended).
+- Find these two lines near the end of the file:
+  const FOCUS_SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+  const FOCUS_SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY';
+- Replace the first value with your Supabase Project URL.
+- Replace the second value with your Publishable/anon public key.
+- Do not add quotation marks twice and do not use the service_role key.
+
+5) Publish the website
+Easiest option for this single-file site: Netlify.
+- Open https://app.netlify.com/drop
+- Sign in and drag the whole folder containing index.html into the page (after editing the values above).
+- Netlify will give you a website URL.
+- Go back to Supabase > Authentication > URL Configuration and add that exact URL to the allowed redirect/site URLs if required.
+- Open the deployed site and test with your own email.
+
+6) How the app behaves
+- A user enters an email address and receives a one-time code.
+- After verification, Focus loads that user's private database record.
+- Changes are saved locally for quick recovery and synced to Supabase automatically.
+- Different email accounts have separate records. RLS protects the database rows.
+- The old device-only data is migrated once into the first account used on that browser if that account has no cloud record.
+
+TEST BEFORE SHARING
+- Sign in with your email and add a test task.
+- Sign out, then sign in with a different email. The first account's task must not appear.
+- Sign out and sign back into the first email. Its task should appear again.
+- If emails do not arrive, check spam and Supabase Auth email settings/SMTP limits.
+
+NOTES
+- Netlify hosts the website; Supabase handles login and database. They do different jobs.
+- Supabase's default email sender may have low testing limits. For public use, configure a verified SMTP sender in Supabase.
+- This version uses email one-time codes, not Google OAuth's Google-branded sign-in button.
