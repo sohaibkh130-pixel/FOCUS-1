@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus — Dashboard & Habit Tracker</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+    <link rel="apple-touch-icon" href="data:image/png;base64,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">
 
     <script>
-        // Thème sombre par défaut, appliqué avant le rendu pour éviter le flash.
+        // Mode sbah (jour) / lil (nuit) / auto selon l'heure, appliqué avant le rendu.
         try {
             var __s = JSON.parse(localStorage.getItem('lifeos_v2') || '{}');
-            if (!__s.focusDarkDefaultApplied) {
-                __s.theme = 'dark';
-                __s.focusDarkDefaultApplied = true;
-                localStorage.setItem('lifeos_v2', JSON.stringify(__s));
-            }
-            if (__s.theme !== 'light') document.documentElement.classList.add('dark');
+            var __m = __s.themeMode || 'auto';
+            var __h = new Date().getHours();
+            var __night = __m === 'night' || (__m === 'auto' && (__h < 6 || __h >= 19));
+            if (__night) document.documentElement.classList.add('dark');
         } catch (e) { document.documentElement.classList.add('dark'); }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,16 +45,16 @@
     <style>
         /* ---------- Palette (clair par défaut, sombre en option) ---------- */
         :root {
-            --c-bg: 9 10 15;
-            --c-surface: 18 20 26;
-            --c-surface-hover: 24 27 35;
-            --c-border: 34 38 48;
-            --c-border-subtle: 26 29 38;
-            --c-teal: 45 212 168;
-            --c-orange: 245 158 11;
-            --c-indigo: 99 102 241;
-            --c-muted: 113 113 122;
-            --c-primary: 244 244 245;
+            --c-bg: 250 248 244;
+            --c-surface: 255 253 249;
+            --c-surface-hover: 245 241 233;
+            --c-border: 232 225 213;
+            --c-border-subtle: 241 236 228;
+            --c-teal: 28 151 119;
+            --c-orange: 196 137 42;
+            --c-indigo: 112 101 190;
+            --c-muted: 123 119 111;
+            --c-primary: 35 34 31;
         }
         html.dark {
             --c-bg: 9 10 15;
@@ -70,8 +69,39 @@
             --c-primary: 244 244 245;
         }
         body { background-color: rgb(var(--c-bg)); color: rgb(var(--c-primary)); touch-action: manipulation; transition: background-color .3s ease, color .3s ease; }
-        html:not(.dark) .bg-surface { box-shadow: 0 1px 2px rgba(28,32,51,.05), 0 8px 24px -12px rgba(28,32,51,.12); }
-        html:not(.dark) body { background-image: radial-gradient(900px 400px at 10% -10%, rgb(var(--c-teal) / .08), transparent), radial-gradient(800px 380px at 100% 0%, rgb(var(--c-indigo) / .08), transparent); background-attachment: fixed; }
+        html:not(.dark) .bg-surface {
+            box-shadow: 0 2px 5px rgba(72, 58, 35, .025), 0 12px 30px -18px rgba(72, 58, 35, .13);
+        }
+        html:not(.dark) body {
+            background-color: #faf8f4;
+            background-image:
+                radial-gradient(ellipse 58% 30% at 100% 0%, rgba(225, 198, 151, .20), transparent 75%),
+                radial-gradient(ellipse 48% 25% at 0% 100%, rgba(232, 218, 194, .22), transparent 75%),
+                linear-gradient(145deg, #fdfbf7 0%, #faf8f4 52%, #f7f3ec 100%);
+            background-attachment: fixed;
+        }
+        html:not(.dark) body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: .48;
+            background:
+                radial-gradient(ellipse 72% 20% at 100% 34%, transparent 60%, rgba(220, 194, 153, .16) 61%, transparent 72%),
+                radial-gradient(ellipse 70% 18% at 0% 72%, transparent 60%, rgba(220, 194, 153, .13) 61%, transparent 73%);
+        }
+        html:not(.dark) header {
+            background: rgba(250, 248, 244, .86) !important;
+            border-color: rgba(220, 212, 199, .72) !important;
+        }
+        html:not(.dark) .border-border,
+        html:not(.dark) .border-border-subtle {
+            border-color: #e9e2d7;
+        }
+        html:not(.dark) .skeleton-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(204, 174, 122, .055), transparent);
+        }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgb(var(--c-surface)); }
         ::-webkit-scrollbar-thumb { background: rgb(var(--c-border)); border-radius: 3px; }
@@ -128,45 +158,47 @@
     </style>
 </head>
 <body class="antialiased min-h-screen pb-24">
-
-    <!-- Secure email OTP sign-in gate -->
-    <section id="authGate" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg/95 backdrop-blur-xl">
-        <div class="w-full max-w-md rounded-3xl border border-border bg-surface p-6 sm:p-8 shadow-2xl">
-            <div class="w-12 h-12 rounded-2xl bg-teal/10 border border-teal/20 flex items-center justify-center text-teal mb-5"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
-            <p class="text-[10px] uppercase tracking-[.25em] font-bold text-teal">FOCUS · PERSONAL SPACE</p>
-            <h1 class="text-2xl font-extrabold mt-2">Your progress, saved to your account.</h1>
-            <p class="text-sm text-muted mt-2 leading-relaxed">Sign in with your email. We’ll send you a one-time verification code. Your data stays private to your account.</p>
-            <div class="mt-6 space-y-3">
-                <label for="focusEmail" class="block text-xs font-semibold text-muted">Gmail / Email address</label>
-                <input id="focusEmail" type="email" autocomplete="email" placeholder="you@gmail.com" class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')sendFocusCode()">
-                <button id="sendFocusCodeBtn" type="button" onclick="sendFocusCode()" class="w-full rounded-xl bg-teal text-bg font-extrabold py-3 text-sm hover:opacity-90">Send verification code</button>
-                <div id="focusCodeArea" class="hidden space-y-3 pt-2">
-                    <label for="focusOtp" class="block text-xs font-semibold text-muted">6-digit code sent to your email</label>
-                    <input id="focusOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-center text-xl tracking-[.5em] font-bold focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')verifyFocusCode()">
-                    <button id="verifyFocusCodeBtn" type="button" onclick="verifyFocusCode()" class="w-full rounded-xl bg-teal text-bg font-extrabold py-3 text-sm hover:opacity-90">Verify and open Focus</button>
-                    <button type="button" onclick="resetFocusCode()" class="w-full text-xs text-muted hover:text-teal py-1">Use another email</button>
-                </div>
-                <p id="focusAuthMessage" role="status" aria-live="polite" class="text-xs text-muted min-h-5"></p>
-                <p id="focusConfigWarning" class="hidden text-xs text-orange bg-orange/10 border border-orange/20 rounded-xl p-3">Setup required: add your Supabase Project URL and Publishable (anon) key in the configuration section of this HTML file. Never put a service-role key here.</p>
+    <!-- Login gate: shown until the visitor signs in (Google or email) -->
+    <div id="authGate" class="fixed inset-0 z-[100] bg-bg/80 backdrop-blur-sm flex items-center justify-center p-5 overflow-y-auto hidden">
+        <div class="relative w-full max-w-sm bg-surface border border-border rounded-2xl p-6 space-y-4">
+            <button onclick="authHideGate()" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-surface-hover text-muted text-lg leading-none">×</button>
+            <div class="text-center space-y-1">
+                <div class="mx-auto w-11 h-11 rounded-2xl bg-teal/10 border border-teal/30 flex items-center justify-center text-teal font-extrabold text-lg">F</div>
+                <h2 id="authTitle" class="font-extrabold text-lg">Focus</h2>
+                <p id="authSub" class="text-xs text-muted"></p>
             </div>
-            <p class="text-[10px] text-muted mt-5 leading-relaxed">Use only your own email account. Never share your verification code with anyone.</p>
+            <button id="authGoogle" onclick="authGoogle()" class="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 transition-all">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+                <span id="authGoogleTxt"></span>
+            </button>
+            <div class="flex items-center gap-3 text-[11px] text-muted"><div class="flex-1 h-px bg-border"></div><span id="authOr"></span><div class="flex-1 h-px bg-border"></div></div>
+            <div class="space-y-2">
+                <input id="authEmail" type="email" autocomplete="email" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
+                <input id="authPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
+            </div>
+            <p id="authMsg" class="hidden text-xs rounded-xl px-3 py-2 border border-orange/30 bg-orange/10 text-orange"></p>
+            <button id="authSubmitBtn" onclick="authSubmit()" class="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-teal text-bg hover:opacity-90 transition-all"></button>
+            <button id="authToggle" onclick="authToggleMode()" class="w-full text-xs text-muted hover:text-teal underline"></button>
         </div>
-    </section>
+    </div>
+
 
     <!-- Header -->
     <header class="sticky top-0 z-40 bg-bg/90 backdrop-blur-md border-b border-border px-4 py-3">
         <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-8 h-8 shrink-0 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center float">
-                    <i data-lucide="layout-grid" class="w-4 h-4 text-teal"></i>
-                </div>
+            <div class="flex items-center gap-2.5 min-w-0 shrink-0">
+                <img src="data:image/png;base64,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" alt="Focus" class="w-9 h-9 shrink-0 float">
                 <div class="min-w-0 leading-tight">
-                    <span class="font-bold text-lg tracking-tight block">Focus</span>
+                    <span class="font-bold text-lg tracking-tight block whitespace-nowrap">Focus</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5">
-                <button id="themeBtn" onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm hover:border-teal transition-all" title="Thème">🌙</button>
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                <button onclick="openLeaderboard()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-orange/10 border border-orange/30 text-orange hover:bg-orange/20 transition-all">
+                    <i data-lucide="trophy" class="w-3.5 h-3.5"></i>
+                    <span id="txt-leaderboard" class="hidden sm:inline">Classement</span>
+                </button>
+                <button id="themeBtn" onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm hover:border-teal transition-all" title="Mode">🌗</button>
                 <button onclick="toggleLanguage()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-border text-teal hover:border-teal transition-all">
                     <i data-lucide="globe" class="w-3.5 h-3.5"></i>
                     <span id="langDisplay">FR</span>
@@ -183,9 +215,8 @@
                 <!-- Username (top-right): click to edit -->
                 <button onclick="openNameModal()" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-surface border border-border hover:border-teal transition-all" title="Modifier le nom">
                     <span id="avatarInitials" class="w-7 h-7 rounded-full bg-teal/15 border border-teal/30 flex items-center justify-center text-[11px] font-extrabold text-teal">?</span>
-                    <span id="userNameTop" class="text-xs font-bold max-w-[84px] truncate">Invité</span>
+                    <span id="userNameTop" class="hidden sm:inline text-xs font-bold max-w-[84px] truncate">Invité</span>
                 </button>
-                <button type="button" onclick="focusSignOut()" class="w-8 h-8 rounded-full bg-surface border border-border hover:border-orange text-muted hover:text-orange flex items-center justify-center" title="Sign out" aria-label="Sign out"><i data-lucide="log-out" class="w-4 h-4"></i></button>
             </div>
         </div>
     </header>
@@ -288,6 +319,7 @@
                 <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-muted"></span><span id="txt-leg-target">Cible</span></div>
                 <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal"></span><span id="txt-leg-exec">Exécution</span></div>
                 <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo"></span><span id="txt-leg-res">Résultats</span></div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange"></span><span id="txt-leg-money">Argent</span></div>
             </div>
             <div class="h-44 w-full"><canvas id="paceChart"></canvas></div>
         </div>
@@ -299,7 +331,11 @@
                     <i data-lucide="calendar" class="w-4 h-4 text-teal"></i>
                     <span id="txt-daily-tracker-title">Ma semaine</span>
                 </h3>
-                <span id="txt-select-day-sub" class="text-xs text-muted">Sélectionnez un jour</span>
+                <div class="flex items-center gap-1">
+                    <button id="prevWeekBtn" onclick="shiftWeek(-1)" class="w-7 h-7 rounded-lg border border-border hover:border-teal text-base font-bold leading-none" aria-label="Previous week">‹</button>
+                    <button id="txt-select-day-sub" onclick="goToday()" class="px-2.5 h-7 rounded-lg border border-border text-[10px] font-bold text-teal hover:border-teal">Aujourd’hui</button>
+                    <button id="nextWeekBtn" onclick="shiftWeek(1)" class="w-7 h-7 rounded-lg border border-border hover:border-teal text-base font-bold leading-none" aria-label="Next week">›</button>
+                </div>
             </div>
             <div id="daysContainer" class="grid grid-cols-7 gap-1.5 text-center"></div>
 
@@ -308,7 +344,7 @@
                     <p id="selectedDayStatus" class="text-xs font-bold">—</p>
                     <span id="dayProgress" class="text-[10px] font-bold text-teal">0/3</span>
                 </div>
-                <p id="focusLine" class="text-[11px] text-muted mt-1">—</p>
+                <button id="restoreTasksBtn" onclick="restoreDefaultTasks()" style="display:none" class="mt-1 text-[10px] font-bold text-teal hover:underline"></button>
                 <ul id="tasksList" class="mt-2 space-y-2"></ul>
                 <div class="mt-2 flex items-center gap-2">
                     <input id="newTaskInput" type="text" maxlength="80" placeholder="Ajoute ta propre tâche..." class="flex-1 min-w-0 bg-bg border border-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')addCustomTask()">
@@ -324,6 +360,9 @@
                 <h2 id="txt-cat-header" class="text-xs font-bold uppercase tracking-wider text-muted">Catégories & Réglages Directs</h2>
                 <div class="flex items-center gap-2">
                     <span id="txt-cat-hint" class="text-xs text-teal font-medium hidden sm:inline">Glissez le curseur avec le doigt</span>
+                    <button onclick="openCategoryVisibilityModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-bold hover:border-teal transition-colors">
+                        <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i><span id="txt-customize-cats">Personnaliser</span>
+                    </button>
                     <button onclick="openAddCategoryModal()" class="flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full bg-teal text-bg text-xs font-extrabold hover:scale-105 transition-transform">
                         <span class="text-base leading-none">+</span><span id="txt-add-cat-btn">Ajouter</span>
                     </button>
@@ -347,16 +386,17 @@
                         <p id="txt-rew1-title" class="text-xs font-semibold">Grand Dîner au Restaurant</p>
                         <p class="text-[10px] font-bold text-teal mt-0.5">300 DH</p>
                     </div>
-                    <button data-idx="0" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button>
+                    <div class="flex items-center gap-1.5 shrink-0"><button data-idx="0" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button><button onclick="deleteReward('0')" class="shrink-0 w-6 h-6 rounded-full border border-border text-muted text-[11px] hover:text-orange hover:border-orange transition-colors" title="Supprimer / Delete / حذف">✕</button></div>
                 </div>
                 <div class="lift bg-bg rounded-xl border border-border-subtle p-3 flex items-center justify-between gap-3">
                     <div class="min-w-0">
                         <p id="txt-rew2-title" class="text-xs font-semibold">Nouvelle Tenue / Baskets</p>
                         <p class="text-[10px] font-bold text-teal mt-0.5">1000 DH</p>
                     </div>
-                    <button data-idx="1" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button>
+                    <div class="flex items-center gap-1.5 shrink-0"><button data-idx="1" onclick="claimReward(this)" class="claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all">Réclamer</button><button onclick="deleteReward('1')" class="shrink-0 w-6 h-6 rounded-full border border-border text-muted text-[11px] hover:text-orange hover:border-orange transition-colors" title="Supprimer / Delete / حذف">✕</button></div>
                 </div>
             </div>
+            <button id="restoreRewardsBtn" onclick="restoreDefaultRewards()" style="display:none" class="text-[10px] font-bold text-teal hover:underline">↺ Rétablir les récompenses par défaut</button>
             <div class="border-t border-border-subtle pt-3 space-y-2.5">
                 <p class="text-xs font-bold">🎯 Ajoute ta propre récompense</p>
                 <p class="text-[10px] text-muted">Choisis ce qui te motive : sortie, jeu, livre, temps libre, achat ou autre. Elle restera verrouillée tant que ton score n’atteint pas 50%.</p>
@@ -404,6 +444,53 @@
         </div>
     </div>
 
+    <!-- Visitors can look around, but cannot use anything until they Join -->
+    <div id="lockOverlay" onclick="authShowGate()" class="hidden fixed inset-0 z-[60]"></div>
+    <button id="joinFab" onclick="authShowGate()" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-7 py-3 rounded-full text-sm font-extrabold bg-teal text-bg shadow-lg hover:opacity-90 transition-all"><span id="authJoinTxt">Join</span></button>
+
+    <!-- Modal: leaderboard -->
+    <div id="lbModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-card bg-surface border border-border w-full max-w-md rounded-2xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-orange/10 border border-orange/30 flex items-center justify-center text-orange"><i data-lucide="trophy" class="w-4 h-4"></i></div>
+                    <div>
+                        <h3 id="lbTitle" class="font-bold text-base leading-tight">Leaderboard</h3>
+                        <p id="lbCount" class="text-[11px] text-muted"></p>
+                    </div>
+                </div>
+                <button onclick="closeLeaderboard()" class="w-8 h-8 rounded-full hover:bg-surface-hover text-muted text-lg leading-none">×</button>
+            </div>
+            <div id="lbDemo" class="hidden text-[11px] rounded-xl border border-orange/30 bg-orange/10 text-orange px-3 py-2"></div>
+            <div class="flex gap-1.5">
+                <button id="lbTab-streak" onclick="lbSetTab('streak')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
+                <button id="lbTab-best" onclick="lbSetTab('best')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
+                <button id="lbTab-gain" onclick="lbSetTab('gain')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
+            </div>
+            <p id="lbRule" class="text-[11px] text-muted"></p>
+            <div id="lbMine" class="rounded-xl border border-teal/30 bg-teal/10 px-3 py-2 text-xs font-semibold text-teal"></div>
+            <div id="lbList" class="space-y-1.5"></div>
+            <button id="lbJoinBtn" onclick="lbToggleJoin()" class="w-full px-4 py-2.5 rounded-xl text-xs font-bold bg-teal text-bg hover:opacity-90 transition-all"></button>
+            <p id="lbPrivacy" class="text-[10px] text-muted text-center"></p>
+            <button id="lbSignOut" onclick="lbSignOut()" class="hidden w-full text-[11px] text-muted hover:text-text underline"></button>
+        </div>
+    </div>
+
+    <!-- Modal: customize visible categories -->
+    <div id="categoryVisibilityModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between gap-3">
+                <div><h3 id="visibility-title" class="text-base font-extrabold">Personnaliser les catégories</h3><p id="visibility-hint" class="text-xs text-muted mt-1">Choisissez les catégories à afficher.</p></div>
+                <button onclick="closeCategoryVisibilityModal()" class="text-muted hover:text-primary"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="categoryVisibilityList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+            <div class="flex items-center justify-between gap-2 pt-2">
+                <button onclick="showAllCategories()" id="visibility-show-all" class="text-xs font-bold text-teal">Afficher tout</button>
+                <button onclick="closeCategoryVisibilityModal()" id="visibility-done" class="px-4 py-2 rounded-xl bg-teal text-bg text-xs font-extrabold">Terminé</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: add category -->
     <div id="addCategoryModal" class="fixed inset-0 bg-bg/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="modal-card bg-surface border border-border w-full max-w-md rounded-2xl p-5 space-y-4">
@@ -416,17 +503,18 @@
                     <label id="txt-lbl-cat-name" class="text-xs font-semibold text-muted block mb-1">Nom de la catégorie</label>
                     <input id="catNameInput" type="text" placeholder="ex: Projets Freelance" class="w-full bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
                     <div class="flex items-center gap-2 mt-2">
-                        <input id="catGoalInput" type="number" min="0.1" step="any" placeholder="Objectif (ex: 20)" class="w-1/2 bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                        <input id="catGoalInput" type="number" min="0.1" step="any" placeholder="Objectif en heures (ex: 20)" class="w-1/2 bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
                         <select id="catUnitInput" class="w-1/2 bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal"></select>
                     </div>
                 </div>
                 <div>
                     <label id="txt-lbl-cat-type" class="text-xs font-semibold text-muted block mb-1">Type d'objectif (Couleur du cercle)</label>
-                    <select id="catTypeInput" class="w-full bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
-                        <option value="execution">Exécution (Teal)</option>
-                        <option value="money">Argent (Orange)</option>
-                        <option value="results">Résultats (Indigo)</option>
+                    <select id="catTypeInput" onchange="updateCatTypeHelp()" class="w-full bg-bg border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal">
+                        <option value="execution">Exécution — tâches et efforts (Turquoise)</option>
+                        <option value="money">Finance — revenus et dépenses (Orange)</option>
+                        <option value="results">Résultats — objectifs atteints (Indigo)</option>
                     </select>
+                    <p id="catTypeHelp" class="text-xs text-muted mt-2 leading-relaxed">Turquoise : suivi des tâches et de l'effort. Orange : argent, revenus et dépenses. Indigo : résultats concrets et objectifs atteints.</p>
                 </div>
             </div>
             <div class="flex items-center justify-end gap-2 pt-2">
@@ -446,13 +534,13 @@
                 </div>
                 <button onclick="closeCopilotModal()" class="text-muted hover:text-primary"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="copilotContent" class="space-y-3 max-h-80 overflow-y-auto text-xs leading-relaxed text-primary">
+            <div id="copilotContent" class="space-y-3 max-h-[60vh] overflow-y-auto text-xs leading-relaxed text-primary">
                 <p id="txt-copilot-initial" class="text-muted"></p>
             </div>
             <div class="pt-2 border-t border-border-subtle">
                 <button onclick="generateAIAnalysis()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo text-white hover:bg-indigo/90 transition-all flex items-center justify-center gap-2">
                     <i data-lucide="bot" class="w-4 h-4"></i>
-                    <span id="txt-gen-ai-btn">Générer mon plan</span>
+                    <span id="txt-gen-ai-btn">Actualiser l’analyse</span>
                 </button>
             </div>
         </div>
@@ -461,6 +549,7 @@
     <div id="toastHost"></div>
     <datalist id="unitList"><option value="h"><option value="DH"><option value="jours"><option value="pages"><option value="km"><option value="%"></datalist>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <script>
     /* =====================================================
        TEXTS (FR / EN / AR)
@@ -473,22 +562,22 @@
             paceDayTitle: (d, n) => `Jour ${d} sur ${n} · Rythme actuel`,
             done: ' accompli', target: p => `· cible ${p}%`,
             behindBadge: '! EN RETARD', onPaceBadge: '✓ DANS LE RYTHME',
-            legTarget: 'Cible', legExec: 'Exécution', legRes: 'Résultats',
-            weekTitle: 'Ma semaine', selectDaySub: 'Sélectionnez un jour',
+            legTarget: 'Cible', legExec: 'Exécution', legRes: 'Résultats', legMoney: 'Argent',
+            weekTitle: 'Ma semaine', selectDaySub: 'Aujourd’hui',
             catHeader: 'Catégories & Réglages Directs', catHint: 'Glissez le curseur avec le doigt',
             rewardsTitle: 'Récompenses Déblocables', rewardsReq: 'Score requis: 50%+',
             rew1: 'Grand Dîner au Restaurant', rew2: 'Nouvelle Tenue / Baskets',
             claimBtn: 'Réclamer', claimedBtn: 'Réclamé ✓', lockedMsg: 'Il faut 50%+ de score pour débloquer cette récompense.',
             addCatTitle: 'Ajouter une Nouvelle Catégorie', lblCatName: 'Nom de la catégorie', lblCatType: "Type d'objectif (Couleur)",
             cancelBtn: 'Annuler', createBtn: 'Créer la catégorie',
-            copilotTitle: 'Analyse IA - Tâches & Conseils', copilotInitial: "Clique ci-dessous pour obtenir ton plan d'action du jour.",
-            genAiBtn: 'Générer mon plan du jour',
+            copilotTitle: 'Coach IA — Analyse & Plan d’action', copilotInitial: "Clique ci-dessous pour obtenir ton plan d'action du jour.",
+            genAiBtn: 'Actualiser l’analyse',
             earnedText: 'Argent gagné', actionsText: 'actions', trackedText: 'suivis',
             unitHours: 'H', unitDays: 'JOURS',
             remainLbl: 'Reste', goalNumLbl: 'Objectif (nombre)', unitLbl: 'Unité (h, DH, jours...)', unitErr: "L'unité doit être un mot (h, DH, jours...), pas un nombre.",
             addBtn: 'Ajouter', addTaskPh: 'Ajoute ta propre tâche...', myTask: 'Ma tâche',
             reachedLbl: 'Atteint', goalLbl: 'Objectif', goalNumPh: 'Objectif en nombre (ex: 200)', goalUnitPh: 'Unité : h, DH, jours...',
-            goalUnits: { fin: 'DH', bus: 'propositions', app: 'H', faith: 'jours', fam: 'moments', hab: 'jours' },
+            goalUnits: { fin: 'DH', bus: 'heures', app: 'H', faith: 'heures', fam: 'heures', hab: 'heures' },
             days: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
             dayNames: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
             greet: { morning: 'Bonjour', afternoon: 'Bon après-midi', evening: 'Bonsoir', night: 'Bonne nuit' },
@@ -527,22 +616,22 @@
             paceDayTitle: (d, n) => `Day ${d} of ${n} · Current Pace`,
             done: ' done', target: p => `· target ${p}%`,
             behindBadge: '! BEHIND', onPaceBadge: '✓ ON TRACK',
-            legTarget: 'Target', legExec: 'Execution', legRes: 'Results',
-            weekTitle: 'My week', selectDaySub: 'Select a day',
+            legTarget: 'Target', legExec: 'Execution', legRes: 'Results', legMoney: 'Money',
+            weekTitle: 'My week', selectDaySub: 'Today',
             catHeader: 'Categories & Direct Settings', catHint: 'Drag the slider with your finger',
             rewardsTitle: 'Unlockable Rewards', rewardsReq: 'Required Score: 50%+',
             rew1: 'Nice Dinner Out', rew2: 'New Outfit / Sneakers',
             claimBtn: 'Claim', claimedBtn: 'Claimed ✓', lockedMsg: 'You need a 50%+ score to unlock this reward.',
             addCatTitle: 'Add New Category', lblCatName: 'Category Name', lblCatType: 'Goal Type (Circle Color)',
             cancelBtn: 'Cancel', createBtn: 'Create Category',
-            copilotTitle: 'AI Analysis - Tasks & Advice', copilotInitial: 'Click below to get your action plan for today.',
-            genAiBtn: "Generate today's plan",
+            copilotTitle: 'AI Coach — Analysis & Action Plan', copilotInitial: 'Click below to get your action plan for today.',
+            genAiBtn: 'Refresh analysis',
             earnedText: 'Money earned', actionsText: 'actions', trackedText: 'tracked',
             unitHours: 'H', unitDays: 'DAYS',
             remainLbl: 'Left', goalNumLbl: 'Goal (number)', unitLbl: 'Unit (h, DH, days...)', unitErr: 'The unit must be a word (h, DH, days...), not a number.',
             addBtn: 'Add', addTaskPh: 'Add your own task...', myTask: 'My task',
             reachedLbl: 'Reached', goalLbl: 'Goal', goalNumPh: 'Goal as a number (e.g. 200)', goalUnitPh: 'Unit: h, DH, days...',
-            goalUnits: { fin: 'DH', bus: 'proposals', app: 'H', faith: 'days', fam: 'moments', hab: 'days' },
+            goalUnits: { fin: 'DH', bus: 'hours', app: 'H', faith: 'hours', fam: 'hours', hab: 'hours' },
             days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
             greet: { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening', night: 'Good night' },
@@ -581,22 +670,22 @@
             paceDayTitle: (d, n) => `اليوم ${d} من ${n} · الوتيرة الحالية`,
             done: ' منجز', target: p => `· الهدف ${p}%`,
             behindBadge: '! متأخر', onPaceBadge: '✓ في المسار',
-            legTarget: 'الهدف', legExec: 'التنفيذ', legRes: 'النتائج',
-            weekTitle: 'أسبوعي', selectDaySub: 'اختر يوماً',
+            legTarget: 'الهدف', legExec: 'التنفيذ', legRes: 'النتائج', legMoney: 'المال',
+            weekTitle: 'أسبوعي', selectDaySub: 'اليوم',
             catHeader: 'الفئات والتحكم المباشر', catHint: 'اسحب المؤشر بإصبعك',
             rewardsTitle: 'المكافآت القابلة للفتح', rewardsReq: 'النتيجة المطلوبة: 50%+',
             rew1: 'عشاء فاخر في مطعم', rew2: 'ملابس جديدة / حذاء رياضي',
             claimBtn: 'مطالبة', claimedBtn: 'تم الاستلام ✓', lockedMsg: 'تحتاج نتيجة 50%+ لفتح هذه المكافأة.',
             addCatTitle: 'إضافة فئة جديدة', lblCatName: 'اسم الفئة', lblCatType: 'نوع الهدف (لون الدائرة)',
             cancelBtn: 'إلغاء', createBtn: 'إنشاء الفئة',
-            copilotTitle: 'تحليل AI - المهام والنصائح', copilotInitial: 'انقر أدناه للحصول على خطة عملك لليوم.',
-            genAiBtn: 'توليد خطة اليوم',
+            copilotTitle: 'مدرّب AI — تحليل وخطة عمل', copilotInitial: 'انقر أدناه للحصول على خطة عملك لليوم.',
+            genAiBtn: 'تحديث التحليل',
             earnedText: 'المال المكتسب', actionsText: 'إجراءات', trackedText: 'متابعات',
             unitHours: 'س', unitDays: 'يوم',
             remainLbl: 'المتبقي', goalNumLbl: 'الهدف (رقم)', unitLbl: 'الوحدة (س، درهم، يوم...)', unitErr: 'الوحدة يجب أن تكون كلمة (س، درهم، يوم...) وليس رقماً.',
             addBtn: 'إضافة', addTaskPh: 'أضف مهمتك الخاصة...', myTask: 'مهمتي',
             reachedLbl: 'المنجز', goalLbl: 'الهدف', goalNumPh: 'الهدف كرقم (مثال: 200)', goalUnitPh: 'الوحدة: س، درهم، يوم...',
-            goalUnits: { fin: 'درهم', bus: 'عرض', app: 'ساعة', faith: 'يوم', fam: 'لحظة', hab: 'يوم' },
+            goalUnits: { fin: 'درهم', bus: 'ساعة', app: 'ساعة', faith: 'ساعة', fam: 'ساعة', hab: 'ساعة' },
             days: ['إثن', 'ثلا', 'أرب', 'خمي', 'جمعة', 'سبت', 'أحد'],
             dayNames: ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'],
             greet: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'تصبح على خير' },
@@ -642,15 +731,9 @@
     ];
 
     /* =====================================================
-       STATE + STORAGE (local cache + private cloud account)
+       STATE + STORAGE (localStorage)
     ===================================================== */
-    let STORAGE_KEY = 'lifeos_v2';
-    let focusAuthUser = null;
-    let focusCloudSaveTimer = null;
-    let focusLoadingUserId = null;
-    let focusAppInitialized = false;
-    let focusLegacyStore = null;
-    try { focusLegacyStore = JSON.parse(localStorage.getItem('lifeos_v2') || 'null'); } catch (_) {}
+    const STORAGE_KEY = 'lifeos_v2';
     let targetMoney = 50000;
 
     const BASE_CATS = [
@@ -662,7 +745,7 @@
         { id: 'hab',   group: 'execution', colorClass: 'slider-teal',   barColor: '#2dd4a8', textClass: 'text-teal' }
     ];
 
-    function defaultStore() { return { user: '', lang: 'FR', custom: [], customRewards: [], goals: {}, customTasks: {}, theme: 'dark', months: {}, dayDone: {}, lastActive: '' }; }
+    function defaultStore() { return { user: '', lang: 'FR', custom: [], customRewards: [], goals: {}, customTasks: {}, hiddenCategories: [], theme: 'dark', themeMode: 'auto', hiddenRewards: [], hiddenTaskCats: [], months: {}, dayDone: {}, lastActive: '' }; }
 
     let store = defaultStore();
     try {
@@ -673,32 +756,16 @@
     let saveTimer = null;
     function persist() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+        if (typeof lbScheduleSync === 'function') lbScheduleSync();
         const dot = document.getElementById('saveDot');
         const info = document.getElementById('saveInfo');
         if (info) info.textContent = i18n[currentLang].saved;
         if (dot) dot.style.transform = 'scale(1.8)';
         clearTimeout(saveTimer);
         saveTimer = setTimeout(() => {
-            if (info) info.textContent = focusAuthUser ? 'Saved securely to your account' : i18n[currentLang].saveInfo;
+            if (info) info.textContent = i18n[currentLang].saveInfo;
             if (dot) dot.style.transform = 'scale(1)';
         }, 1500);
-
-        // Debounced cloud sync: each row is owned by the authenticated user (RLS enforced in Postgres).
-        if (focusAuthUser && window.focusSupabaseClient) {
-            clearTimeout(focusCloudSaveTimer);
-            focusCloudSaveTimer = setTimeout(async () => {
-                try {
-                    const { error } = await window.focusSupabaseClient
-                        .from('focus_user_data')
-                        .upsert({ user_id: focusAuthUser.id, data: store, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-                    if (error) throw error;
-                    if (info) info.textContent = 'Saved securely to your account ✓';
-                } catch (err) {
-                    console.error('Focus cloud save failed:', err);
-                    if (info) info.textContent = 'Cloud sync issue — your changes remain on this device';
-                }
-            }, 800);
-        }
     }
 
     // ---- Date helpers (real date, recomputed live) ----
@@ -720,15 +787,21 @@
 
     // ---- Objectifs par catégorie (valeur cible + unité, modifiables) ----
     const TARGET_PCT = 70; // cible fixe du mois
-    const DEFAULT_TARGETS = { fin: 50000, bus: 100, app: 100, faith: 100, fam: 100, hab: 100 };
+    const DEFAULT_TARGETS = { fin: 50000, bus: 20, app: 20, faith: 7, fam: 5, hab: 30 };
+    const DEFAULT_UNITS = { fin: 'DH', bus: 'h', app: 'h', faith: 'h', fam: 'h', hab: 'h' };
+    function hoursUnit() { return currentLang === 'AR' ? 'ساعة' : currentLang === 'EN' ? 'hours' : 'heures'; }
+    function isWork(cat) { return /^\s*work\s*$/i.test(cat.customName || ''); }
+    function showAbs(cat) { return cat.id !== 'fin' && !cat.isMoney; }
     function goalOf(cat) {
         const saved = store.goals && store.goals[cat.id];
         if (saved) {
+            // Business & Career is tracked in hours, including older saved settings.
+            if (cat.id !== 'fin' && !cat.isMoney && (!saved.unit || saved.unit === '%')) return { ...saved, target: (isWork(cat) && saved.target === 100) ? 24 : saved.target, unit: hoursUnit() };
             // une unité purement numérique est une erreur de saisie : on l'ignore
-            if (/^[\d.,\s]+$/.test(saved.unit || '')) return { target: 100, unit: '%' };
+            if (/^[\d.,\s]+$/.test(saved.unit || '')) return { target: 100, unit: cat.id === 'fin' ? 'DH' : hoursUnit() };
             return saved;
         }
-        const unit = cat.id === 'fin' ? ((i18n[currentLang].goalUnits || {}).fin || 'DH') : '%';
+        const unit = cat.id === 'bus' ? hoursUnit() : (DEFAULT_UNITS[cat.id] || (cat.isMoney ? 'DH' : hoursUnit()));
         return { target: DEFAULT_TARGETS[cat.id] || 100, unit };
     }
     function fmtNum(n) {
@@ -751,7 +824,8 @@
         const md = getMonthData();
         categories.forEach(c => md.values[c.id] = c.value);
         const { execAvg, resAvg } = computeAvgs();
-        md.history[selectedDate.getDate()] = { e: execAvg, r: resAvg };
+        const _mc = categories.find(c => c.isMoney);
+        md.history[selectedDate.getDate()] = { e: execAvg, r: resAvg, m: _mc ? _mc.value : 0 };
         store.lastActive = dayKey(selectedDate);
         persist();
     }
@@ -765,7 +839,7 @@
         const endDay = isCurrent ? now().getDate() : isPast ? daysInMonth(activeMonthDate) : Math.min(daysInMonth(activeMonthDate), selectedDate.getDate());
         for (let d = endDay; d >= 1; d--) {
             const h = md.history[d];
-            if (h && (h.e > 0 || h.r > 0)) s++;
+            if (h && (h.e > 0 || h.r > 0 || h.m > 0)) s++;
             else if (d !== endDay) break;
         }
         return s;
@@ -792,6 +866,8 @@
         setText('txt-copilot-btn', t.copilotBtn);
         setText('txt-saisir-btn', t.saisirBtn);
         setText('txt-leaderboard', t.leaderboard);
+        if (typeof authPaint === 'function') authPaint();
+        if (typeof lbRender === 'function' && !document.getElementById('lbModal').classList.contains('hidden')) lbRender();
         setText('txt-your-year', t.yourYear);
         setText('txt-gauge-execution', t.gaugeExec);
         setText('txt-gauge-money', t.gaugeMoney);
@@ -800,8 +876,11 @@
         setText('txt-leg-target', t.legTarget);
         setText('txt-leg-exec', t.legExec);
         setText('txt-leg-res', t.legRes);
+        setText('txt-leg-money', t.legMoney);
         setText('txt-daily-tracker-title', t.weekTitle);
         setText('txt-select-day-sub', t.selectDaySub);
+        setText('prevWeekBtn', currentLang === 'AR' ? '›' : '‹');
+        setText('nextWeekBtn', currentLang === 'AR' ? '‹' : '›');
         setText('txt-cat-header', t.catHeader);
         setText('txt-cat-hint', t.catHint);
         setText('monthlyAnalysisBtnText', currentLang === 'EN' ? 'Monthly analysis' : currentLang === 'AR' ? 'تحليل الشهر' : 'Analyse du mois');
@@ -812,10 +891,12 @@
         setText('txt-add-cat-modal-title', t.addCatTitle);
         setText('txt-lbl-cat-name', t.lblCatName);
         setText('txt-lbl-cat-type', t.lblCatType);
+        updateCatTypeHelp();
         setText('txt-cancel-btn', t.cancelBtn);
         setText('txt-create-btn', t.createBtn);
         setText('txt-copilot-modal-title', t.copilotTitle);
         setText('txt-copilot-initial', t.copilotInitial);
+        if (!document.getElementById('copilotModal').classList.contains('hidden')) generateAIAnalysis();
         setText('txt-gen-ai-btn', t.genAiBtn);
         setText('txt-name-title', t.nameTitle);
         setText('txt-name-hint', t.nameHint);
@@ -831,6 +912,7 @@
         syncMoneyTarget();
 
         refreshClaimButtons();
+        applyThemeBtn();
         renderUser();
         renderClock();
         renderDays();
@@ -924,13 +1006,34 @@
             const btn = document.createElement('button');
             btn.className = 'day-btn py-2 rounded-xl border text-xs transition-all ' +
                 (isSel ? 'border-teal/40 bg-teal/15 text-teal font-bold ' : 'border-border bg-bg font-semibold hover:border-teal ') +
-                (isToday ? 'today-ring ' : '') + (isFuture && !isSel ? 'opacity-60 ' : '') + (!inActiveMonth ? 'opacity-25 cursor-not-allowed ' : '');
-            btn.disabled = !inActiveMonth;
+                (isToday ? 'today-ring ' : '') + (isFuture && !isSel ? 'opacity-60 ' : '') + (!inActiveMonth ? 'opacity-50 ' : '');
             btn.innerHTML = `<span class="block text-[10px] opacity-70">${t.days[i]}</span><span class="block text-sm font-extrabold">${d.getDate()}</span>`;
-            btn.onclick = () => { if (!inActiveMonth) return; selectedDate = d; renderDays(); renderDayTasks(); };
+            btn.onclick = () => selectDate(d);
             container.appendChild(btn);
         });
     }
+
+    function selectDate(d) {
+        const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const sameMonth = target.getFullYear() === activeMonthDate.getFullYear() && target.getMonth() === activeMonthDate.getMonth();
+        selectedDate = target;
+        if (!sameMonth) {
+            activeMonthDate = new Date(target.getFullYear(), target.getMonth(), 1);
+            buildCategories();
+            renderCategories();
+            recalculateAll(true);
+            rebuildChart();
+            renderCustomRewards();
+            persist();
+        }
+        renderDays();
+        renderDayTasks();
+        renderClock();
+    }
+    function shiftWeek(n) {
+        selectDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 7 * n));
+    }
+    function goToday() { selectDate(now()); }
 
     function tasksForDate(d) {
         return WEEK_FOCUS[weekdayIdx(d)];
@@ -946,21 +1049,29 @@
         const focus = tasksForDate(d);
 
         setText('selectedDayStatus', t.dayHeader(t.dayNames[idx], d.getDate(), isToday));
-        setText('focusLine', `${t.focus} : ` + focus.map(c => t.cats[c] || c).join(' · '));
+        const hiddenT = store.hiddenTaskCats || [];
+        const rb = document.getElementById('restoreTasksBtn');
+        if (rb) {
+            rb.style.display = hiddenT.length ? '' : 'none';
+            rb.textContent = ({ FR: '↺ Rétablir les tâches par défaut', EN: '↺ Restore default tasks', AR: '↺ استرجاع المهام الافتراضية' })[currentLang];
+        }
 
         const list = document.getElementById('tasksList');
         list.innerHTML = '';
         focus.forEach((c, i) => {
+            if (hiddenT.includes(c)) return;
             const li = document.createElement('li');
             const isDone = done.includes(i);
             li.className = 'lift flex items-start gap-2.5 bg-bg border border-border-subtle rounded-xl p-2.5 cursor-pointer';
             li.innerHTML = `
                 <span class="mt-0.5 w-5 h-5 shrink-0 rounded-md border ${isDone ? 'bg-teal border-teal text-bg' : 'border-border'} flex items-center justify-center text-[11px] font-black ${isDone ? 'tick-pop' : ''}">${isDone ? '✓' : ''}</span>
-                <span class="min-w-0">
+                <span class="min-w-0 flex-1">
                     <span class="block text-[10px] font-bold uppercase tracking-wider text-muted">${t.cats[c]}</span>
                     <span class="block text-xs ${isDone ? 'task-done' : ''}">${t.task[c]}</span>
-                </span>`;
+                </span>
+                <button class="text-muted hover:text-orange text-sm px-1" title="✕">✕</button>`;
             li.onclick = () => toggleTask(key, i);
+            li.querySelector('button').onclick = e => { e.stopPropagation(); hideDefaultTask(c); };
             list.appendChild(li);
         });
         // Tâches personnelles ajoutées par l'utilisateur pour ce jour
@@ -979,11 +1090,23 @@
             li.querySelector('button').onclick = e => { e.stopPropagation(); deleteCustomTask(key, ci); };
             list.appendChild(li);
         });
-        const doneCount = done.length + customs.filter(c => c.done).length;
-        setText('dayProgress', `${doneCount}/${focus.length + customs.length}`);
+        const visCount = focus.filter(c => !hiddenT.includes(c)).length;
+        const doneCount = done.filter(ix => !hiddenT.includes(focus[ix])).length + customs.filter(c => c.done).length;
+        setText('dayProgress', `${doneCount}/${visCount + customs.length}`);
         document.getElementById('timeTip').style.display = isToday ? '' : 'none';
     }
 
+    function hideDefaultTask(c) {
+        store.hiddenTaskCats = [...new Set([...(store.hiddenTaskCats || []), c])];
+        persist();
+        renderDayTasks();
+        toast(currentLang === 'AR' ? 'تم حذف المهمة.' : currentLang === 'EN' ? 'Task deleted.' : 'Tâche supprimée.');
+    }
+    function restoreDefaultTasks() {
+        store.hiddenTaskCats = [];
+        persist();
+        renderDayTasks();
+    }
     function addCustomTask() {
         const input = document.getElementById('newTaskInput');
         const text = input.value.trim();
@@ -1016,7 +1139,9 @@
         store.dayDone[key] = arr;
         persist();
         renderDayTasks();
-        if (arr.length === tasksForDate(selectedDate).length) { toast('🎉 ' + i18n[currentLang].saved); burstConfetti(18); }
+        const _f = tasksForDate(selectedDate), _h = store.hiddenTaskCats || [];
+        const _vis = _f.map((c, ix) => ix).filter(ix => !_h.includes(_f[ix]));
+        if (_vis.length && _vis.every(ix => arr.includes(ix))) { toast('🎉 ' + i18n[currentLang].saved); burstConfetti(18); }
     }
 
     /* =====================================================
@@ -1024,11 +1149,67 @@
     ===================================================== */
     function catLabel(cat) { const t = i18n[currentLang]; return t.cats[cat.id] || cat.customName || cat.id; }
 
+    function openCategoryVisibilityModal() {
+        renderCategoryVisibilityOptions();
+        document.getElementById('categoryVisibilityModal').classList.remove('hidden');
+    }
+    function closeCategoryVisibilityModal() { document.getElementById('categoryVisibilityModal').classList.add('hidden'); }
+    function renderCategoryVisibilityOptions() {
+        const host = document.getElementById('categoryVisibilityList');
+        if (!host) return;
+        const hidden = new Set(store.hiddenCategories || []);
+        host.innerHTML = categories.map(cat => {
+            const checked = !hidden.has(cat.id);
+            return `<label class="flex items-center justify-between gap-3 rounded-xl border border-border-subtle bg-bg px-3 py-3 cursor-pointer">
+                <span class="text-sm font-semibold">${escapeHtml(catLabel(cat))}</span>
+                <span class="flex items-center gap-3">
+                    ${isCustomCat(cat.id) ? `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); deleteCustomCategory('${cat.id}')" class="text-red-400 text-base leading-none" title="Supprimer / Delete / حذف" aria-label="Delete">🗑</button>` : ''}
+                    <input type="checkbox" class="w-4 h-4 accent-teal" ${checked ? 'checked' : ''} onchange="toggleCategoryVisibility('${cat.id}', this.checked)" aria-label="${escapeHtml(catLabel(cat))}">
+                </span>
+            </label>`;
+        }).join('');
+        const ar = currentLang === 'AR', en = currentLang === 'EN';
+        document.getElementById('visibility-title').textContent = ar ? 'تخصيص الفئات' : en ? 'Customize categories' : 'Personnaliser les catégories';
+        document.getElementById('visibility-hint').textContent = ar ? 'اختر الفئات التي تريد إظهارها.' : en ? 'Choose which categories to display.' : 'Choisissez les catégories à afficher.';
+        document.getElementById('visibility-show-all').textContent = ar ? 'إظهار الكل' : en ? 'Show all' : 'Afficher tout';
+        document.getElementById('visibility-done').textContent = ar ? 'تم' : en ? 'Done' : 'Terminé';
+    }
+    function isCustomCat(id) { return (store.custom || []).some(c => c.id === id); }
+    function deleteCustomCategory(id) {
+        const cat = (store.custom || []).find(c => c.id === id);
+        if (!cat) return;
+        if (!confirm('Supprimer / Delete / حذف : ' + (cat.customName || id) + ' ?')) return;
+        store.custom = store.custom.filter(c => c.id !== id);
+        store.hiddenCategories = (store.hiddenCategories || []).filter(x => x !== id);
+        Object.values(store.months || {}).forEach(m => { if (m && m.values) delete m.values[id]; });
+        if (store.goals) delete store.goals[id];
+        persist();
+        renderCategoryVisibilityOptions();
+        renderCategories();
+        recalculateAll(true);
+    }
+    function toggleCategoryVisibility(id, visible) {
+        const hidden = new Set(store.hiddenCategories || []);
+        if (visible) hidden.delete(id); else hidden.add(id);
+        store.hiddenCategories = [...hidden];
+        persist();
+        renderCategories();
+        recalculateAll(true);
+    }
+    function showAllCategories() {
+        store.hiddenCategories = [];
+        persist();
+        renderCategoryVisibilityOptions();
+        renderCategories();
+        recalculateAll(true);
+    }
+
     function renderCategories() {
         const t = i18n[currentLang];
         const container = document.getElementById('categoriesContainer');
         container.innerHTML = '';
-        categories.forEach((cat, i) => {
+        const hidden = new Set(store.hiddenCategories || []);
+        categories.filter(cat => !hidden.has(cat.id)).forEach((cat, i) => {
             const card = document.createElement('div');
             card.className = 'reveal lift bg-surface rounded-2xl border border-border p-4 space-y-3';
             card.style.animationDelay = `${0.05 * i}s`;
@@ -1036,7 +1217,7 @@
             card.innerHTML = `
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-semibold">${escapeHtml(catLabel(cat))}</h3>
-                    <span id="val-text-${cat.id}" class="text-sm font-bold ${cat.textClass}">${cat.value}%</span>
+                    <span id="val-text-${cat.id}" class="text-sm font-bold ${cat.textClass}">${showAbs(cat) ? `${fmtNum((cat.value / 100) * goalOf(cat).target)} ${escapeHtml(goalOf(cat).unit)}` : `${cat.value}%`}</span>
                 </div>
                 <div class="space-y-1.5">
                     <input type="range" min="0" max="100" value="${cat.value}"
@@ -1063,15 +1244,15 @@
             <div class="grid grid-cols-3 gap-2 items-end">
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.reachedLbl}</p>
-                    <p class="text-base font-black ${cat.textClass} tabular-nums"><span id="reached-${cat.id}">${fmtNum(reachedN)}</span> <span class="text-xs font-bold text-muted">${unit}</span></p>
+                    <p class="text-sm font-black ${cat.textClass} tabular-nums"><span id="reached-${cat.id}">${fmtNum(reachedN)}</span> <span class="text-[10px] font-bold text-muted">${unit}</span> ${showAbs(cat) ? '' : `<span class="goal-percent text-[10px] font-semibold text-muted">(${cat.value}%)</span>`}</p>
                 </div>
                 <div class="text-center">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.remainLbl}</p>
-                    <p class="text-base font-black text-primary tabular-nums"><span id="remain-${cat.id}">${fmtNum(g.target - reachedN)}</span> <span class="text-xs font-bold text-muted">${unit}</span></p>
+                    <p class="text-sm font-black text-primary tabular-nums"><span id="remain-${cat.id}">${fmtNum(g.target - reachedN)}</span> <span class="text-[10px] font-bold text-muted">${unit}</span></p>
                 </div>
                 <div class="text-end">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-muted">${t.goalLbl}</p>
-                    <button onclick="toggleGoalEditor('${cat.id}')" class="text-base font-extrabold hover:text-teal transition-colors">${fmtNum(g.target)} ${unit} <span class="text-[11px] opacity-60">✎</span></button>
+                    <button onclick="toggleGoalEditor('${cat.id}')" class="text-sm font-extrabold hover:text-teal transition-colors">${fmtNum(g.target)} ${unit} <span class="text-[11px] opacity-60">✎</span></button>
                 </div>
             </div>
             <div id="goal-edit-${cat.id}" class="hidden">
@@ -1080,7 +1261,7 @@
                         <input id="goal-num-${cat.id}" type="number" min="0.1" step="any" value="${g.target}" class="mt-1 ${inp}">
                     </label>
                     <label class="text-[10px] font-semibold text-muted">${t.unitLbl}
-                        <select id="goal-unit-${cat.id}" class="mt-1 ${inp}">${unitOptions(g.unit)}</select>
+                        <select id="goal-unit-${cat.id}" class="mt-1 ${inp}">${unitOptions(g.unit, cat.id)}</select>
                     </label>
                 </div>
                 <button onclick="saveGoal('${cat.id}')" class="mt-2 w-full px-3 py-1.5 rounded-lg text-xs font-bold bg-teal text-bg hover:opacity-90">OK</button>
@@ -1122,15 +1303,15 @@
     }
 
     // Choix d'unités proposés : %, h (heures), jours, DH
-    function unitOptions(current) {
+    function unitOptions(current, categoryId) {
         const t = i18n[currentLang];
-        const list = ['%', t.unitHours, t.unitDays, 'DH'];
+        const list = [t.unitHours, 'min', t.unitDays, 'DH', ...(categoryId === 'fin' ? ['%'] : []), 'pages', 'propositions', 'séances', 'km'];
         if (current && !list.includes(current)) list.push(current);
         return list.map(u => `<option value="${escapeHtml(u)}" ${u === current ? 'selected' : ''}>${escapeHtml(u)}</option>`).join('');
     }
     function fillUnitSelect() {
         const sel = document.getElementById('catUnitInput');
-        if (sel) sel.innerHTML = unitOptions('%');
+        if (sel) sel.innerHTML = unitOptions(i18n[currentLang].unitHours, 'custom');
     }
 
     function toggleGoalEditor(id) {
@@ -1158,11 +1339,15 @@
         const cat = categories.find(c => c.id === id);
         if (!cat) return;
         cat.value = val;
-        document.getElementById(`val-text-${id}`).textContent = `${val}%`;
+        const g = goalOf(cat);
+        const reachedValue = (val / 100) * g.target;
+        document.getElementById(`val-text-${id}`).textContent = showAbs(cat) ? `${fmtNum(reachedValue)} ${g.unit}` : `${val}%`;
         document.getElementById(`bar-${id}`).style.width = `${val}%`;
         const reachedEl = document.getElementById(`reached-${id}`);
-        const gTarget = goalOf(cat).target;
-        if (reachedEl) reachedEl.textContent = fmtNum((val / 100) * gTarget);
+        const gTarget = g.target;
+        if (reachedEl) reachedEl.textContent = fmtNum(reachedValue);
+        const reachedBox = reachedEl && reachedEl.parentElement;
+        if (reachedBox) { const pct = reachedBox.querySelector('.goal-percent'); if (pct) pct.textContent = `(${val}%)`; }
         const remainEl = document.getElementById(`remain-${id}`);
         if (remainEl) remainEl.textContent = fmtNum(gTarget - (val / 100) * gTarget);
         if (cat.isMoney) {
@@ -1216,8 +1401,11 @@
         }
 
         if (chartInstance) {
-            chartInstance.data.datasets[1].data[day - 1] = execAvg;
-            chartInstance.data.datasets[2].data[day - 1] = resAvg;
+            if (chartInstance.data.datasets[1].data[day - 1] != null) {
+                chartInstance.data.datasets[1].data[day - 1] = execAvg;
+                chartInstance.data.datasets[2].data[day - 1] = resAvg;
+                chartInstance.data.datasets[3].data[day - 1] = moneyVal;
+            }
             chartInstance.update();
         }
         refreshClaimButtons();
@@ -1257,40 +1445,84 @@
         // Courbe continue : 0 avant le début du suivi, puis on reporte la dernière valeur connue jusqu'à aujourd'hui
         const exec = Array(total).fill(null);
         const res = Array(total).fill(null);
-        let lastE = 0, lastR = 0;
+        const money = Array(total).fill(null);
+        let lastE = 0, lastR = 0, lastM = 0;
         for (let day = 1; day <= throughDay; day++) {
             const h = md.history[day];
-            if (h) { lastE = h.e; lastR = h.r; }
+            if (h) { lastE = h.e; lastR = h.r; if (h.m != null) lastM = h.m; }
             exec[day - 1] = lastE;
             res[day - 1] = lastR;
+            money[day - 1] = lastM;
         }
         const { execAvg, resAvg } = computeAvgs();
         const selectedIdx = Math.max(0, Math.min(total - 1, selectedDate.getDate() - 1));
-        exec[selectedIdx] = execAvg; res[selectedIdx] = resAvg;
+        if (selectedIdx < throughDay) {
+            const mcat = categories.find(c => c.isMoney);
+            exec[selectedIdx] = execAvg; res[selectedIdx] = resAvg; money[selectedIdx] = mcat ? mcat.value : 0;
+        }
         return {
             labels: Array.from({ length: total }, (_, i) => i + 1),
             target: Array(total).fill(TARGET_PCT),
-            exec, res
+            exec, res, money
         };
     }
 
+    const endLabelsPlugin = {
+        id: 'endLabels',
+        afterDatasetsDraw(chart) {
+            const { ctx, chartArea } = chart;
+            const items = [];
+            chart.data.datasets.forEach((ds, i) => {
+                if (i === 0) return;
+                let idx = -1;
+                for (let k = ds.data.length - 1; k >= 0; k--) { if (ds.data[k] != null) { idx = k; break; } }
+                if (idx < 0) return;
+                const el = chart.getDatasetMeta(i).data[idx];
+                if (!el) return;
+                items.push({ x: el.x, oy: el.y, y: el.y, v: ds.data[idx], color: ds.borderColor });
+            });
+            items.sort((a, b) => a.y - b.y);
+            for (let k = 1; k < items.length; k++) if (items[k].y - items[k - 1].y < 14) items[k].y = items[k - 1].y + 14;
+            ctx.save();
+            ctx.font = '700 10px "Plus Jakarta Sans", sans-serif';
+            ctx.textBaseline = 'middle';
+            items.forEach(it => {
+                const txt = `${Math.round(it.v)}%`;
+                const w = ctx.measureText(txt).width;
+                const toRight = it.x + 12 + w <= chart.width;
+                const tx = toRight ? it.x + 9 : it.x - 9 - w;
+                const ty = Math.max(chartArea.top + 7, Math.min(chartArea.bottom - 7, it.y));
+                ctx.beginPath(); ctx.arc(it.x, it.oy, 4.5, 0, Math.PI * 2);
+                ctx.fillStyle = it.color; ctx.fill();
+                ctx.lineWidth = 2; ctx.strokeStyle = rgbVar('--c-surface'); ctx.stroke();
+                ctx.fillStyle = rgbVar('--c-surface'); ctx.globalAlpha = 0.85;
+                ctx.fillRect(tx - 3, ty - 7, w + 6, 14);
+                ctx.globalAlpha = 1; ctx.fillStyle = it.color;
+                ctx.fillText(txt, tx, ty);
+            });
+            ctx.restore();
+        }
+    };
     function rebuildChart() {
         const t = i18n[currentLang];
         const c = chartData();
         const todayIdx = selectedDate.getDate() - 1;
-        const C = { teal: rgbVar('--c-teal'), tealSoft: rgbVar('--c-teal', 0.14), indigo: rgbVar('--c-indigo'), muted: rgbVar('--c-muted'), grid: rgbVar('--c-border'), tick: rgbVar('--c-muted') };
+        const C = { orange: rgbVar('--c-orange'), teal: rgbVar('--c-teal'), tealSoft: rgbVar('--c-teal', 0.14), indigo: rgbVar('--c-indigo'), muted: rgbVar('--c-muted'), grid: rgbVar('--c-border'), tick: rgbVar('--c-muted') };
         if (chartInstance) chartInstance.destroy();
         const ctx = document.getElementById('paceChart').getContext('2d');
         chartInstance = new Chart(ctx, {
             type: 'line',
+            plugins: [endLabelsPlugin],
             data: {
                 labels: c.labels,
                 datasets: [
-                    { label: t.legTarget, data: c.target, borderColor: '#71717a', borderWidth: 1.5, borderDash: [3, 3], pointRadius: 0 },
-                    { label: t.legExec, data: c.exec, borderColor: '#2dd4a8', backgroundColor: 'rgba(45,212,168,.12)', borderWidth: 3, fill: true,
-                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: '#2dd4a8', spanGaps: false, tension: .35 },
-                    { label: t.legRes, data: c.res, borderColor: '#6366f1', borderWidth: 3,
-                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: '#6366f1', spanGaps: false, tension: .35 }
+                    { label: t.legTarget, data: c.target, borderColor: C.muted, borderWidth: 1.5, borderDash: [3, 3], pointRadius: 0 },
+                    { label: t.legExec, data: c.exec, borderColor: C.teal, backgroundColor: C.tealSoft, borderWidth: 3, fill: true,
+                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: C.teal, spanGaps: false, tension: .35 },
+                    { label: t.legRes, data: c.res, borderColor: C.indigo, borderWidth: 3,
+                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: C.indigo, spanGaps: false, tension: .35 },
+                    { label: t.legMoney, data: c.money, borderColor: C.orange, borderWidth: 3,
+                      pointRadius: ctx => ctx.dataIndex === todayIdx ? 5 : 0, pointHoverRadius: 6, pointBackgroundColor: C.orange, spanGaps: false, tension: .35 }
                 ]
             },
             options: {
@@ -1298,8 +1530,8 @@
                 animation: { duration: 1100, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { color: '#1a1d26' }, ticks: { color: '#71717a', font: { size: 9 } } },
-                    y: { grid: { color: '#1a1d26' }, ticks: { color: '#71717a', font: { size: 9 } }, min: 0, max: 100 }
+                    x: { grid: { color: C.grid }, ticks: { color: C.tick, font: { size: 9 } } },
+                    y: { grid: { color: C.grid }, ticks: { color: C.tick, font: { size: 9 } }, min: 0, max: 100 }
                 }
             }
         });
@@ -1395,7 +1627,7 @@
         document.getElementById('monthlyAnalysisTitle').textContent = (currentLang==='EN'?'Full monthly analysis':currentLang==='AR'?'التحليل الشهري الكامل':'Analyse complète du mois');
         document.getElementById('monthlyAnalysisSubtitle').textContent = monthName;
         const history = md.history || {};
-        const recordedDays = Object.keys(history).filter(k => history[k] && (Number(history[k].e)>0 || Number(history[k].r)>0)).length;
+        const recordedDays = Object.keys(history).filter(k => history[k] && (Number(history[k].e)>0 || Number(history[k].r)>0 || Number(history[k].m)>0)).length;
         const histVals = Object.values(history).filter(h=>h && (Number.isFinite(Number(h.e)) || Number.isFinite(Number(h.r))));
         const avgE = histVals.length ? Math.round(histVals.reduce((a,h)=>a+(Number(h.e)||0),0)/histVals.length) : average(execCats);
         const avgR = histVals.length ? Math.round(histVals.reduce((a,h)=>a+(Number(h.r)||0),0)/histVals.length) : average(resCats);
@@ -1406,9 +1638,9 @@
             const dayNum = Number(key.slice(monthPrefix.length));
             const date = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), dayNum);
             if (!Number.isInteger(dayNum) || dayNum < 1 || dayNum > daysInMonth(activeMonthDate)) return;
-            const baseCount = tasksForDate(date).length;
+            const baseCount = tasksForDate(date).filter(c => !(store.hiddenTaskCats || []).includes(c)).length;
             const customCount = (store.customTasks && store.customTasks[key] || []).length;
-            taskDone += Array.isArray(arr) ? arr.length : 0;
+            taskDone += Array.isArray(arr) ? arr.filter(ix => !(store.hiddenTaskCats || []).includes(tasksForDate(date)[ix])).length : 0;
             taskDone += (store.customTasks && store.customTasks[key] || []).filter(task => task && task.done).length;
             taskTotal += baseCount + customCount;
         });
@@ -1419,7 +1651,7 @@
             if (!Number.isInteger(dayNum) || dayNum < 1 || dayNum > daysInMonth(activeMonthDate)) return;
             const date = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), dayNum);
             taskDone += (Array.isArray(tasks) ? tasks : []).filter(task => task && task.done).length;
-            taskTotal += tasksForDate(date).length + (Array.isArray(tasks) ? tasks.length : 0);
+            taskTotal += tasksForDate(date).filter(c => !(store.hiddenTaskCats || []).includes(c)).length + (Array.isArray(tasks) ? tasks.length : 0);
         });
         const sorted = [...cats].sort((a,b)=>a.value-b.value);
         const catName = c => (i18n[currentLang].cats[c.id] || c.customName || c.id);
@@ -1465,9 +1697,33 @@
         });
     }
 
+    function applyDefaultRewardVisibility() {
+        const hid = store.hiddenRewards || [];
+        ['0', '1'].forEach(i => {
+            const b = document.querySelector(`.claim-btn[data-idx="${i}"]`);
+            const card = b && b.closest('.lift');
+            if (card) card.style.display = hid.includes(i) ? 'none' : '';
+        });
+        const r = document.getElementById('restoreRewardsBtn');
+        if (r) r.style.display = hid.length ? '' : 'none';
+    }
+    function deleteReward(id) {
+        if (id === '0' || id === '1') store.hiddenRewards = [...new Set([...(store.hiddenRewards || []), id])];
+        else store.customRewards = (store.customRewards || []).filter(r => r.id !== id);
+        persist();
+        applyDefaultRewardVisibility();
+        renderCustomRewards();
+        toast(currentLang === 'AR' ? 'تم حذف المكافأة.' : currentLang === 'EN' ? 'Reward deleted.' : 'Récompense supprimée.');
+    }
+    function restoreDefaultRewards() {
+        store.hiddenRewards = [];
+        persist();
+        applyDefaultRewardVisibility();
+    }
     function renderCustomRewards() {
         const host = document.getElementById('customRewardsList');
         if (!host) return;
+        applyDefaultRewardVisibility();
         const rewards = Array.isArray(store.customRewards) ? store.customRewards : [];
         host.innerHTML = '';
         if (!rewards.length) {
@@ -1491,7 +1747,15 @@
             btn.onclick = function () { claimReward(this); };
             btn.className = 'claim-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted transition-all';
             btn.textContent = i18n[currentLang].claimBtn;
-            card.append(info, btn);
+            const del = document.createElement('button');
+            del.textContent = '✕';
+            del.title = 'Supprimer / Delete / حذف';
+            del.className = 'shrink-0 w-6 h-6 rounded-full border border-border text-muted text-[11px] hover:text-orange hover:border-orange transition-colors';
+            del.onclick = () => deleteReward(reward.id);
+            const actions = document.createElement('div');
+            actions.className = 'flex items-center gap-1.5 shrink-0';
+            actions.append(btn, del);
+            card.append(info, actions);
             host.appendChild(card);
         });
         refreshClaimButtons();
@@ -1532,6 +1796,38 @@
     /* =====================================================
        MODALS
     ===================================================== */
+    function updateCatTypeHelp() {
+        const select = document.getElementById('catTypeInput');
+        const help = document.getElementById('catTypeHelp');
+        if (!select || !help) return;
+        const lang = currentLang;
+        const labels = {
+            FR: {
+                execution: 'Exécution — tâches et efforts (Turquoise)',
+                money: 'Finance — revenus et dépenses (Orange)',
+                results: 'Résultats — objectifs atteints (Indigo)',
+                help: 'Turquoise : suivi des tâches et de l’effort. Orange : argent, revenus et dépenses. Indigo : résultats concrets et objectifs atteints.'
+            },
+            EN: {
+                execution: 'Execution — tasks and effort (Teal)',
+                money: 'Finance — income and expenses (Orange)',
+                results: 'Results — achieved outcomes (Indigo)',
+                help: 'Teal: track tasks and effort. Orange: money, income and expenses. Indigo: measurable results and goals achieved.'
+            },
+            AR: {
+                execution: 'التنفيذ — المهام والمجهود (تركوازي)',
+                money: 'المالية — المداخيل والمصاريف (برتقالي)',
+                results: 'النتائج — الأهداف المحققة (نيلي)',
+                help: 'التركوازي: تتبّع المهام والمجهود. البرتقالي: المال والمداخيل والمصاريف. النيلي: النتائج الملموسة والأهداف التي حققتها.'
+            }
+        }[lang] || null;
+        if (!labels) return;
+        for (const option of select.options) {
+            if (labels[option.value]) option.textContent = labels[option.value];
+        }
+        help.textContent = labels.help;
+    }
+
     function openAddCategoryModal() { document.getElementById('addCategoryModal').classList.remove('hidden'); }
     function closeAddCategoryModal() { document.getElementById('addCategoryModal').classList.add('hidden'); }
 
@@ -1549,7 +1845,7 @@
         const newId = 'custom_' + Date.now();
         store.custom.push(Object.assign({ id: newId, customName: name, group: type }, map));
         const gNum = parseFloat(document.getElementById('catGoalInput').value);
-        store.goals[newId] = { target: gNum > 0 ? gNum : 100, unit: unitRaw || '%' };
+        store.goals[newId] = { target: gNum > 0 ? gNum : (/^\s*work\s*$/i.test(name) ? 24 : 100), unit: unitRaw || i18n[currentLang].unitHours };
         persist();
         buildCategories();
         renderCategories();
@@ -1557,37 +1853,274 @@
         closeAddCategoryModal();
         document.getElementById('catNameInput').value = '';
         document.getElementById('catGoalInput').value = '';
-        document.getElementById('catUnitInput').value = '%';
+        document.getElementById('catUnitInput').value = i18n[currentLang].unitHours;
     }
 
-    function openCopilotModal() { document.getElementById('copilotModal').classList.remove('hidden'); }
+    function openCopilotModal() { document.getElementById('copilotModal').classList.remove('hidden'); generateAIAnalysis(); }
     function closeCopilotModal() { document.getElementById('copilotModal').classList.add('hidden'); }
 
     function generateAIAnalysis() {
-        const t = i18n[currentLang];
-        const d = activeMonthDate;
-        const day = selectedDate.getDate(), total = daysInMonth(d);
-        const targetPct = TARGET_PCT;
+        const host = document.getElementById('copilotContent');
+        if (!host) return;
+        const L = COACH[currentLang];
+        host.innerHTML = `<div class="flex items-center gap-2 text-indigo text-xs font-bold py-2"><span class="float">✨</span><span>${L.analysing}</span><span class="inline-flex gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo animate-pulse inline-block"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo animate-pulse inline-block"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo animate-pulse inline-block"></span></span></div>`;
+        clearTimeout(generateAIAnalysis._t);
+        generateAIAnalysis._t = setTimeout(() => {
+            host.innerHTML = buildCoachHtml();
+            host.scrollTop = 0;
+            if (window.lucide) lucide.createIcons();
+        }, 650);
+    }
+
+    /* =====================================================
+       COACH IA : analyse locale (FR / EN / AR)
+    ===================================================== */
+    const COACH = {
+        FR: {
+            hello: n => `Salut${n ? ' ' + n : ''} 👋 Voici mon analyse de ton mois, sans détour.`,
+            analysing: 'Analyse de tes chiffres…',
+            secDiag: 'Diagnostic', secProblems: 'Ce qui te freine', secToday: 'À faire aujourd’hui',
+            secBest: 'Ma recommandation', secReach: 'Comment atteindre le reste', secTip: 'Conseil du moment',
+            lblScore: 'Score global', lblExpected: 'Rythme attendu', lblGap: 'Écart',
+            dayLine: (d, t, l) => `Jour ${d} sur ${t} · il te reste ${l} jour${l > 1 ? 's' : ''} (aujourd’hui inclus).`,
+            vNew: 'Tu n’as encore rien saisi ce mois-ci, donc je ne peux pas mesurer ta progression. Le plus important maintenant : démarrer, même petit.',
+            vAhead: g => `Tu es <strong>en avance</strong> de ${g} point${g > 1 ? 's' : ''} sur le rythme. C’est solide : l’enjeu est de tenir, pas d’accélérer.`,
+            vSlight: g => `Tu es légèrement en retard (${g} points). Rien de grave : un petit ajustement quotidien suffit pour revenir dans le rythme.`,
+            vBehind: g => `Tu es nettement en retard (${g} points sous le rythme). Ça se rattrape, mais seulement avec un effort ciblé, pas en essayant de tout faire d’un coup.`,
+            rewardOk: '🎁 Récompenses débloquées (score ≥ 50%).',
+            rewardNeed: n => `🔒 Il te manque ${n} point${n > 1 ? 's' : ''} pour débloquer les récompenses (50%).`,
+            projection: p => `À ton rythme actuel, tu finirais le mois autour de <strong>${p}%</strong> (seuil « dans le rythme » du site : ${TARGET_PCT}%).`,
+            pNoData: 'Aucune donnée saisie : sans chiffres, impossible d’ajuster quoi que ce soit.',
+            pBehind: (g, e) => `Retard global de ${g} points : tu devrais être vers ${e}% à ce stade du mois.`,
+            pZero: names => `Aucune progression enregistrée sur : ${names}.`,
+            pWorst: (n, v, e) => `<strong>${n}</strong> est ta zone la plus en retard (${v}% au lieu d’environ ${e}%).`,
+            pTooMuch: d => `Tes objectifs en heures demandent <strong>${d} par jour</strong> pour être atteints : ce n’est pas tenable sur la durée. Mieux vaut baisser certains objectifs (✎) que d’abandonner.`,
+            pStreak: 'Ta série est à 0 : le vrai problème est la régularité, plus que le volume.',
+            pFewDays: (n, d) => `Tu n’as mis à jour tes curseurs que ${n} jour${n > 1 ? 's' : ''} sur ${d} : sans suivi régulier, impossible de corriger à temps.`,
+            pNone: 'Rien de bloquant pour l’instant. Continue comme ça.',
+            item: (n, a, r) => `<strong>${n}</strong> : vise ${a} aujourd’hui (reste ${r} au total).`,
+            idea: x => `Idée : ${x}`,
+            capped: 'Certains blocs sont plafonnés à 4 h par jour : étale le reste sur les jours suivants plutôt que de t’épuiser.',
+            update: 'Ce soir : mets à jour tes curseurs (30 secondes) pour que l’analyse de demain soit exacte.',
+            allDone: 'Tous tes objectifs sont atteints : bravo ! Fixe-en de nouveaux avec ✎ ou ajoute une catégorie.',
+            bestNew: 'Commence petit : un seul bloc de 25 minutes sur ta catégorie la plus importante, puis mets à jour ton curseur. Le plus dur, c’est de démarrer, pas de finir.',
+            bestBehind: (a, b) => `Ne cherche pas à tout rattraper. Concentre ton énergie sur <strong>${a}</strong>${b ? ` et <strong>${b}</strong>` : ''} (les plus gros écarts) et garde un minimum sur le reste. Fais le bloc le plus difficile le matin, avant les distractions.`,
+            bestSlight: (a, x) => `Tu es proche du rythme. Ajoute environ <strong>${x}</strong> par jour sur <strong>${a}</strong> et tu reviens dans la cible sans changer ton organisation.`,
+            bestAhead: a => `Protège ton avance : n’ajoute pas d’objectifs, garde de la marge pour les imprévus et profite de ton élan pour renforcer <strong>${a}</strong>, ta catégorie la plus faible.`,
+            reachHead: 'Reste à faire par catégorie :',
+            reachRow: (n, rem, per, norm) => `<strong>${n}</strong> : ${rem} restant → <strong>${per}/jour</strong> (rythme normal : ${norm}/jour)`,
+            reachRate: (c, r) => `Rythme global : ${c} pt/jour jusqu’ici, ${r} pt/jour nécessaires pour finir à 100%.`,
+            reachUnreal: 'L’écart est trop grand pour viser 100% : fixe-toi un objectif intermédiaire (par exemple 70%) et ajuste tes objectifs avec ✎. C’est plus réaliste et plus motivant.',
+            reachNone: 'Rien à rattraper.',
+            foot: 'Analyse calculée localement à partir de tes chiffres. Rien n’est envoyé sur internet.'
+        },
+        EN: {
+            hello: n => `Hi${n ? ' ' + n : ''} 👋 Here is my straight-talking analysis of your month.`,
+            analysing: 'Analysing your numbers…',
+            secDiag: 'Diagnosis', secProblems: 'What is holding you back', secToday: 'To do today',
+            secBest: 'My recommendation', secReach: 'How to reach the rest', secTip: 'Tip for right now',
+            lblScore: 'Overall score', lblExpected: 'Expected pace', lblGap: 'Gap',
+            dayLine: (d, t, l) => `Day ${d} of ${t} · ${l} day${l > 1 ? 's' : ''} left (today included).`,
+            vNew: 'You have not logged anything this month yet, so I cannot measure your progress. What matters most now is to start, even small.',
+            vAhead: g => `You are <strong>ahead</strong> of the pace by ${g} point${g > 1 ? 's' : ''}. That is solid: the goal now is to keep it up, not to speed up.`,
+            vSlight: g => `You are slightly behind (${g} points). Nothing serious: a small daily adjustment is enough to get back on pace.`,
+            vBehind: g => `You are clearly behind (${g} points under the pace). It can be recovered, but only with targeted effort, not by trying to do everything at once.`,
+            rewardOk: '🎁 Rewards unlocked (score ≥ 50%).',
+            rewardNeed: n => `🔒 You need ${n} more point${n > 1 ? 's' : ''} to unlock rewards (50%).`,
+            projection: p => `At your current pace you would finish the month around <strong>${p}%</strong> (the site’s “on track” threshold: ${TARGET_PCT}%).`,
+            pNoData: 'No data logged: without numbers, no adjustment is possible.',
+            pBehind: (g, e) => `Overall you are ${g} points behind: you should be around ${e}% at this point of the month.`,
+            pZero: names => `No progress recorded in: ${names}.`,
+            pWorst: (n, v, e) => `<strong>${n}</strong> is your weakest area (${v}% instead of about ${e}%).`,
+            pTooMuch: d => `Your hour-based goals need <strong>${d} per day</strong> to be reached, which is not sustainable. It is better to lower some goals (✎) than to give up.`,
+            pStreak: 'Your streak is at 0: the real problem is consistency, more than volume.',
+            pFewDays: (n, d) => `You only updated your sliders on ${n} of ${d} days: without regular tracking you cannot correct course in time.`,
+            pNone: 'Nothing blocking right now. Keep going.',
+            item: (n, a, r) => `<strong>${n}</strong>: aim for ${a} today (${r} left in total).`,
+            idea: x => `Idea: ${x}`,
+            capped: 'Some blocks are capped at 4 h per day: spread the rest over the coming days instead of burning out.',
+            update: 'Tonight: update your sliders (30 seconds) so tomorrow’s analysis is accurate.',
+            allDone: 'All your goals are reached: well done! Set new ones with ✎ or add a category.',
+            bestNew: 'Start small: a single 25-minute block on your most important category, then update your slider. Starting is the hard part, not finishing.',
+            bestBehind: (a, b) => `Do not try to catch up on everything. Put your energy into <strong>${a}</strong>${b ? ` and <strong>${b}</strong>` : ''} (the biggest gaps) and keep a minimum on the rest. Do the hardest block in the morning, before distractions.`,
+            bestSlight: (a, x) => `You are close to the pace. Add about <strong>${x}</strong> per day on <strong>${a}</strong> and you are back on target without changing your routine.`,
+            bestAhead: a => `Protect your lead: do not add goals, keep some margin for surprises, and use your momentum to strengthen <strong>${a}</strong>, your weakest category.`,
+            reachHead: 'Remaining per category:',
+            reachRow: (n, rem, per, norm) => `<strong>${n}</strong>: ${rem} left → <strong>${per}/day</strong> (normal pace: ${norm}/day)`,
+            reachRate: (c, r) => `Overall pace: ${c} pts/day so far, ${r} pts/day needed to finish at 100%.`,
+            reachUnreal: 'The gap is too large to aim for 100%: set an intermediate goal (for example 70%) and adjust your goals with ✎. It is more realistic and more motivating.',
+            reachNone: 'Nothing to catch up on.',
+            foot: 'Analysis computed locally from your numbers. Nothing is sent over the internet.'
+        },
+        AR: {
+            hello: n => `مرحباً${n ? ' ' + n : ''} 👋 إليك تحليلي لشهرك بكل وضوح.`,
+            analysing: 'جارٍ تحليل أرقامك…',
+            secDiag: 'التشخيص', secProblems: 'ما الذي يعيقك', secToday: 'ما يجب فعله اليوم',
+            secBest: 'توصيتي', secReach: 'كيف تبلغ الباقي', secTip: 'نصيحة اللحظة',
+            lblScore: 'النتيجة العامة', lblExpected: 'الوتيرة المتوقعة', lblGap: 'الفارق',
+            dayLine: (d, t, l) => `اليوم ${d} من ${t} · بقي ${l} يوم (مع اليوم).`,
+            vNew: 'لم تسجّل شيئاً هذا الشهر بعد، لذلك لا أستطيع قياس تقدمك. الأهم الآن أن تبدأ ولو بخطوة صغيرة.',
+            vAhead: g => `أنت <strong>متقدّم</strong> بـ ${g} نقطة عن الوتيرة. وضع جيد، والمطلوب المحافظة عليه لا التسارع.`,
+            vSlight: g => `أنت متأخر قليلاً (${g} نقطة). لا شيء خطير: تعديل يومي بسيط يعيدك إلى الوتيرة.`,
+            vBehind: g => `أنت متأخر بوضوح (${g} نقطة تحت الوتيرة). يمكن تعويضه، لكن بجهد موجَّه وليس بمحاولة فعل كل شيء دفعة واحدة.`,
+            rewardOk: '🎁 المكافآت مفتوحة (النتيجة ≥ 50%).',
+            rewardNeed: n => `🔒 ينقصك ${n} نقطة لفتح المكافآت (50%).`,
+            projection: p => `بوتيرتك الحالية ستنهي الشهر قرابة <strong>${p}%</strong> (حدّ «في المسار» في الموقع: ${TARGET_PCT}%).`,
+            pNoData: 'لا توجد بيانات مسجّلة: بدون أرقام لا يمكن تعديل أي شيء.',
+            pBehind: (g, e) => `تأخر عام بمقدار ${g} نقطة: كان يجب أن تكون قرابة ${e}% في هذه المرحلة من الشهر.`,
+            pZero: names => `لا يوجد تقدم مسجّل في: ${names}.`,
+            pWorst: (n, v, e) => `<strong>${n}</strong> هو أضعف مجال لديك (${v}% بدل حوالي ${e}%).`,
+            pTooMuch: d => `أهدافك بالساعات تتطلب <strong>${d} يومياً</strong> لبلوغها، وهذا غير قابل للاستمرار. الأفضل تخفيض بعض الأهداف (✎) بدل الاستسلام.`,
+            pStreak: 'سلسلتك عند 0: المشكلة الحقيقية هي الانتظام أكثر من الحجم.',
+            pFewDays: (n, d) => `حدّثتَ المؤشرات ${n} يوماً فقط من ${d}: بدون متابعة منتظمة لا يمكن التصحيح في الوقت المناسب.`,
+            pNone: 'لا شيء يعيقك حالياً. واصل هكذا.',
+            item: (n, a, r) => `<strong>${n}</strong>: استهدف ${a} اليوم (المتبقي ${r} في المجموع).`,
+            idea: x => `فكرة: ${x}`,
+            capped: 'بعض الفترات محدودة بـ 4 ساعات يومياً: وزّع الباقي على الأيام التالية بدل إرهاق نفسك.',
+            update: 'الليلة: حدّث المؤشرات (30 ثانية) ليكون تحليل الغد دقيقاً.',
+            allDone: 'حققت كل أهدافك: أحسنت! ضع أهدافاً جديدة عبر ✎ أو أضف فئة.',
+            bestNew: 'ابدأ صغيراً: فترة واحدة مدتها 25 دقيقة في أهم مجال لديك، ثم حدّث المؤشر. الأصعب هو البداية وليس الإنهاء.',
+            bestBehind: (a, b) => `لا تحاول تعويض كل شيء. ركّز طاقتك على <strong>${a}</strong>${b ? ` و<strong>${b}</strong>` : ''} (أكبر فارقين) وحافظ على الحد الأدنى في الباقي. اجعل أصعب مهمة في الصباح قبل المشتتات.`,
+            bestSlight: (a, x) => `أنت قريب من الوتيرة. أضف حوالي <strong>${x}</strong> يومياً في <strong>${a}</strong> وستعود إلى الهدف دون تغيير تنظيمك.`,
+            bestAhead: a => `حافظ على تقدمك: لا تضف أهدافاً جديدة، واترك هامشاً للطوارئ، واستعمل زخمك لتقوية <strong>${a}</strong> وهو أضعف مجالاتك.`,
+            reachHead: 'المتبقي في كل مجال:',
+            reachRow: (n, rem, per, norm) => `<strong>${n}</strong>: متبقٍ ${rem} ← <strong>${per}/يوم</strong> (الوتيرة العادية: ${norm}/يوم)`,
+            reachRate: (c, r) => `الوتيرة العامة: ${c} نقطة/يوم حتى الآن، والمطلوب ${r} نقطة/يوم للوصول إلى 100%.`,
+            reachUnreal: 'الفارق كبير لبلوغ 100%: ضع هدفاً وسيطاً (مثلاً 70%) وعدّل أهدافك عبر ✎. هذا أكثر واقعية وتحفيزاً.',
+            reachNone: 'لا شيء لتعويضه.',
+            foot: 'التحليل محسوب محلياً من أرقامك. لا يُرسل أي شيء عبر الإنترنت.'
+        }
+    };
+
+    function unitKind(u) {
+        const x = String(u || '').trim().toLowerCase();
+        if (/^(h|hr|hrs|heure|heures|hour|hours|ساعة|س)$/.test(x)) return 'h';
+        if (/^(min|mn|minute|minutes|دقيقة|د)$/.test(x)) return 'min';
+        if (/^(dh|mad|درهم)$/.test(x)) return 'dh';
+        return 'other';
+    }
+    function fmtDur(h) {
+        const m = Math.max(0, Math.round(h * 60));
+        const mu = currentLang === 'AR' ? 'د' : 'min', hu = currentLang === 'AR' ? 'س' : 'h';
+        if (m < 60) return `${m} ${mu}`;
+        const H = Math.floor(m / 60), M = m % 60;
+        return M ? `${H} ${hu} ${pad(M)}` : `${H} ${hu}`;
+    }
+    function fmtQ(c, q) {
+        if (c.kind === 'h') return fmtDur(q);
+        if (c.kind === 'min') return fmtDur(q / 60);
+        if (c.kind === 'dh') return `${fmtNum(q)} DH`;
+        return `${fmtNum(q)} ${escapeHtml(c.unit)}`;
+    }
+
+    function buildCoachHtml() {
+        const L = COACH[currentLang], t = i18n[currentLang];
+        const esc = escapeHtml;
+        const r1 = x => Math.round(x * 10) / 10;
+        const total = daysInMonth(activeMonthDate);
+        const day = selectedDate.getDate();
+        const daysLeft = Math.max(1, total - day + 1);
+        const expectedPct = Math.round(100 * day / total);
         const { overall } = computeAvgs();
-        const moneyCat = categories.find(c => c.isMoney);
-        const moneyEarned = moneyCat ? Math.round((moneyCat.value / 100) * targetMoney) : 0;
-        const msg = overall === 0 ? t.copilotStart : overall >= targetPct ? t.copilotOk : t.copilotBehind;
-        const colors = { fin: 'text-orange', bus: 'text-teal', app: 'text-indigo', faith: 'text-teal', fam: 'text-indigo', hab: 'text-teal' };
-        const items = tasksForDate(d).map((c, i) =>
-            `<li class="flex items-start gap-1.5"><span class="${colors[c]} font-bold">${i + 1}. ${t.cats[c]}:</span> ${t.task[c]}</li>`).join('');
-        const name = store.user ? ` ${escapeHtml(store.user)}` : '';
-        document.getElementById('copilotContent').innerHTML = `
-            <div class="flex items-center gap-2 text-indigo font-bold mb-2"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t.copilotPlan}${name ? ' ·' + name : ''}</span></div>
-            <div class="p-3 bg-bg border border-border rounded-xl space-y-2">
-                <p><strong>${t.level}:</strong> <span class="text-teal font-bold">${overall}%</span> / ${targetPct}% (${moneyEarned} DH / ${targetMoney} DH)</p>
-                <p class="text-muted">${msg}</p>
+        const md = getMonthData();
+        const recorded = Object.keys(md.history || {}).filter(k => { const h = md.history[k]; return h && (Number(h.e) > 0 || Number(h.r) > 0 || Number(h.m) > 0); }).length;
+        const streak = computeStreak();
+        const hid = new Set(store.hiddenCategories || []);
+
+        const cats = categories.filter(c => !hid.has(c.id)).map(c => {
+            const g = goalOf(c);
+            const kind = (c.isMoney || c.id === 'fin') ? 'dh' : unitKind(g.unit);
+            const reached = (c.value / 100) * g.target;
+            const rem = Math.max(0, g.target - reached);
+            return {
+                id: c.id, name: catLabel(c), value: c.value, unit: g.unit, kind, target: g.target, reached, rem,
+                perDay: rem / daysLeft, normal: g.target / total, short: expectedPct - c.value,
+                toHours: q => kind === 'h' ? q : kind === 'min' ? q / 60 : null
+            };
+        });
+        const hasData = cats.some(c => c.value > 0) || recorded > 0;
+        const gap = overall - expectedPct;
+        const state = !hasData ? 'new' : gap >= 0 ? 'ahead' : gap > -15 ? 'slight' : 'behind';
+        const cls = { new: 'text-indigo', ahead: 'text-teal', slight: 'text-orange', behind: 'text-orange' }[state];
+        const byShort = cats.filter(c => c.rem > 0).sort((a, b) => b.short - a.short);
+        const top = byShort[0], second = byShort[1];
+
+        // ---- Diagnostic ----
+        const verdict = state === 'new' ? L.vNew : state === 'ahead' ? L.vAhead(Math.abs(gap)) : state === 'slight' ? L.vSlight(Math.abs(gap)) : L.vBehind(Math.abs(gap));
+        const tile = (lbl, val, c) => `<div class="rounded-xl bg-surface border border-border-subtle p-2.5"><p class="text-[10px] text-muted">${lbl}</p><p class="text-lg font-black tabular-nums ${c}">${val}</p></div>`;
+        const projected = (state !== 'new' && overall > 0) ? Math.min(100, Math.round(overall * total / day)) : null;
+        const diag = `
+            <div class="grid grid-cols-3 gap-2">
+                ${tile(L.lblScore, overall + '%', 'text-teal')}
+                ${tile(L.lblExpected, expectedPct + '%', 'text-primary')}
+                ${tile(L.lblGap, (gap > 0 ? '+' : '') + gap, cls)}
             </div>
-            <div class="space-y-2 pt-2">
-                <p class="font-bold text-primary text-xs uppercase tracking-wider">${t.copilotTasks}</p>
-                <ul class="space-y-2 text-muted pl-1">${items}</ul>
-                <p class="text-indigo text-[11px] pt-1">${t.tip[periodOfDay(d.getHours())]}</p>
-            </div>`;
-        lucide.createIcons();
+            <p>${verdict}</p>
+            <p class="text-muted">${L.dayLine(day, total, daysLeft)}</p>
+            ${projected !== null ? `<p>${L.projection(projected)}</p>` : ''}
+            <p class="text-muted">${overall >= 50 ? L.rewardOk : L.rewardNeed(50 - overall)}</p>`;
+
+        // ---- Problems ----
+        const problems = [];
+        if (state === 'new') problems.push(L.pNoData);
+        else {
+            if (state === 'behind' || state === 'slight') problems.push(L.pBehind(Math.abs(gap), expectedPct));
+            const zeros = cats.filter(c => c.value === 0).map(c => esc(c.name));
+            if (day >= 4 && zeros.length) problems.push(L.pZero(zeros.slice(0, 3).join(', ')));
+            if (top && top.short >= 10) problems.push(L.pWorst(esc(top.name), top.value, expectedPct));
+        }
+        const sumH = cats.reduce((s, c) => s + (c.toHours(c.perDay) || 0), 0);
+        if (sumH > 9) problems.push(L.pTooMuch(fmtDur(sumH)));
+        if (state !== 'new' && streak === 0 && day > 1) problems.push(L.pStreak);
+        if (day >= 6 && recorded < day / 2) problems.push(L.pFewDays(recorded, day));
+        if (!problems.length) problems.push(L.pNone);
+
+        // ---- Today ----
+        const capH = state === 'new' ? 1.5 : 4;
+        let capped = false;
+        let focus = byShort.filter(c => c.short > 0).slice(0, 3);
+        if (!focus.length) focus = byShort.slice(0, 2);
+        const todayItems = focus.map(c => {
+            let q = c.perDay;
+            const h = c.toHours(q);
+            if (h !== null && h > capH) { q = c.kind === 'h' ? capH : capH * 60; capped = true; }
+            const idea = t.task[c.id] ? `<span class="block text-muted mt-0.5">${L.idea(esc(t.task[c.id]))}</span>` : '';
+            return `<li><span class="block">${L.item(esc(c.name), fmtQ(c, q), fmtQ(c, c.rem))}</span>${idea}</li>`;
+        });
+        if (!byShort.length) todayItems.push(`<li>${L.allDone}</li>`);
+        if (capped) todayItems.push(`<li class="text-muted">${L.capped}</li>`);
+        todayItems.push(`<li class="text-muted">${L.update}</li>`);
+
+        // ---- Best strategy ----
+        let best;
+        if (state === 'new') best = L.bestNew;
+        else if (!top) best = L.allDone;
+        else if (state === 'behind') best = L.bestBehind(esc(top.name), second && second.short > 0 ? esc(second.name) : '');
+        else if (state === 'slight') best = L.bestSlight(esc(top.name), fmtQ(top, Math.max(0, (top.short / 100) * top.target) / daysLeft));
+        else best = L.bestAhead(esc([...cats].sort((a, b) => a.value - b.value)[0].name));
+
+        // ---- Reach the rest ----
+        const reachRows = byShort.map(c => `<li>${L.reachRow(esc(c.name), fmtQ(c, c.rem), fmtQ(c, c.perDay), fmtQ(c, c.normal))}</li>`);
+        const cur = r1(overall / Math.max(1, day)), req = r1((100 - overall) / daysLeft);
+        const unreal = state !== 'new' && req > 4 && req > cur * 2;
+        const reach = `
+            ${reachRows.length ? `<p class="text-muted">${L.reachHead}</p><ul class="space-y-1.5 list-disc ps-4">${reachRows.join('')}</ul>` : `<p>${L.reachNone}</p>`}
+            ${state !== 'new' && reachRows.length ? `<p class="text-muted">${L.reachRate(cur, req)}</p>` : ''}
+            ${unreal ? `<p class="text-orange">${L.reachUnreal}</p>` : ''}`;
+
+        // ---- Assemble ----
+        const sec = (i, emoji, title, body) => `<section class="reveal rounded-xl border border-border-subtle bg-bg p-3 space-y-2" style="animation-delay:${(i * 0.12).toFixed(2)}s"><h4 class="text-[11px] font-extrabold uppercase tracking-wider text-indigo">${emoji} ${title}</h4>${body}</section>`;
+        const ul = items => `<ul class="space-y-1.5 list-disc ps-4">${items.join('')}</ul>`;
+        const name = store.user ? esc(store.user) : '';
+        return `
+            <p class="reveal text-sm font-bold">${L.hello(name)}</p>
+            ${sec(1, '📊', L.secDiag, diag)}
+            ${sec(2, '⚠️', L.secProblems, ul(problems.map(p => `<li>${p}</li>`)))}
+            ${sec(3, '✅', L.secToday, ul(todayItems))}
+            ${sec(4, '🧠', L.secBest, `<p>${best}</p>`)}
+            ${sec(5, '🎯', L.secReach, reach)}
+            ${sec(6, '💡', L.secTip, `<p>${t.tip[periodOfDay(now().getHours())]}</p>`)}
+            <p class="text-[10px] text-muted">${L.foot}</p>`;
     }
 
     /* =====================================================
@@ -1627,21 +2160,45 @@
         const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim().split(/\s+/).join(',');
         return a == null ? `rgb(${v})` : `rgba(${v},${a})`;
     }
+    const THEME_LBL = {
+        FR: { auto: 'Auto (selon l’heure)', day: 'Mode sbah ☀️', night: 'Mode lil 🌙' },
+        EN: { auto: 'Auto (by time)', day: 'Morning mode ☀️', night: 'Night mode 🌙' },
+        AR: { auto: 'تلقائي (حسب الوقت)', day: 'وضع الصباح ☀️', night: 'وضع الليل 🌙' }
+    };
+    function effectiveTheme() {
+        const m = store.themeMode || 'auto';
+        if (m === 'day') return 'light';
+        if (m === 'night') return 'dark';
+        const h = new Date().getHours();
+        return (h >= 6 && h < 19) ? 'light' : 'dark';
+    }
+    function applyTheme(rebuild) {
+        const eff = effectiveTheme();
+        const changed = document.documentElement.classList.contains('dark') !== (eff === 'dark');
+        store.theme = eff;
+        document.documentElement.classList.toggle('dark', eff === 'dark');
+        applyThemeBtn();
+        if (rebuild && changed && chartInstance) rebuildChart();
+    }
     function applyThemeBtn() {
         const b = document.getElementById('themeBtn');
-        if (b) b.textContent = store.theme === 'dark' ? '☀️' : '🌙';
+        if (!b) return;
+        const m = store.themeMode || 'auto';
+        b.textContent = m === 'day' ? '☀️' : m === 'night' ? '🌙' : '🌗';
+        b.title = THEME_LBL[currentLang][m];
     }
     function toggleTheme() {
-        store.theme = store.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.classList.toggle('dark', store.theme === 'dark');
+        const order = ['auto', 'day', 'night'];
+        store.themeMode = order[(order.indexOf(store.themeMode || 'auto') + 1) % 3];
+        applyTheme(true);
         persist();
-        applyThemeBtn();
-        rebuildChart();
+        toast(THEME_LBL[currentLang][store.themeMode]);
     }
 
     let lastDayKey = dayKey();
 
     function tick() {
+        applyTheme(true);
         renderClock();
         const k = dayKey();
         if (k !== lastDayKey) {           // a new day (or month) started
@@ -1662,136 +2219,292 @@
         }
     }
 
-    // -----------------------------------------------------
-    // ACCOUNT AUTH + PER-USER CLOUD STORAGE (Supabase)
-    // -----------------------------------------------------
-    // Replace these two values with your own Supabase project values.
-    const FOCUS_SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-    const FOCUS_SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY';
-    const focusSupabaseConfigured = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(FOCUS_SUPABASE_URL) &&
-        FOCUS_SUPABASE_PUBLISHABLE_KEY !== 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY' && FOCUS_SUPABASE_PUBLISHABLE_KEY.length > 20;
-    window.focusSupabaseClient = focusSupabaseConfigured && window.supabase
-        ? window.supabase.createClient(FOCUS_SUPABASE_URL, FOCUS_SUPABASE_PUBLISHABLE_KEY)
-        : null;
+    /* =====================================================
+       LEADERBOARD  (Supabase + "Continue with Google")
+       Each member signs in with Google; the row is tied to their account id,
+       so nobody can edit anyone else's numbers. The email is never published.
+    ===================================================== */
+    const LB_CONFIG = { url: 'https://kpftbdtsdytapvcpplup.supabase.co', key: 'sb_publishable_GKtwkpoDskl03zapJeq48w_zf3qa9e8' };
 
-    function focusAuthMessage(message, isError = false) {
-        const el = document.getElementById('focusAuthMessage');
-        if (el) { el.textContent = message; el.className = `text-xs min-h-5 ${isError ? 'text-orange' : 'text-muted'}`; }
-    }
-    function showFocusAuth() {
-        document.getElementById('authGate')?.classList.remove('hidden');
-        document.getElementById('focusCodeArea')?.classList.add('hidden');
-    }
-    function hideFocusAuth() { document.getElementById('authGate')?.classList.add('hidden'); }
-    function resetFocusCode() {
-        document.getElementById('focusCodeArea')?.classList.add('hidden');
-        document.getElementById('focusOtp').value = '';
-        focusAuthMessage('Enter your email address to receive a new code.');
-    }
-    async function sendFocusCode() {
-        if (!window.focusSupabaseClient) { focusAuthMessage('The account service is not configured yet. Follow the setup guide.', true); return; }
-        const email = document.getElementById('focusEmail').value.trim().toLowerCase();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { focusAuthMessage('Enter a valid email address.', true); return; }
-        const btn = document.getElementById('sendFocusCodeBtn');
-        btn.disabled = true; btn.textContent = 'Sending…';
-        try {
-            const { error } = await window.focusSupabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-            if (error) throw error;
-            document.getElementById('focusCodeArea').classList.remove('hidden');
-            focusAuthMessage(`A verification code was sent to ${email}. Check your inbox and spam folder.`);
-            document.getElementById('focusOtp').focus();
-        } catch (err) { focusAuthMessage(err.message || 'Could not send the code. Try again later.', true); }
-        finally { btn.disabled = false; btn.textContent = 'Send verification code'; }
-    }
-    async function verifyFocusCode() {
-        if (!window.focusSupabaseClient) return;
-        const email = document.getElementById('focusEmail').value.trim().toLowerCase();
-        const token = document.getElementById('focusOtp').value.trim().replace(/\s/g, '');
-        if (!/^\d{6}$/.test(token)) { focusAuthMessage('Enter the 6-digit code from your email.', true); return; }
-        const btn = document.getElementById('verifyFocusCodeBtn');
-        btn.disabled = true; btn.textContent = 'Verifying…';
-        try {
-            const { error } = await window.focusSupabaseClient.auth.verifyOtp({ email, token, type: 'email' });
-            if (error) throw error;
-            focusAuthMessage('Email verified. Opening your account…');
-        } catch (err) { focusAuthMessage(err.message || 'The code is invalid or expired. Request a new one.', true); }
-        finally { btn.disabled = false; btn.textContent = 'Verify and open Focus'; }
-    }
-    async function focusSignOut() {
-        if (!window.focusSupabaseClient) return;
-        const { error } = await window.focusSupabaseClient.auth.signOut();
-        if (error) toast('Could not sign out. Please try again.');
+    const LB_T = {
+        FR: { title: 'Classement', members: (n, t) => t ? `${n} classés · ${t} membres` : `${n} classés`, streak: 'Série', best: 'Record', gain: 'Gain 7j',
+              rule: "Jours où tu as fait avancer l'exécution ou les résultats, même un peu. Ouvrir sans rien enregistrer ne compte pas. Jusqu'à 2 jours calmes permis ; 3 cassent la série.",
+              mine: (s) => `Toi : série ${s.streak} · record ${s.best} · 7j ${s.gain7}`, join: 'Rejoindre le classement', leave: 'Quitter le classement', google: 'Continuer avec Google', signout: 'Se déconnecter',
+              privacy: 'En rejoignant, ton prénom et tes chiffres sont visibles par tous. Ton email reste privé.',
+              demo: 'Classement pas encore connecté à la base de données.', you: 'toi', joined: 'Tu es dans le classement', left: 'Tu as quitté le classement',
+              err: 'Impossible de charger le classement', empty: 'Personne pour le moment. Rejoins pour apparaître ici !', end: 'Haut du classement' },
+        EN: { title: 'Leaderboard', members: (n, t) => t ? `${n} ranked · ${t} members` : `${n} ranked`, streak: 'Streak', best: 'Best ever', gain: 'Gain 7d',
+              rule: 'Days where you moved execution or results at all — any amount. Opening the tracker without logging anything does not count. Up to 2 quiet days are allowed; 3 breaks the run.',
+              mine: (s) => `You: streak ${s.streak} · best ${s.best} · 7d ${s.gain7}`, join: 'Join the leaderboard', leave: 'Leave the leaderboard', google: 'Continue with Google', signout: 'Sign out',
+              privacy: 'By joining, your first name and numbers are visible to everyone. Your email stays private.',
+              demo: 'The leaderboard is not connected to the database yet.', you: 'you', joined: "You're on the leaderboard", left: 'You left the leaderboard',
+              err: "Couldn't load the leaderboard", empty: 'Nobody yet. Join to appear here!', end: 'Top of the board' },
+        AR: { title: 'الترتيب', members: (n, t) => t ? `${n} في الترتيب · ${t} عضو` : `${n} في الترتيب`, streak: 'السلسلة', best: 'الأفضل', gain: 'زيادة 7 أيام',
+              rule: 'الأيام التي حرّكت فيها التنفيذ أو النتائج ولو بشيء بسيط. فتح التطبيق دون تسجيل لا يُحتسب. يُسمح بيومين هادئين، وثلاثة أيام تكسر السلسلة.',
+              mine: (s) => `أنت: سلسلة ${s.streak} · الأفضل ${s.best} · 7 أيام ${s.gain7}`, join: 'انضم إلى الترتيب', leave: 'اخرج من الترتيب', google: 'المتابعة عبر Google', signout: 'تسجيل الخروج',
+              privacy: 'عند الانضمام يظهر اسمك الأول وأرقامك للجميع. بريدك الإلكتروني يبقى خاصًا.',
+              demo: 'لوحة الترتيب غير مربوطة بقاعدة البيانات بعد.', you: 'أنت', joined: 'أنت الآن في الترتيب', left: 'خرجت من الترتيب',
+              err: 'تعذّر تحميل الترتيب', empty: 'لا أحد بعد. انضم لتظهر هنا!', end: 'أعلى الترتيب' }
+    };
+    let lbTab = 'streak', lbTimer = null, sb = null, lbUser = null;
+
+    const lbT = () => LB_T[currentLang] || LB_T.FR;
+    const lbConfigured = () => !!(LB_CONFIG.url && LB_CONFIG.key);
+    const lbJoined = () => !!(store.lbJoin && lbUser);
+    const lbModalOpen = () => !document.getElementById('lbModal').classList.contains('hidden');
+    function lbName() {
+        const m = (lbUser && lbUser.user_metadata) || {};
+        return String(store.user || m.given_name || (m.full_name || '').split(' ')[0] || '?').slice(0, 24);
     }
 
-    async function loadFocusAccount(user) {
-        if (!user || focusLoadingUserId === user.id) return;
-        focusLoadingUserId = user.id;
-        focusAuthMessage('Loading your private data…');
+
+    /* ---------- LOGIN GATE (Google or email + password) ---------- */
+    const AUTH_T = {
+        FR: { title: 'Bienvenue sur Focus', sub: 'Connecte-toi pour continuer', google: 'Continuer avec Google', or: 'ou', email: 'Ton email', pass: 'Mot de passe (6 caractères min.)',
+              joinBtn: 'Rejoindre', signin: 'Se connecter', signup: 'Créer mon compte', toSignup: 'Pas de compte ? Créer un compte', toSignin: 'Déjà un compte ? Se connecter',
+              bad: 'Email ou mot de passe incorrect', short: 'Mot de passe : 6 caractères minimum', exists: 'Cet email a déjà un compte. Connecte-toi.', confirm: 'Vérifie ta boîte mail pour confirmer ton compte, puis reviens te connecter.', generic: 'Une erreur est survenue. Réessaie.', fill: 'Entre ton email et ton mot de passe' },
+        EN: { title: 'Welcome to Focus', sub: 'Sign in to continue', google: 'Continue with Google', or: 'or', email: 'Your email', pass: 'Password (min. 6 characters)',
+              joinBtn: 'Join', signin: 'Sign in', signup: 'Create my account', toSignup: 'No account? Create one', toSignin: 'Already have an account? Sign in',
+              bad: 'Wrong email or password', short: 'Password must be at least 6 characters', exists: 'This email already has an account. Sign in.', confirm: 'Check your inbox to confirm your account, then come back and sign in.', generic: 'Something went wrong. Try again.', fill: 'Enter your email and password' },
+        AR: { title: 'مرحبًا بك في Focus', sub: 'سجّل الدخول للمتابعة', google: 'المتابعة عبر Google', or: 'أو', email: 'بريدك الإلكتروني', pass: 'كلمة السر (6 أحرف على الأقل)',
+              joinBtn: 'انضم', signin: 'تسجيل الدخول', signup: 'إنشاء حسابي', toSignup: 'ليس لديك حساب؟ أنشئ حسابًا', toSignin: 'لديك حساب؟ سجّل الدخول',
+              bad: 'البريد أو كلمة السر غير صحيحة', short: 'كلمة السر يجب أن تكون 6 أحرف على الأقل', exists: 'هذا البريد لديه حساب بالفعل. سجّل الدخول.', confirm: 'افتح بريدك لتأكيد الحساب، ثم عد وسجّل الدخول.', generic: 'حدث خطأ. حاول مرة أخرى.', fill: 'أدخل بريدك وكلمة السر' }
+    };
+    let authMode = 'in';
+    const authT = () => AUTH_T[currentLang] || AUTH_T.FR;
+    function authPaint() {
+        const t = authT();
+        setText('authJoinTxt', t.joinBtn);
+        setText('authTitle', t.title); setText('authSub', t.sub); setText('authGoogleTxt', t.google); setText('authOr', t.or);
+        document.getElementById('authEmail').placeholder = t.email;
+        document.getElementById('authPass').placeholder = t.pass;
+        setText('authSubmitBtn', authMode === 'in' ? t.signin : t.signup);
+        setText('authToggle', authMode === 'in' ? t.toSignup : t.toSignin);
+        document.getElementById('authPass').autocomplete = authMode === 'in' ? 'current-password' : 'new-password';
+    }
+    function authShowMsg(m) { const e = document.getElementById('authMsg'); e.textContent = m || ''; e.classList.toggle('hidden', !m); }
+    function authShowGate() { document.getElementById('authGate').classList.remove('hidden'); authPaint(); }
+    function authHideGate() { document.getElementById('authGate').classList.add('hidden'); }
+    let authLocked = false;
+    function authLock(on) {
+        authLocked = on;
+        document.getElementById('lockOverlay').classList.toggle('hidden', !on);
+        document.getElementById('joinFab').classList.toggle('hidden', !on);
+        if (on) authPaint();
+    }
+    function authToggleMode() { authMode = authMode === 'in' ? 'up' : 'in'; authShowMsg(''); authPaint(); }
+    async function authGoogle() {
+        if (!sb) return;
+        const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+        if (error) authShowMsg(authT().generic);
+    }
+    async function authSubmit() {
+        const t = authT();
+        if (!sb) return;
+        const email = document.getElementById('authEmail').value.trim();
+        const password = document.getElementById('authPass').value;
+        if (!email || !password) { authShowMsg(t.fill); return; }
+        if (password.length < 6) { authShowMsg(t.short); return; }
+        authShowMsg('');
+        const btn = document.getElementById('authSubmitBtn'); btn.disabled = true;
         try {
-            const { data, error } = await window.focusSupabaseClient
-                .from('focus_user_data').select('data').eq('user_id', user.id).maybeSingle();
-            if (error) throw error;
-            focusAuthUser = user;
-            STORAGE_KEY = `focus_user_${user.id}`;
-            if (data && data.data && typeof data.data === 'object') {
-                store = Object.assign(defaultStore(), data.data);
+            if (authMode === 'in') {
+                const { error } = await sb.auth.signInWithPassword({ email, password });
+                if (error) authShowMsg(/confirm/i.test(error.message) ? t.confirm : t.bad);
             } else {
-                // One-time migration of the previous device-only data into the first account used on this browser.
-                let cached = null;
-                try { cached = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) {}
-                store = Object.assign(defaultStore(), cached || focusLegacyStore || {});
-                const { error: saveError } = await window.focusSupabaseClient.from('focus_user_data')
-                    .upsert({ user_id: user.id, data: store, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-                if (saveError) throw saveError;
-                focusLegacyStore = null;
+                const { data, error } = await sb.auth.signUp({ email, password });
+                if (error) authShowMsg(/already|registered/i.test(error.message) ? t.exists : t.generic);
+                else if (!data.session) authShowMsg(t.confirm);
             }
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (_) {}
-            currentLang = store.lang in i18n ? store.lang : 'FR';
-            activeMonthDate = new Date(now().getFullYear(), now().getMonth(), 1);
-            selectedDate = now();
-            hideFocusAuth();
-            if (!focusAppInitialized) {
-                lucide.createIcons();
-                buildCategories();
-                applyLanguageUI();
-                renderClock();
-                setInterval(tick, 30000);
-                document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
-                focusAppInitialized = true;
-            } else {
-                buildCategories(); applyLanguageUI(); renderClock();
-            }
-            buildCategories();
-            renderUser(); renderDays(); renderDayTasks(); renderCategories();
-            recalculateAll(true); rebuildChart(); renderCustomRewards(); applyThemeBtn();
-            document.documentElement.classList.toggle('dark', store.theme === 'dark');
-            const emailEl = document.getElementById('saveInfo');
-            if (emailEl) emailEl.textContent = 'Signed in · ' + (user.email || 'Email account');
-            if (!store.user) setTimeout(openNameModal, 500);
-        } catch (err) {
-            console.error('Focus account load failed:', err);
-            focusAuthMessage('Could not load your account data. Check your Supabase table and security policies, then refresh.', true);
-            showFocusAuth();
-        } finally { focusLoadingUserId = null; }
+        } catch (e) { authShowMsg(t.generic); }
+        btn.disabled = false;
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        lucide.createIcons();
-        if (!window.focusSupabaseClient) {
-            document.getElementById('focusConfigWarning')?.classList.remove('hidden');
-            focusAuthMessage('Complete the Supabase setup to activate email login.', true);
-            showFocusAuth();
+    function lbInit() {
+        if (!window.supabase || !lbConfigured()) { authHideGate(); authLock(false); return; }
+        sb = window.supabase.createClient(LB_CONFIG.url, LB_CONFIG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+        sb.auth.getSession().then(({ data }) => lbOnSession(data.session, 'INIT'));
+        sb.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') lbOnSession(session, ev); });
+    }
+    async function lbOnSession(session, ev) {
+        lbUser = session ? session.user : null;
+        if (lbUser) {
+            authHideGate();
+            authLock(false);
+            if (!store.user) {
+                const m = lbUser.user_metadata || {};
+                const nm = m.given_name || (m.full_name || '').split(' ')[0] || (lbUser.email || '').split('@')[0] || '';
+                if (nm) { store.user = nm.charAt(0).toUpperCase() + nm.slice(1, 24); persist(); renderUser(); renderClock(); closeNameModal(); }
+            }
+        } else { authLock(true); }
+        if (lbUser && (store.lbPendingJoin || store.lbJoin === undefined)) {
+            store.lbPendingJoin = false; store.lbJoin = true; persist();
+            try { await lbPush(true); toast(lbT().joined); } catch (e) {}
+        } else if (lbUser && store.lbJoin) {
+            lbScheduleSync();
+        }
+        if (typeof lbRender === 'function' && lbModalOpen()) lbRender();
+    }
+
+    // Days with any progress (execution, results or money > 0), across ALL months
+    function lbActiveDays() {
+        const out = [];
+        Object.keys(store.months || {}).forEach(k => {
+            const [y, m] = k.split('-').map(Number);
+            const h = (store.months[k] || {}).history || {};
+            Object.keys(h).forEach(d => {
+                const v = h[d];
+                if (v && (v.e > 0 || v.r > 0 || v.m > 0)) out.push(Math.floor(Date.UTC(y, m - 1, +d) / 864e5));
+            });
+        });
+        return [...new Set(out)].sort((a, b) => a - b);
+    }
+    // Rule: up to 2 quiet days allowed, 3 break the run. Streak = number of active days in the run.
+    function lbStats() {
+        const n = now();
+        const today = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 864e5);
+        const days = lbActiveDays().filter(d => d <= today);
+        let best = 0, run = 0, prev = null;
+        days.forEach(d => { run = (prev !== null && d - prev <= 3) ? run + 1 : 1; if (run > best) best = run; prev = d; });
+        const streak = (prev !== null && today - prev <= 3) ? run : 0;
+        const gain7 = days.filter(d => d > today - 7).length;
+        return { streak, best: Math.max(best, streak), gain7 };
+    }
+
+    async function lbPush(active) {
+        if (!sb || !lbUser) return;
+        const s = lbStats();
+        const { error } = await sb.from('leaderboard').upsert(
+            { uid: lbUser.id, name: lbName(), streak: s.streak, best: s.best, gain7: s.gain7, active: active !== false, updated_at: new Date().toISOString() },
+            { onConflict: 'uid' });
+        if (error) throw error;
+    }
+    function lbScheduleSync() {
+        if (!lbJoined()) return;
+        clearTimeout(lbTimer);
+        lbTimer = setTimeout(() => { lbPush(true).catch(() => {}); }, 2500);
+    }
+
+    async function lbRows(tab, limit) {
+        const col = { streak: 'streak', best: 'best', gain: 'gain7' }[tab];
+        if (!sb) return { rows: [], total: null };
+        const { data, error, count } = await sb.from('leaderboard')
+            .select('uid,name,streak,best,gain7', { count: 'exact' })
+            .eq('active', true).order(col, { ascending: false }).order('updated_at', { ascending: true }).limit(limit || 10);
+        if (error) throw error;
+        return { rows: (data || []).map(x => Object.assign(x, { mine: !!lbUser && x.uid === lbUser.id })), total: count };
+    }
+
+    function lbPaintTabs() {
+        const t = lbT();
+        [['streak', t.streak], ['best', t.best], ['gain', t.gain]].forEach(([id, label]) => {
+            const b = document.getElementById('lbTab-' + id);
+            b.textContent = label;
+            b.className = 'px-3 py-1.5 rounded-full text-xs font-bold border transition-all ' + (id === lbTab ? 'bg-teal text-bg border-teal' : 'border-border text-muted hover:border-teal');
+        });
+    }
+    function lbPaintStatic() {
+        const t = lbT();
+        setText('lbTitle', t.title);
+        setText('lbRule', t.rule);
+        setText('lbPrivacy', t.privacy);
+        setText('lbMine', t.mine(lbStats()));
+        const j = document.getElementById('lbJoinBtn');
+        const joined = lbJoined();
+        j.textContent = !lbUser ? t.google : (joined ? t.leave : t.join);
+        j.className = 'w-full px-4 py-2.5 rounded-xl text-xs font-bold transition-all ' + (joined ? 'border border-border text-muted hover:bg-surface-hover' : 'bg-teal text-bg hover:opacity-90');
+        const so = document.getElementById('lbSignOut');
+        so.textContent = t.signout;
+        so.classList.toggle('hidden', !lbUser);
+        const d = document.getElementById('lbDemo');
+        d.textContent = t.demo;
+        d.classList.toggle('hidden', !!sb);
+        lbPaintTabs();
+    }
+    function lbRowHtml(r, i, col, t) {
+        return `<div class="flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 ${r.mine ? 'border-teal bg-teal/10' : 'border-border bg-bg'}">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-5 text-xs font-extrabold ${i < 3 ? 'text-orange' : 'text-muted'}">${i + 1}</span>
+                        <span class="text-sm font-bold truncate">${escapeHtml(r.name)}${r.mine ? ` <span class="text-[10px] text-teal font-semibold">(${escapeHtml(t.you)})</span>` : ''}</span>
+                    </div>
+                    <span class="text-sm font-extrabold tabular-nums text-teal">🔥 ${r[col]}</span>
+                </div>`;
+    }
+    async function lbRender() {
+        const t = lbT(), list = document.getElementById('lbList');
+        lbPaintStatic();
+        list.innerHTML = '<div class="text-center text-xs text-muted py-6">…</div>';
+        try {
+            const { rows, total } = await lbRows(lbTab, 10);
+            setText('lbCount', t.members(rows.length, total));
+            if (!rows.length) { list.innerHTML = `<div class="text-center text-xs text-muted py-6">${escapeHtml(t.empty)}</div>`; return; }
+            const col = { streak: 'streak', best: 'best', gain: 'gain7' }[lbTab];
+            list.innerHTML = rows.map((r, i) => lbRowHtml(r, i, col, t)).join('') + `<p class="text-center text-[10px] text-muted pt-1">${escapeHtml(t.end)}</p>`;
+        } catch (e) {
+            list.innerHTML = `<div class="text-center text-xs text-muted py-6">${escapeHtml(t.err)}</div>`;
+        }
+    }
+    function lbSetTab(id) { lbTab = id; lbRender(); }
+    function openLeaderboard() {
+        document.getElementById('lbModal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+        if (lbJoined()) lbPush(true).catch(() => {}).finally(lbRender); else lbRender();
+    }
+    function closeLeaderboard() { document.getElementById('lbModal').classList.add('hidden'); }
+    async function lbToggleJoin() {
+        const t = lbT();
+        if (!sb) { toast(t.demo); return; }
+        if (!lbUser) {
+            store.lbPendingJoin = true; persist();
+            const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+            if (error) toast(t.err);
             return;
         }
-        showFocusAuth();
-        window.focusSupabaseClient.auth.onAuthStateChange((event, session) => {
-            if (session?.user) setTimeout(() => loadFocusAccount(session.user), 0);
-            else if (event === 'SIGNED_OUT') { focusAuthUser = null; focusLoadingUserId = null; showFocusAuth(); }
-        });
-        const { data, error } = await window.focusSupabaseClient.auth.getSession();
-        if (error) { focusAuthMessage(error.message, true); return; }
-        if (data.session?.user) await loadFocusAccount(data.session.user);
-        else showFocusAuth();
+        const joining = !store.lbJoin;
+        store.lbJoin = joining; persist();
+        try { await lbPush(joining); } catch (e) { toast(t.err); }
+        toast(joining ? t.joined : t.left);
+        lbRender();
+    }
+    async function lbSignOut() {
+        if (!sb) return;
+        await sb.auth.signOut();
+        lbUser = null;
+        closeLeaderboard();
+        authLock(true);
+    }
+    document.addEventListener('DOMContentLoaded', lbInit);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        buildCategories();
+        applyLanguageUI();
+        renderClock();
+        setInterval(tick, 30000);
+        applyTheme(false);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+
+        // Three-day return reminder (local HTML version; no account, email, or phone).
+        // This reminder is checked when the user opens/returns to the site.
+        const visitKey = 'focus_last_site_visit_v1';
+        const currentVisit = Date.now();
+        let previousVisit = 0;
+        try { previousVisit = Number(localStorage.getItem(visitKey) || 0); } catch (e) {}
+        if (previousVisit && currentVisit - previousVisit >= 3 * 24 * 60 * 60 * 1000) {
+            const reminderText = currentLang === 'AR'
+                ? 'مرحبا بعودتك! فاتت 3 أيام منذ آخر زيارة. يلا نكملو التقدم ديالك في Focus.'
+                : currentLang === 'EN'
+                    ? 'Welcome back! It has been 3 days since your last visit. Let’s continue your progress in Focus.'
+                    : 'Bon retour ! Cela fait 3 jours depuis ta dernière visite. Continuons tes progrès sur Focus.';
+            setTimeout(() => {
+                toast(reminderText);
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    try { new Notification('Focus', { body: reminderText }); } catch (e) {}
+                }
+            }, 1200);
+        }
+        try { localStorage.setItem(visitKey, String(currentVisit)); } catch (e) {}
+        setTimeout(() => { if (!store.user && !authLocked) openNameModal(); }, 900);   // first visit: ask for the name
     });
     </script>
 </body>
