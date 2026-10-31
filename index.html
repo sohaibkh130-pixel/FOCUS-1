@@ -437,6 +437,10 @@
             </div>
             <input id="nameInput" type="text" maxlength="24" placeholder="Ton prénom" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')saveName()">
             <p id="txt-name-hint" class="text-[11px] text-muted">Ton nom s'affiche en haut et dans tes messages. Il est enregistré sur cet appareil.</p>
+            <div id="accountBox" class="hidden rounded-xl border border-border bg-bg p-3 space-y-2">
+                <p id="accountEmail" class="text-xs text-muted break-all"></p>
+                <button onclick="lbSignOut()" id="accountSignOut" class="w-full px-3 py-2 rounded-xl text-xs font-bold border border-border hover:bg-surface-hover transition-all"></button>
+            </div>
             <div class="flex justify-end gap-2">
                 <button onclick="closeNameModal()" id="txt-name-later" class="px-4 py-2 rounded-xl text-xs font-semibold text-muted hover:bg-surface-hover">Plus tard</button>
                 <button onclick="saveName()" id="txt-name-save" class="px-4 py-2 rounded-xl text-xs font-bold bg-teal text-bg hover:opacity-90 transition-all">Enregistrer</button>
@@ -938,6 +942,7 @@
         setText('avatarInitials', store.user ? initials(store.user) : '?');
     }
     function openNameModal() {
+        if (typeof accountPaint === 'function') accountPaint();
         document.getElementById('nameInput').value = store.user;
         document.getElementById('nameModal').classList.remove('hidden');
         setTimeout(() => document.getElementById('nameInput').focus(), 50);
@@ -2261,13 +2266,13 @@
     /* ---------- LOGIN GATE (Google or email + password) ---------- */
     const AUTH_T = {
         FR: { title: 'Bienvenue sur Focus', sub: 'Connecte-toi pour continuer', google: 'Continuer avec Google', or: 'ou', email: 'Ton email', pass: 'Mot de passe (6 caractères min.)',
-              joinBtn: 'Rejoindre', signin: 'Se connecter', signup: 'Créer mon compte', toSignup: 'Pas de compte ? Créer un compte', toSignin: 'Déjà un compte ? Se connecter',
+              joinBtn: 'Rejoindre', acct: 'Connecté avec', switchAcc: 'Se déconnecter / changer de compte', signin: 'Se connecter', signup: 'Créer mon compte', toSignup: 'Pas de compte ? Créer un compte', toSignin: 'Déjà un compte ? Se connecter',
               bad: 'Email ou mot de passe incorrect', short: 'Mot de passe : 6 caractères minimum', exists: 'Cet email a déjà un compte. Connecte-toi.', confirm: 'Vérifie ta boîte mail pour confirmer ton compte, puis reviens te connecter.', generic: 'Une erreur est survenue. Réessaie.', fill: 'Entre ton email et ton mot de passe' },
         EN: { title: 'Welcome to Focus', sub: 'Sign in to continue', google: 'Continue with Google', or: 'or', email: 'Your email', pass: 'Password (min. 6 characters)',
-              joinBtn: 'Join', signin: 'Sign in', signup: 'Create my account', toSignup: 'No account? Create one', toSignin: 'Already have an account? Sign in',
+              joinBtn: 'Join', acct: 'Signed in as', switchAcc: 'Sign out / switch account', signin: 'Sign in', signup: 'Create my account', toSignup: 'No account? Create one', toSignin: 'Already have an account? Sign in',
               bad: 'Wrong email or password', short: 'Password must be at least 6 characters', exists: 'This email already has an account. Sign in.', confirm: 'Check your inbox to confirm your account, then come back and sign in.', generic: 'Something went wrong. Try again.', fill: 'Enter your email and password' },
         AR: { title: 'مرحبًا بك في Focus', sub: 'سجّل الدخول للمتابعة', google: 'المتابعة عبر Google', or: 'أو', email: 'بريدك الإلكتروني', pass: 'كلمة السر (6 أحرف على الأقل)',
-              joinBtn: 'انضم', signin: 'تسجيل الدخول', signup: 'إنشاء حسابي', toSignup: 'ليس لديك حساب؟ أنشئ حسابًا', toSignin: 'لديك حساب؟ سجّل الدخول',
+              joinBtn: 'انضم', acct: 'مسجّل بحساب', switchAcc: 'تسجيل الخروج / تغيير الحساب', signin: 'تسجيل الدخول', signup: 'إنشاء حسابي', toSignup: 'ليس لديك حساب؟ أنشئ حسابًا', toSignin: 'لديك حساب؟ سجّل الدخول',
               bad: 'البريد أو كلمة السر غير صحيحة', short: 'كلمة السر يجب أن تكون 6 أحرف على الأقل', exists: 'هذا البريد لديه حساب بالفعل. سجّل الدخول.', confirm: 'افتح بريدك لتأكيد الحساب، ثم عد وسجّل الدخول.', generic: 'حدث خطأ. حاول مرة أخرى.', fill: 'أدخل بريدك وكلمة السر' }
     };
     let authMode = 'in';
@@ -2285,6 +2290,16 @@
     function authShowMsg(m) { const e = document.getElementById('authMsg'); e.textContent = m || ''; e.classList.toggle('hidden', !m); }
     function authShowGate() { document.getElementById('authGate').classList.remove('hidden'); authPaint(); }
     function authHideGate() { document.getElementById('authGate').classList.add('hidden'); }
+    function accountPaint() {
+        const box = document.getElementById('accountBox');
+        if (!box) return;
+        const t = authT();
+        box.classList.toggle('hidden', !lbUser);
+        if (lbUser) {
+            document.getElementById('accountEmail').textContent = t.acct + ': ' + (lbUser.email || '');
+            document.getElementById('accountSignOut').textContent = t.switchAcc;
+        }
+    }
     let authLocked = false;
     function authLock(on) {
         authLocked = on;
@@ -2295,7 +2310,7 @@
     function authToggleMode() { authMode = authMode === 'in' ? 'up' : 'in'; authShowMsg(''); authPaint(); }
     async function authGoogle() {
         if (!sb) return;
-        const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+        const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
         if (error) authShowMsg(authT().generic);
     }
     async function authSubmit() {
@@ -2441,7 +2456,9 @@
             const col = { streak: 'streak', best: 'best', gain: 'gain7' }[lbTab];
             list.innerHTML = rows.map((r, i) => lbRowHtml(r, i, col, t)).join('') + `<p class="text-center text-[10px] text-muted pt-1">${escapeHtml(t.end)}</p>`;
         } catch (e) {
-            list.innerHTML = `<div class="text-center text-xs text-muted py-6">${escapeHtml(t.err)}</div>`;
+            console.error('leaderboard:', e);
+            const detail = [e && e.code, e && (e.message || e.details || String(e))].filter(Boolean).join(' · ');
+            list.innerHTML = `<div class="text-center text-xs text-muted py-6">${escapeHtml(t.err)}<br><span dir="ltr" class="block mt-2 text-[10px] opacity-70 break-words">${escapeHtml(detail)}</span></div>`;
         }
     }
     function lbSetTab(id) { lbTab = id; lbRender(); }
@@ -2456,7 +2473,7 @@
         if (!sb) { toast(t.demo); return; }
         if (!lbUser) {
             store.lbPendingJoin = true; persist();
-            const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+            const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
             if (error) toast(t.err);
             return;
         }
@@ -2471,6 +2488,7 @@
         await sb.auth.signOut();
         lbUser = null;
         closeLeaderboard();
+        closeNameModal();
         authLock(true);
     }
     document.addEventListener('DOMContentLoaded', lbInit);
