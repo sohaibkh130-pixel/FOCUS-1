@@ -787,7 +787,7 @@
                 updated_at: new Date().toISOString()
             }, { onConflict: 'uid' });
             if (error) throw error;
-            focusCloudStatus('Synchronisé avec le cloud');
+            // Success message hidden as requested.
         } catch (error) {
             console.error('Focus cloud save:', error);
             focusCloudStatus('Erreur de synchronisation — vérifiez votre connexion');
