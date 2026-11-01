@@ -142,10 +142,13 @@
         }
 
         /* Range sliders */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgb(var(--c-border)); border-radius: 4px; }
-        input[type=range]::-webkit-slider-thumb { height: 22px; width: 22px; border-radius: 50%; cursor: pointer; -webkit-appearance: none; margin-top: -7px; transition: transform .1s ease; }
+        input[type=range] { pointer-events: none; }
+        input[type=range]::-webkit-slider-thumb { pointer-events: auto; }
+        input[type=range]::-moz-range-thumb { pointer-events: auto; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: default; background: rgb(var(--c-border)); border-radius: 4px; }
+        input[type=range]::-webkit-slider-thumb { height: 22px; width: 22px; border-radius: 50%; cursor: grab; -webkit-appearance: none; margin-top: -7px; transition: transform .1s ease; }
         input[type=range]::-webkit-slider-thumb:active { transform: scale(1.25); }
         input[type=range]::-moz-range-track { height: 8px; background: rgb(var(--c-border)); border-radius: 4px; }
         input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; border: none; cursor: pointer; }
@@ -155,6 +158,23 @@
         .slider-teal::-moz-range-thumb { background: rgb(var(--c-teal)); }
         .slider-orange::-moz-range-thumb { background: rgb(var(--c-orange)); }
         .slider-indigo::-moz-range-thumb { background: rgb(var(--c-indigo)); }
+        .celebration-show { display: flex !important; animation: celebrationFade .28s ease-out both; }
+        .celebration-card { animation: celebrationPop .55s cubic-bezier(.2,.9,.25,1.25) both; }
+        .celebration-medal { background: radial-gradient(circle, rgb(var(--c-teal) / .24), rgb(var(--c-indigo) / .12)); box-shadow: 0 0 0 8px rgb(var(--c-teal) / .07), 0 0 36px rgb(var(--c-teal) / .2); animation: medalFloat 2.2s ease-in-out infinite; }
+        .flip-word { direction:ltr; unicode-bidi:isolate; display:flex; justify-content:center; flex-wrap:wrap; perspective:600px; }
+        .flip-letter { display:inline-block; opacity:0; transform:rotateX(-100deg) translateY(10px); transform-origin:50% 100%; animation: flipIn .55s cubic-bezier(.2,.9,.3,1.3) forwards; background: linear-gradient(90deg, rgb(var(--c-teal)), rgb(var(--c-indigo)), rgb(var(--c-orange))); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        @keyframes flipIn { 0% { opacity:0; transform:rotateX(-100deg) translateY(10px); } 60% { opacity:1; transform:rotateX(18deg) translateY(-4px); } 100% { opacity:1; transform:rotateX(0) translateY(0); } }
+        .sound-bars { display:flex; align-items:flex-end; justify-content:center; gap:3px; height:22px; }
+        .sound-bars i { width:4px; border-radius:2px; background:rgb(var(--c-teal)); height:20%; animation: barDance .7s ease-in-out infinite; }
+        .sound-bars i:nth-child(2n) { background:rgb(var(--c-indigo)); animation-duration:.55s; }
+        .sound-bars i:nth-child(3n) { background:rgb(var(--c-orange)); animation-duration:.85s; }
+        .sound-bars.stopped i { animation:none; height:20%; }
+        @keyframes barDance { 0%,100% { height:15%; } 50% { height:100%; } }
+        .celeb-out { animation: celebOut .25s ease-in forwards !important; }
+        @keyframes celebOut { to { opacity:0; transform:translateY(14px); } }
+        @keyframes celebrationFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes celebrationPop { from { opacity: 0; transform: translateY(18px) scale(.88); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes medalFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-7px) rotate(4deg); } }
     </style>
 </head>
 <body class="antialiased min-h-screen pb-24">
@@ -471,11 +491,7 @@
                 <button onclick="closeLeaderboard()" class="w-8 h-8 rounded-full hover:bg-surface-hover text-muted text-lg leading-none">×</button>
             </div>
             <div id="lbDemo" class="hidden text-[11px] rounded-xl border border-orange/30 bg-orange/10 text-orange px-3 py-2"></div>
-            <div class="flex gap-1.5">
-                <button id="lbTab-streak" onclick="lbSetTab('streak')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
-                <button id="lbTab-best" onclick="lbSetTab('best')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
-                <button id="lbTab-gain" onclick="lbSetTab('gain')" class="px-3 py-1.5 rounded-full text-xs font-bold border border-border"></button>
-            </div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/10 px-3 py-1.5 text-xs font-bold text-teal"><i data-lucide="percent" class="w-3.5 h-3.5"></i><span id="lbPercentLabel">Global score</span></div>
             <p id="lbRule" class="text-[11px] text-muted"></p>
             <div id="lbMine" class="rounded-xl border border-teal/30 bg-teal/10 px-3 py-2 text-xs font-semibold text-teal"></div>
             <div id="lbList" class="space-y-1.5"></div>
@@ -551,6 +567,29 @@
                     <i data-lucide="bot" class="w-4 h-4"></i>
                     <span id="txt-gen-ai-btn">Actualiser l’analyse</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dailyCelebration" dir="ltr" class="hidden fixed left-0 right-0 z-[120] justify-center px-4 pointer-events-none" style="bottom:calc(env(safe-area-inset-bottom,0px) + 20px)" role="status" aria-live="polite">
+        <div id="celebrationPill" class="celebration-card flex items-center gap-2.5 rounded-full border border-teal/50 bg-surface px-5 py-2.5 shadow-2xl">
+            <span class="text-xl" aria-hidden="true">🏆</span>
+            <h2 id="celebrationTitle" dir="ltr" class="text-base font-black flip-word" style="flex-wrap:nowrap;white-space:nowrap" aria-label="Congratulations!"></h2>
+            <div id="celebrationBars" class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+    </div>
+
+    <div id="welcomeCard" class="hidden fixed inset-0 z-[130] bg-bg/85 backdrop-blur-md items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+        <div class="celebration-card w-full max-w-sm rounded-3xl border border-teal/40 bg-surface p-7 text-center shadow-2xl space-y-4" id="welcomeInner">
+            <div class="flex items-center justify-between">
+                <p class="text-[10px] font-extrabold uppercase tracking-[.22em] text-teal">FOCUS</p>
+                <button type="button" id="welcomeLang" onclick="toggleLanguage()" class="px-2.5 h-7 rounded-lg border border-border text-[10px] font-bold text-muted hover:text-teal hover:border-teal">FR</button>
+            </div>
+            <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center celebration-medal" aria-hidden="true"><img id="welcomeLogo" alt="Focus" class="w-14 h-14 object-contain"></div>
+            <h2 id="welcomeTitle" class="text-xl font-black greet-grad"></h2>
+            <p id="welcomeBody" class="text-sm text-primary leading-relaxed"></p>
+            <div class="flex gap-2">
+                <button type="button" id="welcomeGo" onclick="closeWelcome()" class="flex-1 rounded-xl bg-teal px-4 py-3 text-sm font-extrabold text-bg"></button>
             </div>
         </div>
     </div>
@@ -754,12 +793,13 @@
         { id: 'hab',   group: 'execution', colorClass: 'slider-teal',   barColor: '#2dd4a8', textClass: 'text-teal' }
     ];
 
-    function defaultStore() { return { user: '', lang: 'FR', custom: [], customRewards: [], goals: {}, customTasks: {}, hiddenCategories: [], theme: 'dark', themeMode: 'auto', hiddenRewards: [], hiddenTaskCats: [], months: {}, dayDone: {}, lastActive: '' }; }
+    function defaultStore() { return { user: '', lang: 'FR', custom: [], customRewards: [], goals: {}, customTasks: {}, customTaskCelebrated: {}, hiddenCategories: [], theme: 'dark', themeMode: 'auto', hiddenRewards: [], hiddenTaskCats: [], months: {}, dayDone: {}, lastActive: '' }; }
 
     let store = defaultStore();
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) store = Object.assign(defaultStore(), JSON.parse(raw));
+    if (!store.customTaskCelebrated) store.customTaskCelebrated = {};
     } catch (e) { /* storage unavailable: run in memory */ }
 
     let saveTimer = null;
@@ -962,6 +1002,7 @@
         store.lang = currentLang;
         persist();
         applyLanguageUI();
+        if (welcomeVisible()) welcomeRender();
     }
 
     function setText(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
@@ -1081,8 +1122,14 @@
         const t = i18n[currentLang];
         const d = now();
         const period = periodOfDay(d.getHours());
-        const name = store.user ? `, ${store.user}` : '';
-        document.getElementById('greetLine').innerHTML = `<span class="greet-grad">${t.greet[period]}${name}</span> 👋`;
+        const greetLine = document.getElementById('greetLine');
+        if (greetLine) {
+            // Treat the saved profile name as plain text, never as HTML.
+            const greetText = document.createElement('span');
+            greetText.className = 'greet-grad';
+            greetText.textContent = `${t.greet[period]}${store.user ? `, ${store.user}` : ''}`;
+            greetLine.replaceChildren(greetText, document.createTextNode(' 👋'));
+        }
         document.getElementById('dateLine').textContent = selectedDate.toLocaleDateString(t.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('clockLine').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
         setText('phaseLine', t.phase[monthPhase(selectedDate.getDate(), daysInMonth(activeMonthDate))]);
@@ -1229,12 +1276,111 @@
         renderDayTasks();
     }
     function toggleCustomTask(key, i) {
-        const ct = store.customTasks[key] && store.customTasks[key][i];
+        const list = store.customTasks[key] || [];
+        const ct = list[i];
         if (!ct) return;
+        const wasDone = !!ct.done;
         ct.done = !ct.done;
         persist();
         renderDayTasks();
+        maybeCelebrateDay(key);
     }
+
+    let _celebAudio = null;
+    function celebCtx() {
+        try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            if (!_celebAudio) _celebAudio = new AC();
+            if (_celebAudio.state === 'suspended') _celebAudio.resume();
+            return _celebAudio;
+        } catch (e) { return null; }
+    }
+    function playTone(ctx, freq, at, dur, type, vol) {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = type || 'sine'; o.frequency.setValueAtTime(freq, at);
+        g.gain.setValueAtTime(0.0001, at);
+        g.gain.exponentialRampToValueAtTime(vol || 0.18, at + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(at); o.stop(at + dur + 0.03);
+    }
+
+    function showDailyTaskCelebration() {
+        const modal = document.getElementById('dailyCelebration');
+        if (!modal) return;
+        const word = 'Congratulations!';
+        const title = document.getElementById('celebrationTitle');
+        const bars = document.getElementById('celebrationBars');
+        const pill = document.getElementById('celebrationPill');
+        clearTimeout(showDailyTaskCelebration._h);
+        clearTimeout(showDailyTaskCelebration._v);
+        pill && pill.classList.remove('celeb-out');
+        title.innerHTML = '';
+        bars && bars.classList.remove('stopped');
+        const step = 0.045;
+        [...word].forEach((ch, i) => {
+            const s = document.createElement('span');
+            s.className = 'flip-letter';
+            s.textContent = ch;
+            s.style.animationDelay = (0.05 + i * step) + 's';
+            title.appendChild(s);
+        });
+        modal.classList.remove('hidden');
+        modal.classList.add('celebration-show');
+        burstConfetti(28);
+
+        // Sound: quick "ta-ta-TAAA" fanfare.
+        const ctx = celebCtx();
+        if (ctx) {
+            const t0 = ctx.currentTime + 0.03;
+            const brass = (f, at, d, v) => { playTone(ctx, f, at, d, 'sawtooth', v); playTone(ctx, f * 2, at, d, 'square', v * 0.25); };
+            [523.25, 659.25].forEach((f, i) => brass(f, t0 + i * 0.11, 0.12, 0.1));
+            const big = t0 + 0.26;
+            [523.25, 659.25, 783.99, 1046.5].forEach(f => brass(f, big, 1.0, 0.09));
+            [1318.5, 1568, 2093].forEach((f, i) => playTone(ctx, f, big + 0.04 + i * 0.05, 0.7, 'sine', 0.06));
+        }
+        // Voice: just "Congratulations!" on the big chord.
+        try {
+            if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                window.speechSynthesis.cancel();
+                const vs = window.speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+                const prefs = [/Natural/i, /Online/i, /Aria|Jenny|Ava|Andrew|Emma|Brian/i, /Google US English/i, /Google UK English/i, /Samantha|Allison|Serena|Karen|Daniel/i, /Female|Zira/i];
+                let voice = null;
+                for (const re of prefs) { voice = vs.find(x => re.test(x.name)); if (voice) break; }
+                const m = new SpeechSynthesisUtterance('Congratulations!');
+                if (voice) { m.voice = voice; m.lang = voice.lang; } else m.lang = 'en-US';
+                m.pitch = 1.2; m.rate = 1.05; m.volume = 1;
+                showDailyTaskCelebration._v = setTimeout(() => window.speechSynthesis.speak(m), 250);
+            }
+        } catch (e) { console.warn('Celebration voice unavailable:', e); }
+
+        // The bar leaves by itself after ~1.8 s (the voice keeps talking until it finishes).
+        showDailyTaskCelebration._h = setTimeout(() => {
+            pill && pill.classList.add('celeb-out');
+            bars && bars.classList.add('stopped');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('celebration-show'); }, 260);
+        }, 1800);
+    }
+
+    // True when every visible task of the day (default + personal) is ticked.
+    function allDayTasksDone(key, d) {
+        const f = tasksForDate(d), h = store.hiddenTaskCats || [];
+        const done = store.dayDone[key] || [];
+        const vis = f.map((c, ix) => ix).filter(ix => !h.includes(f[ix]));
+        const customs = (store.customTasks && store.customTasks[key]) || [];
+        if (!vis.length && !customs.length) return false;
+        return vis.every(ix => done.includes(ix)) && customs.every(c => c.done);
+    }
+    function maybeCelebrateDay(key) {
+        const celebrated = store.customTaskCelebrated || (store.customTaskCelebrated = {});
+        if (allDayTasksDone(key, selectedDate)) {
+            if (!celebrated[key]) { celebrated[key] = true; persist(); showDailyTaskCelebration(); }
+        } else if (celebrated[key]) {
+            delete celebrated[key]; persist(); // un-ticked a task: can celebrate again when finished
+        }
+    }
+
     function deleteCustomTask(key, i) {
         if (!store.customTasks[key]) return;
         store.customTasks[key].splice(i, 1);
@@ -1249,9 +1395,7 @@
         store.dayDone[key] = arr;
         persist();
         renderDayTasks();
-        const _f = tasksForDate(selectedDate), _h = store.hiddenTaskCats || [];
-        const _vis = _f.map((c, ix) => ix).filter(ix => !_h.includes(_f[ix]));
-        if (_vis.length && _vis.every(ix => arr.includes(ix))) { toast('🎉 ' + i18n[currentLang].saved); burstConfetti(18); }
+        maybeCelebrateDay(key);
     }
 
     /* =====================================================
@@ -1314,6 +1458,8 @@
         recalculateAll(true);
     }
 
+    // On touch screens, ignore taps on the slider track: only the thumb can start a drag.
+    // This prevents a normal vertical page scroll from accidentally changing a goal.
     function renderCategories() {
         const t = i18n[currentLang];
         const container = document.getElementById('categoriesContainer');
@@ -1327,11 +1473,13 @@
             card.innerHTML = `
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-semibold">${escapeHtml(catLabel(cat))}</h3>
-                    <span id="val-text-${cat.id}" class="text-sm font-bold ${cat.textClass}">${showAbs(cat) ? `${fmtNum((cat.value / 100) * goalOf(cat).target)} ${escapeHtml(goalOf(cat).unit)}` : `${cat.value}%`}</span>
+                    <div class="flex items-center gap-1.5"><span id="val-text-${cat.id}" class="text-sm font-bold ${cat.textClass}">${showAbs(cat) ? `${fmtNum((cat.value / 100) * goalOf(cat).target)} ${escapeHtml(goalOf(cat).unit)}` : `${cat.value}%`}</span><button type="button" onclick="editCategoryValue('${cat.id}')" class="w-6 h-6 rounded-full border border-border text-muted text-[11px] hover:text-teal hover:border-teal transition-colors" title="Edit / Modifier / تعديل" aria-label="Edit value">✎</button></div>
                 </div>
                 <div class="space-y-1.5">
-                    <input type="range" min="0" max="100" value="${cat.value}"
-                        oninput="updateCategoryValue('${cat.id}', this.value)"
+                    <input type="range" min="0" max="${cat.isMoney ? Math.max(1, Math.round(goalOf(cat).target)) : 100}" step="1" value="${cat.isMoney ? Math.max(0, Math.min(Math.round(goalOf(cat).target), Math.round((cat.value / 100) * goalOf(cat).target))) : cat.value}"
+                        data-cat="${cat.id}"
+                        oninput="${cat.isMoney ? `updateCategoryMoneyAmount('${cat.id}', this.value)` : `updateCategoryValue('${cat.id}', this.value)`}"
+                        aria-label="${escapeHtml(catLabel(cat))} progress"
                         class="${cat.colorClass}">
                     <div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
                         <div id="bar-${cat.id}" class="h-1.5 rounded-full transition-all duration-300" style="width:${cat.value}%; background-color:${BAR_VAR[cat.barColor] || cat.barColor};"></div>
@@ -1444,20 +1592,85 @@
 
     function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
 
+    // Money category slider uses an exact DH scale: one drag step = 1 DH.
+    // The stored category value remains a percentage for compatibility with existing data.
+    function updateCategoryMoneyAmount(id, amount) {
+        const cat = categories.find(c => c.id === id);
+        if (!cat || !cat.isMoney) return;
+        const g = goalOf(cat);
+        const target = Math.max(1, Number(g.target) || 1);
+        const dh = Math.max(0, Math.min(Math.round(target), Math.round(Number(amount) || 0)));
+        cat.value = Math.max(0, Math.min(100, (dh / target) * 100));
+        const reachedValue = dh;
+        const valText = document.getElementById(`val-text-${id}`);
+        if (valText) valText.textContent = `${fmtNum(reachedValue)} ${g.unit}`;
+        const bar = document.getElementById(`bar-${id}`);
+        if (bar) bar.style.width = `${cat.value}%`;
+        const reachedEl = document.getElementById(`reached-${id}`);
+        if (reachedEl) reachedEl.textContent = fmtNum(reachedValue);
+        const remainEl = document.getElementById(`remain-${id}`);
+        if (remainEl) remainEl.textContent = fmtNum(target - reachedValue);
+        const label = document.getElementById('moneyEarnedLabel');
+        if (label) label.textContent = `${dh} DH / ${fmtNum(target)} DH`;
+        recalculateAll();
+        clearTimeout(updateCategoryValue._t);
+        updateCategoryValue._t = setTimeout(() => { saveValues(); renderClock(); }, 350);
+    }
+
+    // Pencil next to the value: type the exact number instead of dragging the line.
+    function editCategoryValue(id) {
+        const cat = categories.find(c => c.id === id);
+        const span = document.getElementById(`val-text-${id}`);
+        if (!cat || !span || span.dataset.editing) return;
+        const g = goalOf(cat), money = !!cat.isMoney, abs = showAbs(cat);
+        const target = money ? Math.max(1, Number(g.target) || 1) : Number(g.target) || 100;
+        const cur = money ? (cat.value / 100) * target : abs ? (cat.value / 100) * target : cat.value;
+        const max = abs || money ? target : 100;
+        const unit = money ? (g.unit || 'DH') : abs ? g.unit : '%';
+        span.dataset.editing = '1'; span.style.display = 'none';
+        const wrap = document.createElement('span');
+        wrap.className = 'inline-flex items-center gap-1';
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(Math.round(cur * 100) / 100);
+        inp.className = 'w-20 bg-bg border border-teal rounded-lg px-2 py-0.5 text-sm font-bold text-right focus:outline-none';
+        inp.setAttribute('aria-label', 'Value');
+        const u = document.createElement('span'); u.className = 'text-xs text-muted'; u.textContent = unit;
+        wrap.append(inp, u);
+        span.parentNode.insertBefore(wrap, span);
+        let done = false;
+        const finish = apply => {
+            if (done) return; done = true;
+            const n = parseFloat(String(inp.value).replace(',', '.'));
+            wrap.remove(); span.style.display = ''; delete span.dataset.editing;
+            if (!apply || !isFinite(n)) return;
+            const v = Math.max(0, Math.min(max, n));
+            if (n > max) toast((currentLang === 'AR' ? 'الحد الأقصى: ' : currentLang === 'EN' ? 'Maximum: ' : 'Maximum : ') + fmtNum(max) + ' ' + unit);
+            const slider = document.querySelector(`#categoriesContainer input[type=range][data-cat="${id}"]`);
+            if (money) { updateCategoryMoneyAmount(id, v); if (slider) slider.value = Math.round(v); }
+            else {
+                const pct = abs ? (v / target) * 100 : v;
+                updateCategoryValue(id, pct); if (slider) slider.value = Math.round(pct);
+            }
+        };
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') finish(true); else if (e.key === 'Escape') finish(false); });
+        inp.addEventListener('blur', () => finish(true));
+        inp.focus(); inp.select();
+    }
+
     function updateCategoryValue(id, val) {
-        val = parseInt(val) || 0;
+        val = Number(val); if (!isFinite(val)) val = 0; val = Math.max(0, Math.min(100, val));
         const cat = categories.find(c => c.id === id);
         if (!cat) return;
         cat.value = val;
         const g = goalOf(cat);
         const reachedValue = (val / 100) * g.target;
-        document.getElementById(`val-text-${id}`).textContent = showAbs(cat) ? `${fmtNum(reachedValue)} ${g.unit}` : `${val}%`;
+        document.getElementById(`val-text-${id}`).textContent = showAbs(cat) ? `${fmtNum(reachedValue)} ${g.unit}` : `${Math.round(val * 10) / 10}%`;
         document.getElementById(`bar-${id}`).style.width = `${val}%`;
         const reachedEl = document.getElementById(`reached-${id}`);
         const gTarget = g.target;
         if (reachedEl) reachedEl.textContent = fmtNum(reachedValue);
         const reachedBox = reachedEl && reachedEl.parentElement;
-        if (reachedBox) { const pct = reachedBox.querySelector('.goal-percent'); if (pct) pct.textContent = `(${val}%)`; }
+        if (reachedBox) { const pct = reachedBox.querySelector('.goal-percent'); if (pct) pct.textContent = `(${Math.round(val)}%)`; }
         const remainEl = document.getElementById(`remain-${id}`);
         if (remainEl) remainEl.textContent = fmtNum(gTarget - (val / 100) * gTarget);
         if (cat.isMoney) {
@@ -1986,120 +2199,9 @@
        COACH IA : analyse locale (FR / EN / AR)
     ===================================================== */
     const COACH = {
-        FR: {
-            hello: n => `Salut${n ? ' ' + n : ''} 👋 Voici mon analyse de ton mois, sans détour.`,
-            analysing: 'Analyse de tes chiffres…',
-            secDiag: 'Diagnostic', secProblems: 'Ce qui te freine', secToday: 'À faire aujourd’hui',
-            secBest: 'Ma recommandation', secReach: 'Comment atteindre le reste', secTip: 'Conseil du moment',
-            lblScore: 'Score global', lblExpected: 'Rythme attendu', lblGap: 'Écart',
-            dayLine: (d, t, l) => `Jour ${d} sur ${t} · il te reste ${l} jour${l > 1 ? 's' : ''} (aujourd’hui inclus).`,
-            vNew: 'Tu n’as encore rien saisi ce mois-ci, donc je ne peux pas mesurer ta progression. Le plus important maintenant : démarrer, même petit.',
-            vAhead: g => `Tu es <strong>en avance</strong> de ${g} point${g > 1 ? 's' : ''} sur le rythme. C’est solide : l’enjeu est de tenir, pas d’accélérer.`,
-            vSlight: g => `Tu es légèrement en retard (${g} points). Rien de grave : un petit ajustement quotidien suffit pour revenir dans le rythme.`,
-            vBehind: g => `Tu es nettement en retard (${g} points sous le rythme). Ça se rattrape, mais seulement avec un effort ciblé, pas en essayant de tout faire d’un coup.`,
-            rewardOk: '🎁 Récompenses débloquées (score ≥ 50%).',
-            rewardNeed: n => `🔒 Il te manque ${n} point${n > 1 ? 's' : ''} pour débloquer les récompenses (50%).`,
-            projection: p => `À ton rythme actuel, tu finirais le mois autour de <strong>${p}%</strong> (seuil « dans le rythme » du site : ${TARGET_PCT}%).`,
-            pNoData: 'Aucune donnée saisie : sans chiffres, impossible d’ajuster quoi que ce soit.',
-            pBehind: (g, e) => `Retard global de ${g} points : tu devrais être vers ${e}% à ce stade du mois.`,
-            pZero: names => `Aucune progression enregistrée sur : ${names}.`,
-            pWorst: (n, v, e) => `<strong>${n}</strong> est ta zone la plus en retard (${v}% au lieu d’environ ${e}%).`,
-            pTooMuch: d => `Tes objectifs en heures demandent <strong>${d} par jour</strong> pour être atteints : ce n’est pas tenable sur la durée. Mieux vaut baisser certains objectifs (✎) que d’abandonner.`,
-            pStreak: 'Ta série est à 0 : le vrai problème est la régularité, plus que le volume.',
-            pFewDays: (n, d) => `Tu n’as mis à jour tes curseurs que ${n} jour${n > 1 ? 's' : ''} sur ${d} : sans suivi régulier, impossible de corriger à temps.`,
-            pNone: 'Rien de bloquant pour l’instant. Continue comme ça.',
-            item: (n, a, r) => `<strong>${n}</strong> : vise ${a} aujourd’hui (reste ${r} au total).`,
-            idea: x => `Idée : ${x}`,
-            capped: 'Certains blocs sont plafonnés à 4 h par jour : étale le reste sur les jours suivants plutôt que de t’épuiser.',
-            update: 'Ce soir : mets à jour tes curseurs (30 secondes) pour que l’analyse de demain soit exacte.',
-            allDone: 'Tous tes objectifs sont atteints : bravo ! Fixe-en de nouveaux avec ✎ ou ajoute une catégorie.',
-            bestNew: 'Commence petit : un seul bloc de 25 minutes sur ta catégorie la plus importante, puis mets à jour ton curseur. Le plus dur, c’est de démarrer, pas de finir.',
-            bestBehind: (a, b) => `Ne cherche pas à tout rattraper. Concentre ton énergie sur <strong>${a}</strong>${b ? ` et <strong>${b}</strong>` : ''} (les plus gros écarts) et garde un minimum sur le reste. Fais le bloc le plus difficile le matin, avant les distractions.`,
-            bestSlight: (a, x) => `Tu es proche du rythme. Ajoute environ <strong>${x}</strong> par jour sur <strong>${a}</strong> et tu reviens dans la cible sans changer ton organisation.`,
-            bestAhead: a => `Protège ton avance : n’ajoute pas d’objectifs, garde de la marge pour les imprévus et profite de ton élan pour renforcer <strong>${a}</strong>, ta catégorie la plus faible.`,
-            reachHead: 'Reste à faire par catégorie :',
-            reachRow: (n, rem, per, norm) => `<strong>${n}</strong> : ${rem} restant → <strong>${per}/jour</strong> (rythme normal : ${norm}/jour)`,
-            reachRate: (c, r) => `Rythme global : ${c} pt/jour jusqu’ici, ${r} pt/jour nécessaires pour finir à 100%.`,
-            reachUnreal: 'L’écart est trop grand pour viser 100% : fixe-toi un objectif intermédiaire (par exemple 70%) et ajuste tes objectifs avec ✎. C’est plus réaliste et plus motivant.',
-            reachNone: 'Rien à rattraper.',
-            foot: 'Analyse calculée localement à partir de tes chiffres. Rien n’est envoyé sur internet.'
-        },
-        EN: {
-            hello: n => `Hi${n ? ' ' + n : ''} 👋 Here is my straight-talking analysis of your month.`,
-            analysing: 'Analysing your numbers…',
-            secDiag: 'Diagnosis', secProblems: 'What is holding you back', secToday: 'To do today',
-            secBest: 'My recommendation', secReach: 'How to reach the rest', secTip: 'Tip for right now',
-            lblScore: 'Overall score', lblExpected: 'Expected pace', lblGap: 'Gap',
-            dayLine: (d, t, l) => `Day ${d} of ${t} · ${l} day${l > 1 ? 's' : ''} left (today included).`,
-            vNew: 'You have not logged anything this month yet, so I cannot measure your progress. What matters most now is to start, even small.',
-            vAhead: g => `You are <strong>ahead</strong> of the pace by ${g} point${g > 1 ? 's' : ''}. That is solid: the goal now is to keep it up, not to speed up.`,
-            vSlight: g => `You are slightly behind (${g} points). Nothing serious: a small daily adjustment is enough to get back on pace.`,
-            vBehind: g => `You are clearly behind (${g} points under the pace). It can be recovered, but only with targeted effort, not by trying to do everything at once.`,
-            rewardOk: '🎁 Rewards unlocked (score ≥ 50%).',
-            rewardNeed: n => `🔒 You need ${n} more point${n > 1 ? 's' : ''} to unlock rewards (50%).`,
-            projection: p => `At your current pace you would finish the month around <strong>${p}%</strong> (the site’s “on track” threshold: ${TARGET_PCT}%).`,
-            pNoData: 'No data logged: without numbers, no adjustment is possible.',
-            pBehind: (g, e) => `Overall you are ${g} points behind: you should be around ${e}% at this point of the month.`,
-            pZero: names => `No progress recorded in: ${names}.`,
-            pWorst: (n, v, e) => `<strong>${n}</strong> is your weakest area (${v}% instead of about ${e}%).`,
-            pTooMuch: d => `Your hour-based goals need <strong>${d} per day</strong> to be reached, which is not sustainable. It is better to lower some goals (✎) than to give up.`,
-            pStreak: 'Your streak is at 0: the real problem is consistency, more than volume.',
-            pFewDays: (n, d) => `You only updated your sliders on ${n} of ${d} days: without regular tracking you cannot correct course in time.`,
-            pNone: 'Nothing blocking right now. Keep going.',
-            item: (n, a, r) => `<strong>${n}</strong>: aim for ${a} today (${r} left in total).`,
-            idea: x => `Idea: ${x}`,
-            capped: 'Some blocks are capped at 4 h per day: spread the rest over the coming days instead of burning out.',
-            update: 'Tonight: update your sliders (30 seconds) so tomorrow’s analysis is accurate.',
-            allDone: 'All your goals are reached: well done! Set new ones with ✎ or add a category.',
-            bestNew: 'Start small: a single 25-minute block on your most important category, then update your slider. Starting is the hard part, not finishing.',
-            bestBehind: (a, b) => `Do not try to catch up on everything. Put your energy into <strong>${a}</strong>${b ? ` and <strong>${b}</strong>` : ''} (the biggest gaps) and keep a minimum on the rest. Do the hardest block in the morning, before distractions.`,
-            bestSlight: (a, x) => `You are close to the pace. Add about <strong>${x}</strong> per day on <strong>${a}</strong> and you are back on target without changing your routine.`,
-            bestAhead: a => `Protect your lead: do not add goals, keep some margin for surprises, and use your momentum to strengthen <strong>${a}</strong>, your weakest category.`,
-            reachHead: 'Remaining per category:',
-            reachRow: (n, rem, per, norm) => `<strong>${n}</strong>: ${rem} left → <strong>${per}/day</strong> (normal pace: ${norm}/day)`,
-            reachRate: (c, r) => `Overall pace: ${c} pts/day so far, ${r} pts/day needed to finish at 100%.`,
-            reachUnreal: 'The gap is too large to aim for 100%: set an intermediate goal (for example 70%) and adjust your goals with ✎. It is more realistic and more motivating.',
-            reachNone: 'Nothing to catch up on.',
-            foot: 'Analysis computed locally from your numbers. Nothing is sent over the internet.'
-        },
-        AR: {
-            hello: n => `مرحباً${n ? ' ' + n : ''} 👋 إليك تحليلي لشهرك بكل وضوح.`,
-            analysing: 'جارٍ تحليل أرقامك…',
-            secDiag: 'التشخيص', secProblems: 'ما الذي يعيقك', secToday: 'ما يجب فعله اليوم',
-            secBest: 'توصيتي', secReach: 'كيف تبلغ الباقي', secTip: 'نصيحة اللحظة',
-            lblScore: 'النتيجة العامة', lblExpected: 'الوتيرة المتوقعة', lblGap: 'الفارق',
-            dayLine: (d, t, l) => `اليوم ${d} من ${t} · بقي ${l} يوم (مع اليوم).`,
-            vNew: 'لم تسجّل شيئاً هذا الشهر بعد، لذلك لا أستطيع قياس تقدمك. الأهم الآن أن تبدأ ولو بخطوة صغيرة.',
-            vAhead: g => `أنت <strong>متقدّم</strong> بـ ${g} نقطة عن الوتيرة. وضع جيد، والمطلوب المحافظة عليه لا التسارع.`,
-            vSlight: g => `أنت متأخر قليلاً (${g} نقطة). لا شيء خطير: تعديل يومي بسيط يعيدك إلى الوتيرة.`,
-            vBehind: g => `أنت متأخر بوضوح (${g} نقطة تحت الوتيرة). يمكن تعويضه، لكن بجهد موجَّه وليس بمحاولة فعل كل شيء دفعة واحدة.`,
-            rewardOk: '🎁 المكافآت مفتوحة (النتيجة ≥ 50%).',
-            rewardNeed: n => `🔒 ينقصك ${n} نقطة لفتح المكافآت (50%).`,
-            projection: p => `بوتيرتك الحالية ستنهي الشهر قرابة <strong>${p}%</strong> (حدّ «في المسار» في الموقع: ${TARGET_PCT}%).`,
-            pNoData: 'لا توجد بيانات مسجّلة: بدون أرقام لا يمكن تعديل أي شيء.',
-            pBehind: (g, e) => `تأخر عام بمقدار ${g} نقطة: كان يجب أن تكون قرابة ${e}% في هذه المرحلة من الشهر.`,
-            pZero: names => `لا يوجد تقدم مسجّل في: ${names}.`,
-            pWorst: (n, v, e) => `<strong>${n}</strong> هو أضعف مجال لديك (${v}% بدل حوالي ${e}%).`,
-            pTooMuch: d => `أهدافك بالساعات تتطلب <strong>${d} يومياً</strong> لبلوغها، وهذا غير قابل للاستمرار. الأفضل تخفيض بعض الأهداف (✎) بدل الاستسلام.`,
-            pStreak: 'سلسلتك عند 0: المشكلة الحقيقية هي الانتظام أكثر من الحجم.',
-            pFewDays: (n, d) => `حدّثتَ المؤشرات ${n} يوماً فقط من ${d}: بدون متابعة منتظمة لا يمكن التصحيح في الوقت المناسب.`,
-            pNone: 'لا شيء يعيقك حالياً. واصل هكذا.',
-            item: (n, a, r) => `<strong>${n}</strong>: استهدف ${a} اليوم (المتبقي ${r} في المجموع).`,
-            idea: x => `فكرة: ${x}`,
-            capped: 'بعض الفترات محدودة بـ 4 ساعات يومياً: وزّع الباقي على الأيام التالية بدل إرهاق نفسك.',
-            update: 'الليلة: حدّث المؤشرات (30 ثانية) ليكون تحليل الغد دقيقاً.',
-            allDone: 'حققت كل أهدافك: أحسنت! ضع أهدافاً جديدة عبر ✎ أو أضف فئة.',
-            bestNew: 'ابدأ صغيراً: فترة واحدة مدتها 25 دقيقة في أهم مجال لديك، ثم حدّث المؤشر. الأصعب هو البداية وليس الإنهاء.',
-            bestBehind: (a, b) => `لا تحاول تعويض كل شيء. ركّز طاقتك على <strong>${a}</strong>${b ? ` و<strong>${b}</strong>` : ''} (أكبر فارقين) وحافظ على الحد الأدنى في الباقي. اجعل أصعب مهمة في الصباح قبل المشتتات.`,
-            bestSlight: (a, x) => `أنت قريب من الوتيرة. أضف حوالي <strong>${x}</strong> يومياً في <strong>${a}</strong> وستعود إلى الهدف دون تغيير تنظيمك.`,
-            bestAhead: a => `حافظ على تقدمك: لا تضف أهدافاً جديدة، واترك هامشاً للطوارئ، واستعمل زخمك لتقوية <strong>${a}</strong> وهو أضعف مجالاتك.`,
-            reachHead: 'المتبقي في كل مجال:',
-            reachRow: (n, rem, per, norm) => `<strong>${n}</strong>: متبقٍ ${rem} ← <strong>${per}/يوم</strong> (الوتيرة العادية: ${norm}/يوم)`,
-            reachRate: (c, r) => `الوتيرة العامة: ${c} نقطة/يوم حتى الآن، والمطلوب ${r} نقطة/يوم للوصول إلى 100%.`,
-            reachUnreal: 'الفارق كبير لبلوغ 100%: ضع هدفاً وسيطاً (مثلاً 70%) وعدّل أهدافك عبر ✎. هذا أكثر واقعية وتحفيزاً.',
-            reachNone: 'لا شيء لتعويضه.',
-            foot: 'التحليل محسوب محلياً من أرقامك. لا يُرسل أي شيء عبر الإنترنت.'
-        }
+        FR: { analysing: 'Analyse de tes chiffres…' },
+        EN: { analysing: 'Analysing your numbers…' },
+        AR: { analysing: 'جارٍ تحليل أرقامك…' }
     };
 
     function unitKind(u) {
@@ -2116,21 +2218,16 @@
         const H = Math.floor(m / 60), M = m % 60;
         return M ? `${H} ${hu} ${pad(M)}` : `${H} ${hu}`;
     }
-    function fmtQ(c, q) {
-        if (c.kind === 'h') return fmtDur(q);
-        if (c.kind === 'min') return fmtDur(q / 60);
-        if (c.kind === 'dh') return `${fmtNum(q)} DH`;
-        return `${fmtNum(q)} ${escapeHtml(c.unit)}`;
-    }
-
+    // Full AI coach: reads every part of the site (score, pace, categories, streak, daily tasks)
+    // and gives a verdict, weak points and a concrete plan. Computed locally (FR / EN / AR).
     function buildCoachHtml() {
-        const L = COACH[currentLang], t = i18n[currentLang];
-        const esc = escapeHtml;
-        const r1 = x => Math.round(x * 10) / 10;
+        const esc = escapeHtml, lang = currentLang;
+        const T = (fr, en, ar) => lang === 'AR' ? ar : lang === 'EN' ? en : fr;
         const total = daysInMonth(activeMonthDate);
-        const day = selectedDate.getDate();
+        const isCurrent = activeMonthDate.getFullYear() === now().getFullYear() && activeMonthDate.getMonth() === now().getMonth();
+        const day = isCurrent ? now().getDate() : selectedDate.getDate();
         const daysLeft = Math.max(1, total - day + 1);
-        const expectedPct = Math.round(100 * day / total);
+        const expected = Math.round(100 * day / total);
         const { overall } = computeAvgs();
         const md = getMonthData();
         const recorded = Object.keys(md.history || {}).filter(k => { const h = md.history[k]; return h && (Number(h.e) > 0 || Number(h.r) > 0 || Number(h.m) > 0); }).length;
@@ -2142,95 +2239,93 @@
             const kind = (c.isMoney || c.id === 'fin') ? 'dh' : unitKind(g.unit);
             const reached = (c.value / 100) * g.target;
             const rem = Math.max(0, g.target - reached);
-            return {
-                id: c.id, name: catLabel(c), value: c.value, unit: g.unit, kind, target: g.target, reached, rem,
-                perDay: rem / daysLeft, normal: g.target / total, short: expectedPct - c.value,
-                toHours: q => kind === 'h' ? q : kind === 'min' ? q / 60 : null
-            };
+            return { id: c.id, name: catLabel(c), value: Math.round(c.value), kind, unit: g.unit, target: g.target, rem, perDay: rem / daysLeft, gap: c.value - expected };
         });
-        const hasData = cats.some(c => c.value > 0) || recorded > 0;
-        const gap = overall - expectedPct;
-        const state = !hasData ? 'new' : gap >= 0 ? 'ahead' : gap > -15 ? 'slight' : 'behind';
-        const cls = { new: 'text-indigo', ahead: 'text-teal', slight: 'text-orange', behind: 'text-orange' }[state];
-        const byShort = cats.filter(c => c.rem > 0).sort((a, b) => b.short - a.short);
-        const top = byShort[0], second = byShort[1];
+        const sorted = [...cats].sort((a, b) => a.value - b.value);
+        const weak = sorted.filter(c => c.gap < -5 && c.rem > 0).slice(0, 3);
+        const strong = [...sorted].reverse().filter(c => c.gap >= 0).slice(0, 2);
+        const zeros = cats.filter(c => c.value === 0);
 
-        // ---- Diagnostic ----
-        const verdict = state === 'new' ? L.vNew : state === 'ahead' ? L.vAhead(Math.abs(gap)) : state === 'slight' ? L.vSlight(Math.abs(gap)) : L.vBehind(Math.abs(gap));
-        const tile = (lbl, val, c) => `<div class="rounded-xl bg-surface border border-border-subtle p-2.5"><p class="text-[10px] text-muted">${lbl}</p><p class="text-lg font-black tabular-nums ${c}">${val}</p></div>`;
-        const projected = (state !== 'new' && overall > 0) ? Math.min(100, Math.round(overall * total / day)) : null;
-        const diag = `
-            <div class="grid grid-cols-3 gap-2">
-                ${tile(L.lblScore, overall + '%', 'text-teal')}
-                ${tile(L.lblExpected, expectedPct + '%', 'text-primary')}
-                ${tile(L.lblGap, (gap > 0 ? '+' : '') + gap, cls)}
-            </div>
-            <p>${verdict}</p>
-            <p class="text-muted">${L.dayLine(day, total, daysLeft)}</p>
-            ${projected !== null ? `<p>${L.projection(projected)}</p>` : ''}
-            <p class="text-muted">${overall >= 50 ? L.rewardOk : L.rewardNeed(50 - overall)}</p>`;
-
-        // ---- Problems ----
-        const problems = [];
-        if (state === 'new') problems.push(L.pNoData);
-        else {
-            if (state === 'behind' || state === 'slight') problems.push(L.pBehind(Math.abs(gap), expectedPct));
-            const zeros = cats.filter(c => c.value === 0).map(c => esc(c.name));
-            if (day >= 4 && zeros.length) problems.push(L.pZero(zeros.slice(0, 3).join(', ')));
-            if (top && top.short >= 10) problems.push(L.pWorst(esc(top.name), top.value, expectedPct));
+        // Task discipline for the last 7 days
+        let tDone = 0, tAll = 0;
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(now().getFullYear(), now().getMonth(), now().getDate() - i);
+            const k = dayKey(d), f = tasksForDate(d), h = store.hiddenTaskCats || [];
+            const vis = f.map((c, ix) => ix).filter(ix => !h.includes(f[ix]));
+            const cu = (store.customTasks && store.customTasks[k]) || [];
+            tAll += vis.length + cu.length;
+            tDone += vis.filter(ix => (store.dayDone[k] || []).includes(ix)).length + cu.filter(c => c.done).length;
         }
-        const sumH = cats.reduce((s, c) => s + (c.toHours(c.perDay) || 0), 0);
-        if (sumH > 9) problems.push(L.pTooMuch(fmtDur(sumH)));
-        if (state !== 'new' && streak === 0 && day > 1) problems.push(L.pStreak);
-        if (day >= 6 && recorded < day / 2) problems.push(L.pFewDays(recorded, day));
-        if (!problems.length) problems.push(L.pNone);
+        const taskPct = tAll ? Math.round(100 * tDone / tAll) : null;
 
-        // ---- Today ----
-        const capH = state === 'new' ? 1.5 : 4;
-        let capped = false;
-        let focus = byShort.filter(c => c.short > 0).slice(0, 3);
-        if (!focus.length) focus = byShort.slice(0, 2);
-        const todayItems = focus.map(c => {
-            let q = c.perDay;
-            const h = c.toHours(q);
-            if (h !== null && h > capH) { q = c.kind === 'h' ? capH : capH * 60; capped = true; }
-            const idea = t.task[c.id] ? `<span class="block text-muted mt-0.5">${L.idea(esc(t.task[c.id]))}</span>` : '';
-            return `<li><span class="block">${L.item(esc(c.name), fmtQ(c, q), fmtQ(c, c.rem))}</span>${idea}</li>`;
+        const hasData = cats.some(c => c.value > 0) || recorded > 0;
+        const gapAll = overall - expected;
+        const projected = hasData && day > 0 ? Math.min(100, Math.round(overall * total / day)) : 0;
+        let level, emoji, col;
+        if (!hasData) { level = 'new'; emoji = '🌱'; col = 'text-indigo'; }
+        else if (gapAll >= 0) { level = 'good'; emoji = '🔥'; col = 'text-teal'; }
+        else if (gapAll > -15) { level = 'mid'; emoji = '⚠️'; col = 'text-orange'; }
+        else { level = 'bad'; emoji = '🚨'; col = 'text-orange'; }
+
+        const verdict = {
+            new: T('Tu n’as encore rien saisi : je ne peux pas te juger. Commence par une petite action aujourd’hui.', 'You have not logged anything yet, so I cannot judge. Start with one small action today.', 'لم تسجّل شيئاً بعد، لذلك لا أستطيع الحكم. ابدأ بخطوة صغيرة اليوم.'),
+            good: T(`Tu vas bien : ${overall}% pour ${expected}% attendu (+${gapAll}). Si tu gardes ce rythme, tu finis vers ${projected}%.`, `You are doing well: ${overall}% vs ${expected}% expected (+${gapAll}). At this pace you finish around ${projected}%.`, `وضعك جيد: ${overall}% مقابل ${expected}% متوقع (+${gapAll}). بهذه الوتيرة ستنهي الشهر قرابة ${projected}%.`),
+            mid: T(`Tu es un peu en retard : ${overall}% pour ${expected}% attendu (${gapAll}). Rattrapable avec un petit effort chaque jour.`, `You are a bit behind: ${overall}% vs ${expected}% expected (${gapAll}). Recoverable with a small daily effort.`, `أنت متأخر قليلاً: ${overall}% مقابل ${expected}% متوقع (${gapAll}). يمكن تعويضه بمجهود يومي بسيط.`),
+            bad: T(`Tu es clairement en retard : ${overall}% pour ${expected}% attendu (${gapAll}). À ce rythme tu finis vers ${projected}%. Il faut agir maintenant, de façon ciblée.`, `You are clearly behind: ${overall}% vs ${expected}% expected (${gapAll}). At this pace you finish around ${projected}%. Act now, in a targeted way.`, `أنت متأخر بوضوح: ${overall}% مقابل ${expected}% متوقع (${gapAll}). بهذه الوتيرة ستنهي قرابة ${projected}%. تحرّك الآن وبشكل موجَّه.`)
+        }[level];
+
+        const tile = (l, v, c) => `<div class="rounded-xl bg-surface border border-border-subtle p-2.5 text-center"><p class="text-[10px] text-muted">${l}</p><p class="text-lg font-black tabular-nums ${c}">${v}</p></div>`;
+        const bar = c => `<div class="space-y-1"><div class="flex justify-between text-[11px]"><span class="font-bold">${esc(c.name)}</span><span class="tabular-nums ${c.gap < -5 ? 'text-orange' : 'text-teal'}">${c.value}%</span></div><div class="h-1.5 rounded-full bg-border-subtle overflow-hidden"><div class="h-full rounded-full ${c.gap < -5 ? 'bg-orange' : 'bg-teal'}" style="width:${Math.max(0, Math.min(100, c.value))}%"></div></div></div>`;
+
+        // Weaknesses
+        const probs = [];
+        weak.forEach(c => probs.push(T(`<strong>${esc(c.name)}</strong> est à ${c.value}% alors que tu devrais être vers ${expected}%.`, `<strong>${esc(c.name)}</strong> is at ${c.value}% while you should be near ${expected}%.`, `<strong>${esc(c.name)}</strong> عند ${c.value}% بينما يجب أن تكون قرابة ${expected}%.`)));
+        if (day >= 4 && zeros.length) probs.push(T(`Zéro progrès sur : ${zeros.slice(0, 3).map(c => esc(c.name)).join(', ')}.`, `No progress at all on: ${zeros.slice(0, 3).map(c => esc(c.name)).join(', ')}.`, `لا تقدم إطلاقاً في: ${zeros.slice(0, 3).map(c => esc(c.name)).join('، ')}.`));
+        if (taskPct !== null && taskPct < 60) probs.push(T(`Tâches des 7 derniers jours : seulement ${taskPct}% faites (${tDone}/${tAll}). Ta régularité est ton vrai point faible.`, `Tasks over the last 7 days: only ${taskPct}% done (${tDone}/${tAll}). Consistency is your real weak point.`, `مهام آخر 7 أيام: أُنجز ${taskPct}% فقط (${tDone}/${tAll}). الانتظام هو نقطة ضعفك الحقيقية.`));
+        if (hasData && streak === 0 && day > 1) probs.push(T('Ta série est à 0 jour : tu as cassé la chaîne. Refais-la aujourd’hui.', 'Your streak is at 0: the chain is broken. Restart it today.', 'سلسلتك عند 0: انقطعت. ابدأها من جديد اليوم.'));
+        if (day >= 6 && recorded < day / 2) probs.push(T(`Curseurs mis à jour seulement ${recorded} jour(s) sur ${day} : sans suivi tu ne peux pas corriger à temps.`, `Sliders updated on only ${recorded} of ${day} days: without tracking you cannot correct in time.`, `حدّثت المؤشرات ${recorded} يوماً فقط من ${day}: بدون متابعة لا يمكن التصحيح.`));
+        if (!probs.length) probs.push(hasData ? T('Aucun point faible important. Continue.', 'No major weak point. Keep going.', 'لا توجد نقطة ضعف كبيرة. واصل.') : T('Pas assez de données pour trouver des faiblesses.', 'Not enough data to find weaknesses.', 'لا توجد بيانات كافية لإيجاد نقاط الضعف.'));
+
+        // Plan
+        const plan = [];
+        weak.forEach((c, i) => {
+            const q = c.kind === 'dh' ? `${fmtNum(Math.round(c.perDay))} DH` : c.kind === 'h' ? fmtDur(Math.min(c.perDay, 4)) : c.kind === 'min' ? fmtDur(Math.min(c.perDay / 60, 4)) : `${fmtNum(Math.round(c.perDay * 10) / 10)} ${esc(c.unit)}`;
+            const left = c.kind === 'dh' ? `${fmtNum(Math.round(c.rem))} DH` : c.kind === 'h' ? fmtDur(c.rem) : c.kind === 'min' ? fmtDur(c.rem / 60) : `${fmtNum(Math.round(c.rem))} ${esc(c.unit)}`;
+            plan.push(T(`<strong>${i + 1}. ${esc(c.name)}</strong> : vise <strong>${q}/jour</strong> pour finir les ${left} restants.`, `<strong>${i + 1}. ${esc(c.name)}</strong>: aim for <strong>${q}/day</strong> to finish the ${left} left.`, `<strong>${i + 1}. ${esc(c.name)}</strong>: استهدف <strong>${q}/يوم</strong> لإنهاء ${left} المتبقية.`));
         });
-        if (!byShort.length) todayItems.push(`<li>${L.allDone}</li>`);
-        if (capped) todayItems.push(`<li class="text-muted">${L.capped}</li>`);
-        todayItems.push(`<li class="text-muted">${L.update}</li>`);
+        if (level === 'new') plan.push(T('Un bloc de 25 minutes sur ta catégorie la plus importante, puis mets à jour ton curseur.', 'One 25-minute block on your most important category, then update your slider.', 'فترة 25 دقيقة في أهم مجال لديك ثم حدّث المؤشر.'));
+        if (level === 'bad' || level === 'mid') plan.push(T('Fais la tâche la plus difficile le matin, avant les distractions.', 'Do the hardest task in the morning, before distractions.', 'أنجز أصعب مهمة في الصباح قبل المشتتات.'));
+        if (taskPct !== null && taskPct < 60) plan.push(T('Réduis ta liste à 2–3 tâches réalistes et termine-les toutes : le Congratulations arrive à ce moment-là 🎉.', 'Cut your list to 2–3 realistic tasks and finish them all: that is when the Congratulations pops up 🎉.', 'قلّص قائمتك إلى 2–3 مهام واقعية وأنهها كلها: وهنا تظهر Congratulations 🎉.'));
+        if (level === 'good' && strong.length) plan.push(T('Protège ton avance et renforce ton point le plus faible.', 'Protect your lead and strengthen your weakest area.', 'حافظ على تقدمك وقوِّ أضعف مجال لديك.'));
+        plan.push(T('Ce soir : mets à jour tes curseurs (30 s) pour une analyse exacte demain.', 'Tonight: update your sliders (30 s) for an accurate analysis tomorrow.', 'الليلة: حدّث المؤشرات (30 ثانية) لتحليل دقيق غداً.'));
 
-        // ---- Best strategy ----
-        let best;
-        if (state === 'new') best = L.bestNew;
-        else if (!top) best = L.allDone;
-        else if (state === 'behind') best = L.bestBehind(esc(top.name), second && second.short > 0 ? esc(second.name) : '');
-        else if (state === 'slight') best = L.bestSlight(esc(top.name), fmtQ(top, Math.max(0, (top.short / 100) * top.target) / daysLeft));
-        else best = L.bestAhead(esc([...cats].sort((a, b) => a.value - b.value)[0].name));
+        // Can I reach the goal?
+        const cur = Math.round(overall / Math.max(1, day) * 10) / 10, req = Math.round((100 - overall) / daysLeft * 10) / 10;
+        let reach;
+        if (!hasData) reach = T('Je calculerai ta trajectoire dès que tu auras saisi des données.', 'I will compute your trajectory once you log some data.', 'سأحسب مسارك بمجرد أن تُدخل بعض البيانات.');
+        else if (overall >= 100) reach = T('Objectif atteint à 100% : bravo ! Fixe-en de nouveaux avec ✎.', '100% reached: well done! Set new goals with ✎.', 'بلغت 100%: أحسنت! ضع أهدافاً جديدة عبر ✎.');
+        else if (req <= cur * 1.3 || req <= 2) reach = T(`Oui, c’est faisable : il te faut ${req} pt/jour (tu fais ${cur} pt/jour en ce moment).`, `Yes, it is doable: you need ${req} pts/day (you are doing ${cur} pts/day).`, `نعم، ممكن: تحتاج ${req} نقطة/يوم (وتيرتك الحالية ${cur} نقطة/يوم).`);
+        else if (req > cur * 2 && req > 4) reach = T(`100% est difficile : il faudrait ${req} pt/jour contre ${cur} actuellement. Vise ${TARGET_PCT}% ce mois-ci et ajuste tes objectifs avec ✎.`, `100% is hard: you would need ${req} pts/day vs ${cur} now. Aim for ${TARGET_PCT}% this month and adjust goals with ✎.`, `بلوغ 100% صعب: تحتاج ${req} نقطة/يوم مقابل ${cur} حالياً. استهدف ${TARGET_PCT}% هذا الشهر وعدّل أهدافك عبر ✎.`);
+        else reach = T(`Possible mais exigeant : ${req} pt/jour nécessaires contre ${cur} actuellement. Il faut accélérer.`, `Possible but demanding: ${req} pts/day needed vs ${cur} now. You must speed up.`, `ممكن لكنه صعب: تحتاج ${req} نقطة/يوم مقابل ${cur} حالياً. يجب أن تُسرّع.`);
 
-        // ---- Reach the rest ----
-        const reachRows = byShort.map(c => `<li>${L.reachRow(esc(c.name), fmtQ(c, c.rem), fmtQ(c, c.perDay), fmtQ(c, c.normal))}</li>`);
-        const cur = r1(overall / Math.max(1, day)), req = r1((100 - overall) / daysLeft);
-        const unreal = state !== 'new' && req > 4 && req > cur * 2;
-        const reach = `
-            ${reachRows.length ? `<p class="text-muted">${L.reachHead}</p><ul class="space-y-1.5 list-disc ps-4">${reachRows.join('')}</ul>` : `<p>${L.reachNone}</p>`}
-            ${state !== 'new' && reachRows.length ? `<p class="text-muted">${L.reachRate(cur, req)}</p>` : ''}
-            ${unreal ? `<p class="text-orange">${L.reachUnreal}</p>` : ''}`;
-
-        // ---- Assemble ----
-        const sec = (i, emoji, title, body) => `<section class="reveal rounded-xl border border-border-subtle bg-bg p-3 space-y-2" style="animation-delay:${(i * 0.12).toFixed(2)}s"><h4 class="text-[11px] font-extrabold uppercase tracking-wider text-indigo">${emoji} ${title}</h4>${body}</section>`;
-        const ul = items => `<ul class="space-y-1.5 list-disc ps-4">${items.join('')}</ul>`;
+        const sec = (i, e, title, body) => `<section class="reveal rounded-xl border border-border-subtle bg-bg p-3 space-y-2" style="animation-delay:${(i * 0.12).toFixed(2)}s"><h4 class="text-[11px] font-extrabold uppercase tracking-wider text-indigo">${e} ${title}</h4>${body}</section>`;
+        const ul = a => `<ul class="space-y-1.5 list-disc ps-4">${a.map(x => `<li>${x}</li>`).join('')}</ul>`;
         const name = store.user ? esc(store.user) : '';
         return `
-            <p class="reveal text-sm font-bold">${L.hello(name)}</p>
-            ${sec(1, '📊', L.secDiag, diag)}
-            ${sec(2, '⚠️', L.secProblems, ul(problems.map(p => `<li>${p}</li>`)))}
-            ${sec(3, '✅', L.secToday, ul(todayItems))}
-            ${sec(4, '🧠', L.secBest, `<p>${best}</p>`)}
-            ${sec(5, '🎯', L.secReach, reach)}
-            ${sec(6, '💡', L.secTip, `<p>${t.tip[periodOfDay(now().getHours())]}</p>`)}
-            <p class="text-[10px] text-muted">${L.foot}</p>`;
+            <p class="reveal text-sm font-bold">${T(`Salut${name ? ' ' + name : ''} 👋 J’ai analysé tout ton site.`, `Hi${name ? ' ' + name : ''} 👋 I analysed your whole site.`, `مرحباً${name ? ' ' + name : ''} 👋 حلّلت موقعك بالكامل.`)}</p>
+            ${sec(1, emoji, T('Verdict', 'Verdict', 'الحكم'), `
+                <div class="grid grid-cols-4 gap-2">
+                    ${tile(T('Score', 'Score', 'النتيجة'), overall + '%', 'text-teal')}
+                    ${tile(T('Attendu', 'Expected', 'المتوقع'), expected + '%', 'text-primary')}
+                    ${tile(T('Série', 'Streak', 'السلسلة'), streak + 'j', 'text-indigo')}
+                    ${tile(T('Tâches 7j', 'Tasks 7d', 'مهام 7 أيام'), taskPct === null ? '—' : taskPct + '%', taskPct !== null && taskPct < 60 ? 'text-orange' : 'text-teal')}
+                </div>
+                <p class="${col} font-semibold">${verdict}</p>`)}
+            ${sec(2, '📈', T('Tes catégories', 'Your categories', 'فئاتك'), `<div class="space-y-2">${sorted.map(bar).join('')}</div>`)}
+            ${sec(3, '⚠️', T('Tes points faibles', 'Your weak points', 'نقاط ضعفك'), ul(probs))}
+            ${sec(4, '✅', T('Ce que tu dois faire', 'What you must do', 'ما يجب عليك فعله'), ul(plan))}
+            ${sec(5, '🎯', T('Vas-tu atteindre l’objectif ?', 'Will you reach the goal?', 'هل ستبلغ الهدف؟'), `<p>${reach}</p>`)}
+            <p class="text-[10px] text-muted">${T('Analyse calculée localement à partir de tes chiffres. Rien n’est envoyé sur internet.', 'Analysis computed locally from your numbers. Nothing is sent over the internet.', 'التحليل محسوب محلياً من أرقامك. لا يُرسل أي شيء عبر الإنترنت.')}</p>`;
     }
 
     /* =====================================================
@@ -2340,19 +2435,19 @@
         FR: { title: 'Classement', members: (n, t) => t ? `${n} classés · ${t} membres` : `${n} classés`, streak: 'Série', best: 'Record', gain: 'Gain 7j',
               rule: "Jours où tu as fait avancer l'exécution ou les résultats, même un peu. Ouvrir sans rien enregistrer ne compte pas. Jusqu'à 2 jours calmes permis ; 3 cassent la série.",
               mine: (s) => `Toi : série ${s.streak} · record ${s.best} · 7j ${s.gain7}`, join: 'Rejoindre le classement', leave: 'Quitter le classement', google: 'Continuer avec Google', signout: 'Se déconnecter',
-              privacy: 'En rejoignant, ton prénom et tes chiffres sont visibles par tous. Ton email reste privé.',
+              privacy: 'En rejoignant, ton prénom et ton score en pourcentage sont visibles par tous. Ton email reste privé.',
               demo: 'Classement pas encore connecté à la base de données.', you: 'toi', joined: 'Tu es dans le classement', left: 'Tu as quitté le classement',
               err: 'Impossible de charger le classement', empty: 'Personne pour le moment. Rejoins pour apparaître ici !', end: 'Haut du classement' },
         EN: { title: 'Leaderboard', members: (n, t) => t ? `${n} ranked · ${t} members` : `${n} ranked`, streak: 'Streak', best: 'Best ever', gain: 'Gain 7d',
               rule: 'Days where you moved execution or results at all — any amount. Opening the tracker without logging anything does not count. Up to 2 quiet days are allowed; 3 breaks the run.',
               mine: (s) => `You: streak ${s.streak} · best ${s.best} · 7d ${s.gain7}`, join: 'Join the leaderboard', leave: 'Leave the leaderboard', google: 'Continue with Google', signout: 'Sign out',
-              privacy: 'By joining, your first name and numbers are visible to everyone. Your email stays private.',
+              privacy: 'By joining, your first name and percentage score are visible to everyone. Your email stays private.',
               demo: 'The leaderboard is not connected to the database yet.', you: 'you', joined: "You're on the leaderboard", left: 'You left the leaderboard',
               err: "Couldn't load the leaderboard", empty: 'Nobody yet. Join to appear here!', end: 'Top of the board' },
         AR: { title: 'الترتيب', members: (n, t) => t ? `${n} في الترتيب · ${t} عضو` : `${n} في الترتيب`, streak: 'السلسلة', best: 'الأفضل', gain: 'زيادة 7 أيام',
               rule: 'الأيام التي حرّكت فيها التنفيذ أو النتائج ولو بشيء بسيط. فتح التطبيق دون تسجيل لا يُحتسب. يُسمح بيومين هادئين، وثلاثة أيام تكسر السلسلة.',
               mine: (s) => `أنت: سلسلة ${s.streak} · الأفضل ${s.best} · 7 أيام ${s.gain7}`, join: 'انضم إلى الترتيب', leave: 'اخرج من الترتيب', google: 'المتابعة عبر Google', signout: 'تسجيل الخروج',
-              privacy: 'عند الانضمام يظهر اسمك الأول وأرقامك للجميع. بريدك الإلكتروني يبقى خاصًا.',
+              privacy: 'عند الانضمام يظهر اسمك الأول ونتيجتك المئوية للجميع. بريدك الإلكتروني يبقى خاصًا.',
               demo: 'لوحة الترتيب غير مربوطة بقاعدة البيانات بعد.', you: 'أنت', joined: 'أنت الآن في الترتيب', left: 'خرجت من الترتيب',
               err: 'تعذّر تحميل الترتيب', empty: 'لا أحد بعد. انضم لتظهر هنا!', end: 'أعلى الترتيب' }
     };
@@ -2586,16 +2681,13 @@
         });
         return [...new Set(out)].sort((a, b) => a - b);
     }
-    // Rule: up to 2 quiet days allowed, 3 break the run. Streak = number of active days in the run.
+    // One leaderboard score: equal-weight average of execution, money and results (%).
     function lbStats() {
-        const n = now();
-        const today = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 864e5);
-        const days = lbActiveDays().filter(d => d <= today);
-        let best = 0, run = 0, prev = null;
-        days.forEach(d => { run = (prev !== null && d - prev <= 3) ? run + 1 : 1; if (run > best) best = run; prev = d; });
-        const streak = (prev !== null && today - prev <= 3) ? run : 0;
-        const gain7 = days.filter(d => d > today - 7).length;
-        return { streak, best: Math.max(best, streak), gain7 };
+        const { execAvg, resAvg } = computeAvgs();
+        const moneyCat = categories.find(c => c.isMoney);
+        const moneyPct = moneyCat ? Number(moneyCat.value || 0) : 0;
+        const score = Math.max(0, Math.min(100, Math.round((execAvg + moneyPct + resAvg) / 3)));
+        return { score, streak: score, best: score, gain7: score };
     }
 
     async function lbPush(active) {
@@ -2613,29 +2705,34 @@
     }
 
     async function lbRows(tab, limit) {
-        const col = { streak: 'streak', best: 'best', gain: 'gain7' }[tab];
+        const col = 'streak';
         if (!sb) return { rows: [], total: null };
         const { data, error, count } = await sb.from('leaderboard')
             .select('uid,name,streak,best,gain7', { count: 'exact' })
             .eq('active', true).order(col, { ascending: false }).order('updated_at', { ascending: true }).limit(limit || 10);
         if (error) throw error;
-        return { rows: (data || []).map(x => Object.assign(x, { mine: !!lbUser && x.uid === lbUser.id })), total: count };
+        const scoreRows = (data || []).filter(x => Number(x.streak) === Number(x.best) && Number(x.best) === Number(x.gain7));
+        return { rows: scoreRows.map(x => Object.assign(x, { mine: !!lbUser && x.uid === lbUser.id })), total: count };
     }
 
     function lbPaintTabs() {
-        const t = lbT();
-        [['streak', t.streak], ['best', t.best], ['gain', t.gain]].forEach(([id, label]) => {
+        ['streak', 'best', 'gain'].forEach(id => {
             const b = document.getElementById('lbTab-' + id);
-            b.textContent = label;
-            b.className = 'px-3 py-1.5 rounded-full text-xs font-bold border transition-all ' + (id === lbTab ? 'bg-teal text-bg border-teal' : 'border-border text-muted hover:border-teal');
+            if (b && b.parentElement) b.parentElement.style.display = 'none';
         });
+        setText('lbPercentLabel', currentLang === 'AR' ? 'النتيجة بالنسبة المئوية' : currentLang === 'EN' ? 'Percentage score' : 'Score en pourcentage');
     }
     function lbPaintStatic() {
         const t = lbT();
         setText('lbTitle', t.title);
         setText('lbRule', t.rule);
         setText('lbPrivacy', t.privacy);
-        setText('lbMine', t.mine(lbStats()));
+        const score = lbStats().score;
+        setText('lbMine', currentLang === 'AR' ? `نتيجتك الإجمالية: ${score}%` : currentLang === 'EN' ? `Your overall score: ${score}%` : `Ton score global : ${score}%`);
+        setText('lbPercentLabel', currentLang === 'AR' ? 'النتيجة بالنسبة المئوية' : currentLang === 'EN' ? 'Percentage score' : 'Score en pourcentage');
+        setText('lbRule', currentLang === 'AR' ? 'الترتيب حسب متوسط التنفيذ والمال والنتائج. كل عنصر يساهم بثلث النتيجة.' : currentLang === 'EN' ? 'Ranked by the average of execution, money and results. Each contributes one third.' : 'Classement basé sur la moyenne de l’exécution, de l’argent et des résultats. Chaque partie compte pour un tiers.');
+        const tabs = document.getElementById('lbTab-streak');
+        if (tabs && tabs.parentElement) tabs.parentElement.style.display = 'none';
         const j = document.getElementById('lbJoinBtn');
         const joined = lbJoined();
         j.textContent = !lbUser ? t.google : (joined ? t.leave : t.join);
@@ -2654,7 +2751,7 @@
                         <span class="w-5 text-xs font-extrabold ${i < 3 ? 'text-orange' : 'text-muted'}">${i + 1}</span>
                         <span class="text-sm font-bold truncate">${escapeHtml(r.name)}${r.mine ? ` <span class="text-[10px] text-teal font-semibold">(${escapeHtml(t.you)})</span>` : ''}</span>
                     </div>
-                    <span class="text-sm font-extrabold tabular-nums text-teal">🔥 ${r[col]}</span>
+                    <span class="text-sm font-extrabold tabular-nums text-teal">${Number(r.streak || 0)}%</span>
                 </div>`;
     }
     async function lbRender() {
@@ -2665,7 +2762,7 @@
             const { rows, total } = await lbRows(lbTab, 10);
             setText('lbCount', t.members(rows.length, total));
             if (!rows.length) { list.innerHTML = `<div class="text-center text-xs text-muted py-6">${escapeHtml(t.empty)}</div>`; return; }
-            const col = { streak: 'streak', best: 'best', gain: 'gain7' }[lbTab];
+            const col = 'streak';
             list.innerHTML = rows.map((r, i) => lbRowHtml(r, i, col, t)).join('') + `<p class="text-center text-[10px] text-muted pt-1">${escapeHtml(t.end)}</p>`;
         } catch (e) {
             console.error('leaderboard:', e);
@@ -2703,6 +2800,50 @@
         closeNameModal();
         authLock(true);
     }
+    /* =====================================================
+       WELCOME (first visit): short spoken + written intro, in the site language
+    ===================================================== */
+    const WELCOME = {
+        FR: { title: 'Bienvenue sur Focus 👋', go: 'C’est parti',
+              body: 'Focus t’aide à organiser ta vie : fixe tes objectifs, coche tes tâches chaque jour et prends un rythme régulier.' },
+        EN: { title: 'Welcome to Focus 👋', go: 'Let’s go',
+              body: 'Focus helps you organise your life: set your goals, tick off your tasks every day and build a regular routine.' },
+        AR: { title: 'السلام عليكم، مرحباً بك في Focus 👋', go: 'هيا نبدأ',
+              body: 'Focus موقع كيعاونك تنظم حياتك: حدّد أهدافك، أنجز مهامك كل يوم، وابدأ حياتك بانتظام.' }
+    };
+    function welcomeVisible() { const el = document.getElementById('welcomeCard'); return !!el && !el.classList.contains('hidden'); }
+    function welcomeRender() {
+        if (!welcomeVisible()) return;
+        const W = WELCOME[currentLang] || WELCOME.FR;
+        document.getElementById('welcomeInner').dir = currentLang === 'AR' ? 'rtl' : 'ltr';
+        setText('welcomeTitle', W.title); setText('welcomeBody', W.body); setText('welcomeGo', W.go);
+        setText('welcomeLang', currentLang);
+    }
+    function openWelcome() {
+        const el = document.getElementById('welcomeCard');
+        if (!el) return;
+        el.classList.remove('hidden'); el.classList.add('flex');
+        try { const hd = document.querySelector('header img'), lg = document.getElementById('welcomeLogo'); if (hd && lg) lg.src = hd.src; } catch (e) {}
+        welcomeRender();
+    }
+    function closeWelcome() {
+        const el = document.getElementById('welcomeCard');
+        if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+        window.__focusWelcomed = true;
+        try { localStorage.setItem('focus_welcomed_v1', '1'); } catch (e) {}
+        setTimeout(() => { if (!store.user && !authLocked) openNameModal(); }, 300); // then ask for the name as before
+    }
+    function welcomeShouldShow() {
+        let seen = !!window.__focusWelcomed;
+        try { seen = seen || !!localStorage.getItem('focus_welcomed_v1'); } catch (e) {}
+        return !seen; // shown to everyone on their first visit, logged in or not
+    }
+    // Independent of the rest of the startup code, so it still shows if something else fails to load.
+    (function startWelcome() {
+        const go = () => { try { if (welcomeShouldShow()) setTimeout(openWelcome, 500); } catch (e) { console.warn(e); } };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+    })();
+
     document.addEventListener('DOMContentLoaded', lbInit);
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -2734,7 +2875,7 @@
             }, 1200);
         }
         try { localStorage.setItem(visitKey, String(currentVisit)); } catch (e) {}
-        setTimeout(() => { if (!store.user && !authLocked) openNameModal(); }, 900);   // first visit: ask for the name
+        if (!welcomeShouldShow()) setTimeout(() => { if (!store.user && !authLocked) openNameModal(); }, 900);   // otherwise ask for the name as before
     });
     </script>
 </body>
