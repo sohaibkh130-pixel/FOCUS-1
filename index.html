@@ -175,6 +175,7 @@
             <div class="space-y-2">
                 <input id="authEmail" type="email" autocomplete="email" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
                 <input id="authPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
+                <button id="authForgot" type="button" onclick="authForgotPassword()" class="w-full text-left text-xs text-teal hover:underline">نسيت كلمة السر؟</button>
             </div>
             <p id="authMsg" class="hidden text-xs rounded-xl px-3 py-2 border border-orange/30 bg-orange/10 text-orange"></p>
             <button id="authSubmitBtn" onclick="authSubmit()" class="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-teal text-bg hover:opacity-90 transition-all"></button>
@@ -2356,13 +2357,13 @@
 
     /* ---------- LOGIN GATE (Google or email + password) ---------- */
     const AUTH_T = {
-        FR: { title: 'Bienvenue sur Focus', sub: 'Connecte-toi pour continuer', google: 'Continuer avec Google', or: 'ou', email: 'Ton email', pass: 'Mot de passe (6 caractères min.)',
+        FR: { title: 'Bienvenue sur Focus', sub: 'Connecte-toi pour continuer', google: 'Continuer avec Google', or: 'ou', email: 'Ton email', pass: 'Mot de passe (6 caractères min.)', forgot: 'Mot de passe oublié ?', resetTitle: 'Réinitialiser le mot de passe', resetSub: 'Entre ton nouveau mot de passe', resetBtn: 'Enregistrer le nouveau mot de passe', sent: 'Un lien de réinitialisation a été envoyé à ton email.', updated: 'Mot de passe modifié. Tu peux te connecter.',
               joinBtn: 'Rejoindre', acct: 'Connecté avec', switchAcc: 'Se déconnecter / changer de compte', signin: 'Se connecter', signup: 'Créer mon compte', toSignup: 'Pas de compte ? Créer un compte', toSignin: 'Déjà un compte ? Se connecter',
               bad: 'Email ou mot de passe incorrect', short: 'Mot de passe : 6 caractères minimum', exists: 'Cet email a déjà un compte. Connecte-toi.', confirm: 'Vérifie ta boîte mail pour confirmer ton compte, puis reviens te connecter.', generic: 'Une erreur est survenue. Réessaie.', fill: 'Entre ton email et ton mot de passe' },
-        EN: { title: 'Welcome to Focus', sub: 'Sign in to continue', google: 'Continue with Google', or: 'or', email: 'Your email', pass: 'Password (min. 6 characters)',
+        EN: { title: 'Welcome to Focus', sub: 'Sign in to continue', google: 'Continue with Google', or: 'or', email: 'Your email', pass: 'Password (min. 6 characters)', forgot: 'Forgot password?', resetTitle: 'Reset password', resetSub: 'Enter your new password', resetBtn: 'Save new password', sent: 'A password reset link has been sent to your email.', updated: 'Password updated. You can now sign in.',
               joinBtn: 'Join', acct: 'Signed in as', switchAcc: 'Sign out / switch account', signin: 'Sign in', signup: 'Create my account', toSignup: 'No account? Create one', toSignin: 'Already have an account? Sign in',
               bad: 'Wrong email or password', short: 'Password must be at least 6 characters', exists: 'This email already has an account. Sign in.', confirm: 'Check your inbox to confirm your account, then come back and sign in.', generic: 'Something went wrong. Try again.', fill: 'Enter your email and password' },
-        AR: { title: 'مرحبًا بك في Focus', sub: 'سجّل الدخول للمتابعة', google: 'المتابعة عبر Google', or: 'أو', email: 'بريدك الإلكتروني', pass: 'كلمة السر (6 أحرف على الأقل)',
+        AR: { title: 'مرحبًا بك في Focus', sub: 'سجّل الدخول للمتابعة', google: 'المتابعة عبر Google', or: 'أو', email: 'بريدك الإلكتروني', pass: 'كلمة السر (6 أحرف على الأقل)', forgot: 'نسيت كلمة السر؟', resetTitle: 'إعادة تعيين كلمة السر', resetSub: 'أدخل كلمة السر الجديدة', resetBtn: 'حفظ كلمة السر الجديدة', sent: 'تم إرسال رابط تغيير كلمة السر إلى بريدك الإلكتروني.', updated: 'تم تغيير كلمة السر. يمكنك تسجيل الدخول الآن.',
               joinBtn: 'انضم', acct: 'مسجّل بحساب', switchAcc: 'تسجيل الخروج / تغيير الحساب', signin: 'تسجيل الدخول', signup: 'إنشاء حسابي', toSignup: 'ليس لديك حساب؟ أنشئ حسابًا', toSignin: 'لديك حساب؟ سجّل الدخول',
               bad: 'البريد أو كلمة السر غير صحيحة', short: 'كلمة السر يجب أن تكون 6 أحرف على الأقل', exists: 'هذا البريد لديه حساب بالفعل. سجّل الدخول.', confirm: 'افتح بريدك لتأكيد الحساب، ثم عد وسجّل الدخول.', generic: 'حدث خطأ. حاول مرة أخرى.', fill: 'أدخل بريدك وكلمة السر' }
     };
@@ -2374,9 +2375,16 @@
         setText('authTitle', t.title); setText('authSub', t.sub); setText('authGoogleTxt', t.google); setText('authOr', t.or);
         document.getElementById('authEmail').placeholder = t.email;
         document.getElementById('authPass').placeholder = t.pass;
-        setText('authSubmitBtn', authMode === 'in' ? t.signin : t.signup);
+        setText('authSubmitBtn', authMode === 'reset' ? t.resetBtn : (authMode === 'in' ? t.signin : t.signup));
         setText('authToggle', authMode === 'in' ? t.toSignup : t.toSignin);
+        document.getElementById('authToggle').classList.toggle('hidden', authMode === 'reset');
+        document.getElementById('authGoogle').classList.toggle('hidden', authMode === 'reset');
+        document.getElementById('authOr').parentElement.classList.toggle('hidden', authMode === 'reset');
+        document.getElementById('authForgot').classList.toggle('hidden', authMode !== 'in');
+        document.getElementById('authForgot').textContent = t.forgot;
         document.getElementById('authPass').autocomplete = authMode === 'in' ? 'current-password' : 'new-password';
+        document.getElementById('authPass').placeholder = authMode === 'reset' ? t.resetSub : t.pass;
+        if (authMode === 'reset') { setText('authTitle', t.resetTitle); setText('authSub', t.resetSub); }
     }
     function authShowMsg(m) { const e = document.getElementById('authMsg'); e.textContent = m || ''; e.classList.toggle('hidden', !m); }
     function authShowGate() { document.getElementById('authGate').classList.remove('hidden'); authPaint(); }
@@ -2399,6 +2407,21 @@
         if (on) authPaint();
     }
     function authToggleMode() { authMode = authMode === 'in' ? 'up' : 'in'; authShowMsg(''); authPaint(); }
+    async function authForgotPassword() {
+        const t = authT();
+        const email = document.getElementById('authEmail').value.trim();
+        if (!email) { authShowMsg(t.fill); document.getElementById('authEmail').focus(); return; }
+        if (!sb) { authShowMsg(t.generic); return; }
+        authShowMsg('');
+        const btn = document.getElementById('authForgot'); btn.disabled = true;
+        try {
+            const redirectTo = location.origin + location.pathname;
+            const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
+            if (error) authShowMsg(error.message || t.generic);
+            else authShowMsg(t.sent);
+        } catch (e) { authShowMsg(t.generic); }
+        btn.disabled = false;
+    }
     async function authGoogle() {
         if (!sb) return;
         const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
@@ -2409,12 +2432,17 @@
         if (!sb) return;
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPass').value;
-        if (!email || !password) { authShowMsg(t.fill); return; }
+        if (authMode !== 'reset' && !email) { authShowMsg(t.fill); return; }
+        if (!password) { authShowMsg(t.fill); return; }
         if (password.length < 6) { authShowMsg(t.short); return; }
         authShowMsg('');
         const btn = document.getElementById('authSubmitBtn'); btn.disabled = true;
         try {
-            if (authMode === 'in') {
+            if (authMode === 'reset') {
+                const { error } = await sb.auth.updateUser({ password });
+                if (error) authShowMsg(error.message || t.generic);
+                else { authShowMsg(t.updated); authMode = 'in'; document.getElementById('authPass').value = ''; authPaint(); }
+            } else if (authMode === 'in') {
                 const { error } = await sb.auth.signInWithPassword({ email, password });
                 if (error) authShowMsg(/confirm/i.test(error.message) ? t.confirm : t.bad);
             } else {
@@ -2430,7 +2458,14 @@
         if (!window.supabase || !lbConfigured()) { authHideGate(); authLock(false); return; }
         sb = window.supabase.createClient(LB_CONFIG.url, LB_CONFIG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
         sb.auth.getSession().then(({ data }) => lbOnSession(data.session, 'INIT'));
-        sb.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') lbOnSession(session, ev); });
+        sb.auth.onAuthStateChange((ev, session) => {
+            if (ev === 'PASSWORD_RECOVERY') {
+                authMode = 'reset';
+                authShowGate();
+                authShowMsg('');
+            }
+            if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') lbOnSession(session, ev);
+        });
     }
     async function lbOnSession(session, ev) {
         lbUser = session ? session.user : null;
