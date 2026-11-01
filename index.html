@@ -758,16 +758,109 @@
     } catch (e) { /* storage unavailable: run in memory */ }
 
     let saveTimer = null;
+    // Supabase cloud persistence for the complete Focus store.
+    let focusCloudReady = false;
+    let focusCloudUserId = null;
+    let focusCloudTimer = null;
+    let focusCloudSaving = false;
+    let focusCloudQueued = false;
+
+    function focusCloudStatus(message) {
+        const info = document.getElementById('saveInfo');
+        if (info && message) info.textContent = message;
+    }
+    function focusCloudScheduleSave() {
+        if (!focusCloudReady || !focusCloudUserId || !sb) return;
+        clearTimeout(focusCloudTimer);
+        focusCloudTimer = setTimeout(focusCloudSave, 800);
+    }
+    async function focusCloudSave() {
+        if (!focusCloudReady || !focusCloudUserId || !sb) return;
+        if (focusCloudSaving) { focusCloudQueued = true; return; }
+        focusCloudSaving = true;
+        focusCloudQueued = false;
+        const payload = JSON.parse(JSON.stringify(store));
+        try {
+            const { error } = await sb.from('user_data').upsert({
+                uid: focusCloudUserId,
+                data: payload,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'uid' });
+            if (error) throw error;
+            focusCloudStatus('Synchronisé avec le cloud');
+        } catch (error) {
+            console.error('Focus cloud save:', error);
+            focusCloudStatus('Erreur de synchronisation — vérifiez votre connexion');
+        } finally {
+            focusCloudSaving = false;
+            if (focusCloudQueued) focusCloudScheduleSave();
+        }
+    }
+    function focusCloudHasUsefulLocalData(data) {
+        if (!data || typeof data !== 'object') return false;
+        return !!(data.user || Object.keys(data.months || {}).length || Object.keys(data.goals || {}).length ||
+            (data.custom || []).length || (data.customTasks && Object.keys(data.customTasks).length) ||
+            (data.customRewards || []).length || Object.keys(data.dayDone || {}).length);
+    }
+    function focusRefreshAfterCloudLoad() {
+        try { applyLanguageUI(); } catch(e) {}
+        try { buildCategories(); } catch(e) {}
+        try { renderUser(); } catch(e) {}
+        try { renderClock(); } catch(e) {}
+        try { renderDays(); } catch(e) {}
+        try { renderDayTasks(); } catch(e) {}
+        try { renderCategories(); } catch(e) {}
+        try { renderCategoryVisibilityOptions(); } catch(e) {}
+        try { renderMonthPicker(); } catch(e) {}
+        try { renderMonthlyAnalysis(); } catch(e) {}
+        try { renderCustomRewards(); } catch(e) {}
+        try { applyTheme(false); } catch(e) {}
+    }
+    async function focusCloudLoadForUser(user) {
+        focusCloudReady = false;
+        focusCloudUserId = user.id;
+        focusCloudStatus('جاري تحميل بياناتك من السحابة…');
+        const { data: row, error } = await sb.from('user_data').select('data').eq('uid', user.id).maybeSingle();
+        if (error) throw error;
+        if (row && row.data && typeof row.data === 'object') {
+            // Cloud is authoritative whenever this account already has a record.
+            store = Object.assign(defaultStore(), row.data);
+        } else {
+            // One-time migration: only upload existing browser data when this account is empty.
+            let localData = null;
+            try { localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) {}
+            if (focusCloudHasUsefulLocalData(localData)) {
+                const moveLocal = window.confirm('وجدنا بيانات Focus محفوظة في هذا الجهاز. واش بغيتي ننقلوها للحساب الحالي ديالك في السحابة؟ تأكد أنك داخل بحساب Google الصحيح.');
+                store = moveLocal ? Object.assign(defaultStore(), localData) : defaultStore();
+            } else {
+                store = defaultStore();
+            }
+            const meta = user.user_metadata || {};
+            const firstName = meta.given_name || (meta.full_name || '').split(' ')[0] || (user.email || '').split('@')[0] || '';
+            if (!store.user && firstName) store.user = firstName.charAt(0).toUpperCase() + firstName.slice(1, 24);
+            const { error: insertError } = await sb.from('user_data').upsert({
+                uid: user.id, data: store, updated_at: new Date().toISOString()
+            }, { onConflict: 'uid' });
+            if (insertError) throw insertError;
+        }
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch(e) {}
+        focusCloudReady = true;
+        focusRefreshAfterCloudLoad();
+        focusCloudStatus('تمت المزامنة مع السحابة');
+    }
+
     function persist() {
+        // Keep a local safety cache, while Supabase remains the shared source across devices.
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+        focusCloudScheduleSave();
         if (typeof lbScheduleSync === 'function') lbScheduleSync();
         const dot = document.getElementById('saveDot');
         const info = document.getElementById('saveInfo');
-        if (info) info.textContent = i18n[currentLang].saved;
+        if (info && !focusCloudReady) info.textContent = i18n[currentLang].saved;
         if (dot) dot.style.transform = 'scale(1.8)';
         clearTimeout(saveTimer);
         saveTimer = setTimeout(() => {
-            if (info) info.textContent = i18n[currentLang].saveInfo;
+            if (info && !focusCloudReady) info.textContent = i18n[currentLang].saveInfo;
             if (dot) dot.style.transform = 'scale(1)';
         }, 1500);
     }
@@ -2343,15 +2436,26 @@
     }
     async function lbOnSession(session, ev) {
         lbUser = session ? session.user : null;
-        if (lbUser) {
+        if (!lbUser) {
+            focusCloudReady = false;
+            focusCloudUserId = null;
+            authLock(true);
+            return;
+        }
+        // Do not unlock the app until this account's own cloud data has loaded.
+        authLock(true);
+        try {
+            await focusCloudLoadForUser(lbUser);
             authHideGate();
             authLock(false);
-            if (!store.user) {
-                const m = lbUser.user_metadata || {};
-                const nm = m.given_name || (m.full_name || '').split(' ')[0] || (lbUser.email || '').split('@')[0] || '';
-                if (nm) { store.user = nm.charAt(0).toUpperCase() + nm.slice(1, 24); persist(); renderUser(); renderClock(); closeNameModal(); }
-            }
-        } else { authLock(true); }
+            closeNameModal();
+        } catch (error) {
+            console.error('Focus cloud load:', error);
+            focusCloudStatus('تعذر تحميل البيانات — تحقق من جدول user_data وسياسات RLS');
+            authShowGate();
+            authShowMsg('تعذر تحميل بيانات الحساب. تأكد من إنشاء جدول user_data وتشغيل سياسات RLS ثم أعد المحاولة.');
+            return;
+        }
         if (lbUser && (store.lbPendingJoin || store.lbJoin === undefined)) {
             store.lbPendingJoin = false; store.lbJoin = true; persist();
             try { await lbPush(true); toast(lbT().joined); } catch (e) {}
