@@ -175,11 +175,16 @@
             <div class="space-y-2">
                 <input id="authEmail" type="email" autocomplete="email" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
                 <input id="authPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal">
-                <button id="authForgot" type="button" onclick="authForgotPassword()" class="w-full text-left text-xs text-teal hover:underline">نسيت كلمة السر؟</button>
             </div>
             <p id="authMsg" class="hidden text-xs rounded-xl px-3 py-2 border border-orange/30 bg-orange/10 text-orange"></p>
             <button id="authSubmitBtn" onclick="authSubmit()" class="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-teal text-bg hover:opacity-90 transition-all"></button>
             <button id="authToggle" onclick="authToggleMode()" class="w-full text-xs text-muted hover:text-teal underline"></button>
+            <div class="flex items-center gap-3 text-[11px] text-muted"><div class="flex-1 h-px bg-border"></div><span id="localOrLabel">أو بدون حساب</span><div class="flex-1 h-px bg-border"></div></div>
+            <div class="space-y-2">
+                <input id="localNameInput" type="text" maxlength="30" autocomplete="nickname" placeholder="الاسم فقط" class="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal" onkeydown="if(event.key==='Enter')focusLocalEnter()">
+                <button id="localEnterBtn" type="button" onclick="focusLocalEnter()" class="w-full px-4 py-2.5 rounded-xl text-sm font-bold border border-teal text-teal hover:bg-teal/10 transition-all">الدخول بالاسم على هذا الجهاز</button>
+                <p id="localNote" class="text-[10px] text-muted text-center leading-relaxed">البيانات غتبقى غير فهاد الجهاز والمتصفح، وما كتتزامنش مع الأجهزة الأخرى.</p>
+            </div>
         </div>
     </div>
 
@@ -440,6 +445,7 @@
                 <p id="accountEmail" class="text-xs text-muted break-all"></p>
                 <button onclick="lbSignOut()" id="accountSignOut" class="w-full px-3 py-2 rounded-xl text-xs font-bold border border-border hover:bg-surface-hover transition-all"></button>
             </div>
+            <button id="localSwitchToAccount" onclick="focusLocalSwitchToAccount()" class="hidden w-full px-3 py-2 rounded-xl text-xs font-bold border border-teal text-teal hover:bg-teal/10 transition-all">Switch to Google / email login</button>
             <div class="flex justify-end gap-2">
                 <button onclick="closeNameModal()" id="txt-name-later" class="px-4 py-2 rounded-xl text-xs font-semibold text-muted hover:bg-surface-hover">Plus tard</button>
                 <button onclick="saveName()" id="txt-name-save" class="px-4 py-2 rounded-xl text-xs font-bold bg-teal text-bg hover:opacity-90 transition-all">Enregistrer</button>
@@ -760,6 +766,8 @@
     // Supabase cloud persistence for the complete Focus store.
     let focusCloudReady = false;
     let focusCloudUserId = null;
+    let focusLocalMode = false;
+    let focusLocalStorageKey = null;
     let focusCloudTimer = null;
     let focusCloudSaving = false;
     let focusCloudQueued = false;
@@ -816,6 +824,8 @@
         try { applyTheme(false); } catch(e) {}
     }
     async function focusCloudLoadForUser(user) {
+        focusLocalMode = false;
+        focusLocalStorageKey = null;
         focusCloudReady = false;
         focusCloudUserId = user.id;
         focusCloudStatus('جاري تحميل بياناتك من السحابة…');
@@ -849,9 +859,12 @@
     }
 
     function persist() {
-        // Keep a local safety cache, while Supabase remains the shared source across devices.
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
-        focusCloudScheduleSave();
+        // Email/Google accounts use cloud sync; name-only profiles stay isolated on this device.
+        try {
+            if (focusLocalMode && focusLocalStorageKey) localStorage.setItem(focusLocalStorageKey, JSON.stringify(store));
+            else localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+        } catch (e) {}
+        if (!focusLocalMode) focusCloudScheduleSave();
         if (typeof lbScheduleSync === 'function') lbScheduleSync();
         const dot = document.getElementById('saveDot');
         const info = document.getElementById('saveInfo');
@@ -2373,6 +2386,16 @@
         const t = authT();
         setText('authJoinTxt', t.joinBtn);
         setText('authTitle', t.title); setText('authSub', t.sub); setText('authGoogleTxt', t.google); setText('authOr', t.or);
+        const localLabels = {
+            FR: { or: 'ou sans compte', placeholder: 'Ton prénom ou nom', button: 'Entrer avec un nom sur cet appareil', note: 'Les données resteront sur cet appareil et ce navigateur uniquement. Pas de synchronisation entre appareils.', required: 'Entre un nom pour continuer.' },
+            EN: { or: 'or without an account', placeholder: 'Your name', button: 'Continue with a name on this device', note: 'Your data stays only on this device and browser. It will not sync to other devices.', required: 'Enter a name to continue.' },
+            AR: { or: 'أو بدون حساب', placeholder: 'الاسم فقط', button: 'الدخول بالاسم على هذا الجهاز', note: 'البيانات غتبقى غير فهاد الجهاز والمتصفح، وما كتتزامنش مع الأجهزة الأخرى.', required: 'دخل الاسم ديالك باش تكمل.' }
+        };
+        const localText = localLabels[currentLang] || localLabels.FR;
+        setText('localOrLabel', localText.or);
+        document.getElementById('localNameInput').placeholder = localText.placeholder;
+        setText('localEnterBtn', localText.button);
+        setText('localNote', localText.note);
         document.getElementById('authEmail').placeholder = t.email;
         document.getElementById('authPass').placeholder = t.pass;
         setText('authSubmitBtn', authMode === 'reset' ? t.resetBtn : (authMode === 'in' ? t.signin : t.signup));
@@ -2380,8 +2403,6 @@
         document.getElementById('authToggle').classList.toggle('hidden', authMode === 'reset');
         document.getElementById('authGoogle').classList.toggle('hidden', authMode === 'reset');
         document.getElementById('authOr').parentElement.classList.toggle('hidden', authMode === 'reset');
-        document.getElementById('authForgot').classList.toggle('hidden', authMode !== 'in');
-        document.getElementById('authForgot').textContent = t.forgot;
         document.getElementById('authPass').autocomplete = authMode === 'in' ? 'current-password' : 'new-password';
         document.getElementById('authPass').placeholder = authMode === 'reset' ? t.resetSub : t.pass;
         if (authMode === 'reset') { setText('authTitle', t.resetTitle); setText('authSub', t.resetSub); }
@@ -2394,11 +2415,26 @@
         if (!box) return;
         const t = authT();
         box.classList.toggle('hidden', !lbUser);
+        const localSwitch = document.getElementById('localSwitchToAccount');
+        if (localSwitch) {
+            localSwitch.classList.toggle('hidden', !focusLocalMode);
+            localSwitch.textContent = currentLang === 'AR' ? 'الانتقال إلى تسجيل الدخول بـ Gmail' : (currentLang === 'EN' ? 'Switch to Google / email login' : 'Passer à la connexion Google / email');
+        }
         if (lbUser) {
             document.getElementById('accountEmail').textContent = t.acct + ': ' + (lbUser.email || '');
             document.getElementById('accountSignOut').textContent = t.switchAcc;
         }
     }
+    function focusLocalSwitchToAccount() {
+        focusLocalMode = false;
+        focusLocalStorageKey = null;
+        authMode = 'in';
+        authShowMsg('');
+        authShowGate();
+        authLock(true);
+        closeNameModal();
+    }
+
     let authLocked = false;
     function authLock(on) {
         authLocked = on;
@@ -2407,21 +2443,58 @@
         if (on) authPaint();
     }
     function authToggleMode() { authMode = authMode === 'in' ? 'up' : 'in'; authShowMsg(''); authPaint(); }
-    async function authForgotPassword() {
-        const t = authT();
-        const email = document.getElementById('authEmail').value.trim();
-        if (!email) { authShowMsg(t.fill); document.getElementById('authEmail').focus(); return; }
-        if (!sb) { authShowMsg(t.generic); return; }
-        authShowMsg('');
-        const btn = document.getElementById('authForgot'); btn.disabled = true;
-        try {
-            const redirectTo = location.origin + location.pathname;
-            const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
-            if (error) authShowMsg(error.message || t.generic);
-            else authShowMsg(t.sent);
-        } catch (e) { authShowMsg(t.generic); }
-        btn.disabled = false;
+    async function focusLocalEnter() {
+        const name = (document.getElementById('localNameInput').value || '').trim().replace(/\s+/g, ' ').slice(0, 30);
+        const labels = {
+            FR: { required: 'Entre un nom pour continuer.', taken: 'Ce nom est déjà utilisé. Choisis un autre nom.', unavailable: 'Impossible de vérifier le nom. Réessaie dans un instant.' },
+            EN: { required: 'Enter a name to continue.', taken: 'This name is already taken. Please choose another one.', unavailable: 'Could not verify the name. Please try again.' },
+            AR: { required: 'دخل الاسم ديالك باش تكمل.', taken: 'هاد السمية مستعملة من قبل. اختار سمية أخرى.', unavailable: 'ما قدرناش نتحققو من السمية. عاود حاول من بعد.' }
+        };
+        const msg = labels[currentLang] || labels.FR;
+        if (!name) { authShowMsg(msg.required); document.getElementById('localNameInput').focus(); return; }
+
+        const profileSlug = name.toLocaleLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 40) || 'user';
+        const storageKey = 'focus_local_profile_v1_' + profileSlug;
+        let localData = null;
+        try { localData = JSON.parse(localStorage.getItem(storageKey) || 'null'); } catch(e) {}
+
+        // Returning guest on this same browser: reuse the local profile without reserving the name again.
+        if (!localData) {
+            if (!sb) { authShowMsg(msg.unavailable); return; }
+            const usernameKey = name.normalize('NFKC').toLocaleLowerCase().replace(/\s+/g, ' ');
+            const btn = document.getElementById('localEnterBtn');
+            btn.disabled = true;
+            try {
+                const { error } = await sb.from('focus_guest_names').insert({ username_key: usernameKey, display_name: name });
+                if (error) {
+                    if (error.code === '23505' || /duplicate|unique/i.test(error.message || '')) authShowMsg(msg.taken);
+                    else authShowMsg(msg.unavailable);
+                    btn.disabled = false;
+                    return;
+                }
+            } catch (e) {
+                authShowMsg(msg.unavailable);
+                btn.disabled = false;
+                return;
+            }
+            btn.disabled = false;
+        }
+
+        // Name-only profiles are stored only on this device. The database stores the unique name reservation only.
+        focusLocalMode = true;
+        focusCloudReady = false;
+        focusCloudUserId = null;
+        lbUser = null;
+        focusLocalStorageKey = storageKey;
+        store = Object.assign(defaultStore(), localData || {});
+        if (!store.user) store.user = name;
+        try { localStorage.setItem(focusLocalStorageKey, JSON.stringify(store)); } catch(e) {}
+        focusRefreshAfterCloudLoad();
+        authHideGate();
+        authLock(false);
+        accountPaint();
     }
+
     async function authGoogle() {
         if (!sb) return;
         const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
@@ -2470,6 +2543,8 @@
     async function lbOnSession(session, ev) {
         lbUser = session ? session.user : null;
         if (!lbUser) {
+            focusLocalMode = false;
+            focusLocalStorageKey = null;
             focusCloudReady = false;
             focusCloudUserId = null;
             authLock(true);
