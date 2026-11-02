@@ -475,6 +475,7 @@
 
     <!-- Visitors can look around, but cannot use anything until they Join -->
     <div id="lockOverlay" onclick="authShowGate()" class="hidden fixed inset-0 z-[60]"></div>
+    <div id="restoreBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-5 py-2.5 rounded-full text-xs font-bold bg-surface text-primary border border-border shadow-lg" role="status"></div>
     <button id="joinFab" onclick="authShowGate()" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-7 py-3 rounded-full text-sm font-extrabold bg-teal text-bg shadow-lg hover:opacity-90 transition-all"><span id="authJoinTxt">Join</span></button>
 
     <!-- Modal: leaderboard -->
@@ -2503,7 +2504,7 @@
         if (authMode === 'reset') { setText('authTitle', t.resetTitle); setText('authSub', t.resetSub); }
     }
     function authShowMsg(m) { const e = document.getElementById('authMsg'); e.textContent = m || ''; e.classList.toggle('hidden', !m); }
-    function authShowGate() { document.getElementById('authGate').classList.remove('hidden'); authPaint(); }
+    function authShowGate() { if (window.__authRestoring) return; document.getElementById('authGate').classList.remove('hidden'); authPaint(); }
     function authHideGate() { document.getElementById('authGate').classList.add('hidden'); }
     function accountPaint() {
         const box = document.getElementById('accountBox');
@@ -2530,11 +2531,31 @@
         closeNameModal();
     }
 
+    function authRestoring(on) {
+        window.__authRestoring = !!on;
+        const bar = document.getElementById('restoreBar');
+        if (bar) {
+            const tx = { FR: 'Reconnexion à ton compte…', EN: 'Reconnecting to your account…', AR: 'جارٍ إعادة الاتصال بحسابك…' };
+            bar.textContent = tx[currentLang] || tx.FR;
+            bar.classList.toggle('hidden', !on);
+        }
+        const fab = document.getElementById('joinFab');
+        if (fab && on) fab.classList.add('hidden');
+    }
+    function authIsPermissionError(e) {
+        const m = String((e && (e.message || e.details)) || '');
+        return !!e && (e.code === '42501' || e.status === 401 || e.status === 403 || /row-level security|permission denied|invalid (jwt|refresh)|refresh token/i.test(m));
+    }
+    function authIsNetworkError(e) {
+        if (!e) return true;
+        const m = String(e.message || '');
+        return e.name === 'AuthRetryableFetchError' || e.status === 0 || e.status >= 500 || /fetch|network|timeout|timed out|load failed|offline/i.test(m);
+    }
     let authLocked = false;
     function authLock(on) {
         authLocked = on;
         document.getElementById('lockOverlay').classList.toggle('hidden', !on);
-        document.getElementById('joinFab').classList.toggle('hidden', !on);
+        document.getElementById('joinFab').classList.toggle('hidden', !on || !!window.__authRestoring);
         if (on) authPaint();
     }
     function authToggleMode() { authMode = authMode === 'in' ? 'up' : 'in'; authShowMsg(''); authPaint(); }
@@ -2623,9 +2644,10 @@
     }
 
     function lbInit() {
+        try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
         if (!window.supabase || !lbConfigured()) { authHideGate(); authLock(false); return; }
         sb = window.supabase.createClient(LB_CONFIG.url, LB_CONFIG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-        sb.auth.getSession().then(({ data }) => lbOnSession(data.session, 'INIT'));
+        lbRestoreSession(0);
         sb.auth.onAuthStateChange((ev, session) => {
             if (ev === 'PASSWORD_RECOVERY') {
                 authMode = 'reset';
@@ -2635,9 +2657,32 @@
             if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') lbOnSession(session, ev);
         });
     }
-    async function lbOnSession(session, ev) {
+    function hasStoredAuthSession() {
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (/^sb-.+-auth-token$/.test(k)) { const v = JSON.parse(localStorage.getItem(k) || 'null'); if (v && (v.refresh_token || (v.currentSession && v.currentSession.refresh_token))) return true; }
+            }
+        } catch (e) {}
+        return false;
+    }
+    // A saved login is only dropped when the server clearly says it is invalid, never because of a slow/offline moment.
+    async function lbRestoreSession(tries) {
+        let session = null, err = null;
+        try { const r = await sb.auth.getSession(); session = r.data && r.data.session; err = r.error; } catch (e) { err = e; }
+        if (session) { authRestoring(false); return lbOnSession(session, 'INIT'); }
+        if (hasStoredAuthSession()) {
+            authRestoring(true); authLock(true);
+            try { const r = await sb.auth.refreshSession(); if (r.data && r.data.session) { authRestoring(false); return lbOnSession(r.data.session, 'INIT'); } err = r.error || err; } catch (e) { err = e; }
+            if (!authIsPermissionError(err) && tries < 8) { setTimeout(() => lbRestoreSession(tries + 1), Math.min(1500 * (tries + 1), 8000)); return; }
+        }
+        authRestoring(false);
+        lbOnSession(null, 'INIT');
+    }
+    async function lbOnSession(session, ev, attempt) {
         lbUser = session ? session.user : null;
         if (!lbUser) {
+            authRestoring(false);
             focusLocalMode = false;
             focusLocalStorageKey = null;
             focusCloudReady = false;
@@ -2649,11 +2694,19 @@
         authLock(true);
         try {
             await focusCloudLoadForUser(lbUser);
+            authRestoring(false);
             authHideGate();
             authLock(false);
             closeNameModal();
         } catch (error) {
             console.error('Focus cloud load:', error);
+            // Slow or missing network: keep the saved login and retry, do NOT send the user back to the login form.
+            if (!authIsPermissionError(error) && (attempt || 0) < 8) {
+                authRestoring(true);
+                setTimeout(() => lbOnSession(session, ev, (attempt || 0) + 1), Math.min(1500 * ((attempt || 0) + 1), 8000));
+                return;
+            }
+            authRestoring(false);
             focusCloudStatus('تعذر تحميل البيانات — تحقق من جدول user_data وسياسات RLS');
             authShowGate();
             authShowMsg('تعذر تحميل بيانات الحساب. تأكد من إنشاء جدول user_data وتشغيل سياسات RLS ثم أعد المحاولة.');
@@ -2794,7 +2847,7 @@
     }
     async function lbSignOut() {
         if (!sb) return;
-        await sb.auth.signOut();
+        await sb.auth.signOut({ scope: 'local' });
         lbUser = null;
         closeLeaderboard();
         closeNameModal();
